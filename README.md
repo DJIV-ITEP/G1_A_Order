@@ -15,7 +15,6 @@ This repo is only for `Order` micro-service.
 ## File Structure
 
 ```
-
 ├── api # contains the app interface with the client
 │   │
 │   ├── controller # contains the controller classes
