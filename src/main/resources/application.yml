@@ -1,0 +1,6 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/order_services
+    username: ala
+    password: 1234
+  jpa.hibernate.ddl-auto: create-drop
