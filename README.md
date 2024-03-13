@@ -34,8 +34,8 @@ This repo is only for `Order` micro-service.
 
 ## Team Members
 
-1- Adel Subait - `Project Owner` 
-2- Adam Almohammedi - `Scrum Master` 
-3- Waledd Thamer 
-4- Ala Al-Sanea 
-5- Amjad Al-Aghbari
+1. Adel Subait - `Project Owner` 
+2. Adam Almohammedi - `Scrum Master` 
+3. Waledd Thamer 
+4. Ala Al-Sanea 
+5. Amjad Al-Aghbari
