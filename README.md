@@ -26,13 +26,21 @@ This repo is only for `Order` micro-service.
 ├── persistent # contains DB logic
 │   │
 │   ├── entity # contains DB entity
+│   │  
+│   ├── seed # contains DB seeders
 │   │
 │   └── repository # contains DB calls
 │
 └── service # contains business logic
 ```
 
-## How to Run
+## Before running the project
+
+Make a cope of `src/main/resources/application.yml.example` to `src/main/resources/application.yml` and config the DB connection `username` and `password`
+
+#### Note:
+- Change the DB name to `order_service` to be unified for the group members
+- The `src/main/resources/application.yml` is not trackable
 
 Run the following command to install dependance  
 ```bash
@@ -54,8 +62,8 @@ http://localhost:8080/swagger-ui/index.html
 
 ## Team Members
 
-1. Adel Subait - `Project Owner`
-2. Adam Almohammedi - `Scrum Master`
-3. Waledd Thamer
-4. Ala Al-Sanea
-5. Amjad Al-Aghbari
+1. [Adel Subait](https://github.com/ahdel) - `Project Owner`
+2. [Adam Almohammedi](https://github.com/Eng-Adam-Almohammedi) - `Scrum Master`
+3. [Waledd Thamer](https://github.com/waleedthamer)
+4. [Ala Al-Sanea](https://github.com/Ala-Alsanea)
+5. [Amjad Al-Aghbari](https://github.com/amjadfqs)
