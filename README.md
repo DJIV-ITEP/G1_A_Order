@@ -32,10 +32,30 @@ This repo is only for `Order` micro-service.
 └── service # contains business logic
 ```
 
+## How to Run
+
+Run the following command to install dependance  
+```bash
+mvn clean install
+```
+Run the following command to list dependance  
+```bash
+ mvn dependency:tree
+```
+Run the following command to start the app
+```bash
+mvn spring-boot:run
+```
+Navigate to the following URL to test the APIs
+```
+http://localhost:8080/swagger-ui/index.html
+```
+
+
 ## Team Members
 
-1. Adel Subait - `Project Owner` 
-2. Adam Almohammedi - `Scrum Master` 
-3. Waledd Thamer 
-4. Ala Al-Sanea 
+1. Adel Subait - `Project Owner`
+2. Adam Almohammedi - `Scrum Master`
+3. Waledd Thamer
+4. Ala Al-Sanea
 5. Amjad Al-Aghbari
