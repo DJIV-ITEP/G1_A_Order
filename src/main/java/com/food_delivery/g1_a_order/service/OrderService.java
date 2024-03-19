@@ -26,4 +26,11 @@ public class OrderService {
     public List<Order> getOrders() {
         return orderRepository.findAll();
     }
+
+    public boolean createOrder(OrderCreateDto OrderCreateDto) {
+        
+        Order order = mapper.toOrder(OrderCreateDto);
+        return orderRepository.save(order) == order;
+    }
+
 }

@@ -31,4 +31,15 @@ public class OrderController {
 
         return ResponseEntity.ok(OrderService.getOrders());
     }
+
+    @PostMapping("add")
+    public ResponseEntity<String> addOrder(@RequestBody OrderCreateDto OrderCreateDto) {
+
+        if(OrderService.createOrder(OrderCreateDto));
+            return ResponseEntity.ok("Seccessfully added order");
+            
+    }
+    
+    
+
 }
