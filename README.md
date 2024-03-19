@@ -22,6 +22,8 @@ This repo is only for `Order` micro-service.
 │   └── dto # contains the Data Transfer object classes
 │
 ├── config # contains app config
+│ 
+├── helper # contains static helper func
 │
 ├── persistent # contains DB logic
 │   │
