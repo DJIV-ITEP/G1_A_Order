@@ -31,10 +31,6 @@ public class OrderStatusController {
         return mapper.toOrderStatusShowDto(orderStatus);
     }
 
-    @GetMapping("/testString")
-    String test() {
-        List<OrderStatus> orderStatus = repository.findAll();
-        return orderStatus.get(0).toString();
-    }
+
 
 }

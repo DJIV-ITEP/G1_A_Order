@@ -1,6 +1,6 @@
 package com.food_delivery.g1_a_order.persistent.entity;
 
-
+import java.time.LocalDateTime;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -28,9 +28,11 @@ public class OrderStatus {
     @Column(nullable = false)
     private String value;
 
+    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime updatedAt;
+
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "orderStatus")
     private List<Order> orders;
-
 
     public OrderStatus(String value) {
         this.value = value;
