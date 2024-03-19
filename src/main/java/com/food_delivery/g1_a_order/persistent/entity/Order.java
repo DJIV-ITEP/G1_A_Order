@@ -1,6 +1,6 @@
 package com.food_delivery.g1_a_order.persistent.entity;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import jakarta.persistence.Entity;
@@ -27,7 +27,8 @@ public class Order {
     private Long customerId;
     private Long restaurantId;
     private Long deliveryId;
-    private LocalDate date;
+    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime updatedAt;
 
     @ManyToOne
     private OrderStatus orderStatus;
