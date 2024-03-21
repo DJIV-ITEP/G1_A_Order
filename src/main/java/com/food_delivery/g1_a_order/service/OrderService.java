@@ -40,13 +40,12 @@ public class OrderService {
         
         Order order = orderMapper.toOrder(OrderCreateDto);
         order.setOrderStatus(OrderStatusEnum.PENDING.status);
-        // order.setOrderItems();
 
         List<OrderItem> orderItems = orderItemMapper.toOrderItem(OrderCreateDto.orderItems());
         orderItems.forEach(orderItem -> orderItem.setOrder(order));
         order.setOrderItems(orderItems);
 
-        return orderRepository.save(order) == order;
+        return orderRepository.save(order).equals(order);
     }
 
 }

@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.food_delivery.g1_a_order.api.dto.order.OrderCreateDto;
 import com.food_delivery.g1_a_order.api.dto.order.OrderShowDto;
-import com.food_delivery.g1_a_order.persistent.entity.Order;
 import com.food_delivery.g1_a_order.service.OrderService;
 
 import lombok.AllArgsConstructor;

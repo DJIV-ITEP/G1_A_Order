@@ -32,6 +32,7 @@ public class OrderStatus {
     @Column(nullable = false)
     private String value;
 
+    @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
     private LocalDateTime updatedAt;
 
