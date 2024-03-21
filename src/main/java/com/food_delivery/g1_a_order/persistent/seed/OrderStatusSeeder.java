@@ -19,14 +19,11 @@ public class OrderStatusSeeder {
     CommandLineRunner commandLineRunner(OrderStatusRepository repository) {
         return args -> {
 
-            OrderStatus pending = new OrderStatus(
-                    OrderStatusEnum.PENDING.status);
+            OrderStatus pending =OrderStatusEnum.PENDING.status;
 
-            OrderStatus inProgress = new OrderStatus(
-                OrderStatusEnum.IN_PEOGRESS.status);
+            OrderStatus inProgress = OrderStatusEnum.IN_PEOGRESS.status;
 
-            OrderStatus delivered = new OrderStatus(
-                OrderStatusEnum.DELIVERED.status);
+            OrderStatus delivered = OrderStatusEnum.DELIVERED.status;
 
             List<OrderStatus> statuses = List.of(pending, inProgress, delivered);
 

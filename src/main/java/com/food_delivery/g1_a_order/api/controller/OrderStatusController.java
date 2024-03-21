@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.food_delivery.g1_a_order.api.dto.OrderStatusShowDto;
 import com.food_delivery.g1_a_order.config.MapperRegister;
-import com.food_delivery.g1_a_order.persistent.entity.OrderStatus;
 import com.food_delivery.g1_a_order.persistent.repository.OrderStatusRepository;
 
 import lombok.AllArgsConstructor;
