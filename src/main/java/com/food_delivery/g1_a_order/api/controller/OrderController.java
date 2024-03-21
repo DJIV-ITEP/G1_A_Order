@@ -3,8 +3,8 @@ package com.food_delivery.g1_a_order.api.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.food_delivery.g1_a_order.api.dto.OrderCreateDto;
-import com.food_delivery.g1_a_order.api.dto.OrderShowDto;
+import com.food_delivery.g1_a_order.api.dto.order.OrderCreateDto;
+import com.food_delivery.g1_a_order.api.dto.order.OrderShowDto;
 import com.food_delivery.g1_a_order.persistent.entity.Order;
 import com.food_delivery.g1_a_order.service.OrderService;
 

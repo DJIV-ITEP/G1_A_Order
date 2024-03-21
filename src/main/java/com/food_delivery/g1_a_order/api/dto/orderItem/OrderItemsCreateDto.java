@@ -1,4 +1,4 @@
-package com.food_delivery.g1_a_order.api.dto;
+package com.food_delivery.g1_a_order.api.dto.orderItem;
 
 
 public record OrderItemsCreateDto(

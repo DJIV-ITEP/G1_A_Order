@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.food_delivery.g1_a_order.api.dto.OrderStatusShowDto;
-import com.food_delivery.g1_a_order.config.MapperRegister;
+import com.food_delivery.g1_a_order.api.dto.orderStatus.OrderStatusShowDto;
+import com.food_delivery.g1_a_order.config.mapper.OrderStatusMapper;
 import com.food_delivery.g1_a_order.persistent.repository.OrderStatusRepository;
 
 import lombok.AllArgsConstructor;
@@ -21,13 +21,13 @@ public class OrderStatusController {
 
     OrderStatusRepository repository;
     @Autowired
-    MapperRegister mapper;
+    OrderStatusMapper  orderStatusMapper;
 
     @GetMapping()
     List<OrderStatusShowDto> getOrderStatus() {
 
         var orderStatus = repository.findAll();
-        return mapper.toOrderStatusShowDto(orderStatus);
+        return orderStatusMapper.toOrderStatusShowDto(orderStatus);
     }
 
 
