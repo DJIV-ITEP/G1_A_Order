@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.food_delivery.g1_a_order.persistent.entity.Order;
 import com.food_delivery.g1_a_order.persistent.enum_.ResponseMsg;
 import com.food_delivery.g1_a_order.service.OrderItemService;
 

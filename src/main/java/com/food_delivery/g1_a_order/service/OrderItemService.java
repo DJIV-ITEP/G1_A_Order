@@ -2,7 +2,6 @@ package com.food_delivery.g1_a_order.service;
 
 import org.springframework.stereotype.Service;
 
-import com.food_delivery.g1_a_order.persistent.entity.Order;
 import com.food_delivery.g1_a_order.persistent.entity.OrderItem;
 import com.food_delivery.g1_a_order.persistent.repository.OrderItemRepository;
 import com.food_delivery.g1_a_order.persistent.repository.OrderRepository;
