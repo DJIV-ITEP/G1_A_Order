@@ -17,7 +17,7 @@ import lombok.AllArgsConstructor;
 public class OrderItemController {
 
     OrderItemService itemService;
-    @DeleteMapping("{id}/delete")
+    @DeleteMapping("delete/{id}")
     public ResponseEntity<String> deleteOrderItem(@PathVariable Long id) {
 
         if (itemService.deleteOrderItem(id))
