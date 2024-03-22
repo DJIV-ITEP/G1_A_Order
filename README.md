@@ -1,8 +1,6 @@
-# Wasale - ‭Food Delivery Service‬
+# Wasale - Food Delivery Service
 
-‭ “Wasale” is a popular delivery company that wants to build a food delivery system that facilitates‬
-‭ordering food from different restaurants. The system shall support adding/removing different‬
-‭restaurants to the restaurant catalog.‬
+“Wasale” is a popular delivery company that wants to build a food delivery system that facilitates ordering food from different restaurants. The system shall support adding/removing different restaurants to the restaurant catalog.
 
 ## Tech Stack
 
@@ -11,6 +9,22 @@
 ## Scope
 
 This repo is only for `Order` micro-service.
+
+## Documents
+
+- ### Entity Relationship Diagram
+
+    ### Note : The ERD is still in working Process.
+
+    - #### ERD Image :
+
+    ![ERD Image](https://github.com/DJIV-ITEP/G1_A_Order/blob/chore/add-document-folder-to-the-project/docs/ERD/OrderService-ERD.jpg?raw=true)
+
+    - #### ERD Link to Contribute :
+    
+        [Link to the ERD](https://drive.google.com/file/d/11FZMY6oAOZzh27i3cV22MedzbqIBba9L/view?usp=sharing "@It's Safe, Don't Worry :)")
+
+
 
 ## File Structure
 
