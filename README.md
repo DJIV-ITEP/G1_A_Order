@@ -18,7 +18,7 @@ This repo is only for `Order` micro-service.
 
     - #### ERD Image :
 
-    ![ERD Image](https://cdn.path.to/some/image.jpg "ERD Image")
+    ![ERD Image](https://github.com/DJIV-ITEP/G1_A_Order/blob/chore/add-document-folder-to-the-project/docs/ERD/OrderService-ERD.jpg?raw=true)
 
     - #### ERD Link to Contribute :
     
