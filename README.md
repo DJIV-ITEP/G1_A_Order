@@ -22,11 +22,19 @@ This repo is only for `Order` micro-service.
 │   └── dto # contains the Data Transfer object classes
 │
 ├── config # contains app config
+│   │
+│   ├──  mapper # contains mappers between entities and DTOs
+│   │
+│   └── SwaggerConfig.java # constain swagger config
+│
+├── helper # contains static helper func
 │
 ├── persistent # contains DB logic
 │   │
 │   ├── entity # contains DB entity
 │   │  
+│   ├── enum_ # contains enums 
+│   │
 │   ├── seed # contains DB seeders
 │   │
 │   └── repository # contains DB calls
