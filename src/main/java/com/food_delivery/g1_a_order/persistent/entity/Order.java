@@ -12,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,7 +20,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -35,9 +35,17 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @NotNull
     private Long id;
+
+    @NotNull
     private Long customerId;
+
+    @NotNull
     private Long restaurantId;
+
     private Long deliveryId;
+
+    @Transient
+    private float totalPrice;
 
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -47,8 +55,7 @@ public class Order {
     @ManyToOne
     private OrderStatus orderStatus;
 
-
     @NotNull
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<OrderItem> orderItems ;
+    private List<OrderItem> orderItems;
 }
