@@ -10,6 +10,17 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:16.2
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: order_service_db
+        ports:
+          - 5432:5432
+        volumes:  # Mount your database initialization script
+          - ./init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
     steps:
       - uses: actions/checkout@v3
       - name: Set up JDK 17
@@ -19,11 +30,22 @@ jobs:
           distribution: 'temurin'  
           cache: 'maven'
 
+      - name: Set Spring profile for testing
+        run: echo "spring.profiles.active=test" >> $GITHUB_ENV
+
       - name: Build with Maven
         if: ${{ github.event_name == 'pull_request' || github.event_name == 'push' && github.ref == 'refs/heads/dev' }}
+        env: # Access secrets
+          SPRING_DATASOURCE_URL: jdbc:postgresql://${{ secrets.DB_HOST }}:${{ secrets.DB_PORT }}/${{ secrets.DB_NAME }}
+          SPRING_DATASOURCE_USERNAME: ${{ secrets.DB_USER }}
+          SPRING_DATASOURCE_PASSWORD: ${{ secrets.DB_PASSWORD }}
         # run: mvn -B package --file pom.xml 
         run: mvn clean install
 
       - name: Run tests
         if: ${{ github.event_name == 'pull_request' || github.event_name == 'push' && github.ref == 'refs/heads/dev' }}
+        env: # Access secrets
+          SPRING_DATASOURCE_URL: jdbc:postgresql://${{ secrets.DB_HOST }}:${{ secrets.DB_PORT }}/${{ secrets.DB_NAME }}
+          SPRING_DATASOURCE_USERNAME: ${{ secrets.DB_USER }}
+          SPRING_DATASOURCE_PASSWORD: ${{ secrets.DB_PASSWORD }}
         run: mvn test 
