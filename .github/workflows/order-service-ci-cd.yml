@@ -16,7 +16,7 @@ jobs:
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: order_service_db
+          POSTGRES_DB: order_service
         ports:
           - 5432:5432
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
@@ -36,28 +36,22 @@ jobs:
       - name: Build with Maven
         if: ${{ github.event_name == 'pull_request' || github.event_name == 'push' && github.ref == 'refs/heads/dev' }}
         env: # Access secrets and set Spring properties
-          SPRING_DATASOURCE_URL: jdbc:postgresql://${{ secrets.DB_HOST }}:${{ secrets.DB_PORT }}/${{ secrets.DB_NAME }}
-          SPRING_DATASOURCE_USERNAME: ${{ secrets.DB_USER }}
-          SPRING_DATASOURCE_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/order_service
+          SPRING_DATASOURCE_USERNAME: postgres
+          SPRING_DATASOURCE_PASSWORD: postgres
           SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
           SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.PostgreSQLDialect
           SPRING_JPA_HIBERNATE_DDL-AUTO: create-drop 
-          SPRING_JPA_SHOW-SQL: true
-          SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL: true
-          SERVER_PORT: 8080
         # run: mvn -B package --file pom.xml 
         run: mvn clean install
 
       - name: Run tests
         if: ${{ github.event_name == 'pull_request' || github.event_name == 'push' && github.ref == 'refs/heads/dev' }}
         env: # Access secrets and set Spring properties
-          SPRING_DATASOURCE_URL: jdbc:postgresql://${{ secrets.DB_HOST }}:${{ secrets.DB_PORT }}/${{ secrets.DB_NAME }}
-          SPRING_DATASOURCE_USERNAME: ${{ secrets.DB_USER }}
-          SPRING_DATASOURCE_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/order_service
+          SPRING_DATASOURCE_USERNAME: postgres
+          SPRING_DATASOURCE_PASSWORD: postgres
           SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
           SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.PostgreSQLDialect
           SPRING_JPA_HIBERNATE_DDL-AUTO: create-drop 
-          SPRING_JPA_SHOW-SQL: true
-          SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL: true
-          SERVER_PORT: 8080    
         run: mvn test 
