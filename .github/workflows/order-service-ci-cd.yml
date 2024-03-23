@@ -2,9 +2,9 @@ name: Order Service CI/CD
 
 on:
   push:
-    branches: [ dev ]  # Trigger on the 'dev' branch
+    branches: [dev] # Trigger on the 'dev' branch
   pull_request:
-    branches: [ dev ]  # Trigger on PRs to the 'dev' branch
+    branches: [dev] # Trigger on PRs to the 'dev' branch
 
 jobs:
   build-and-test:
@@ -27,31 +27,27 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: 17
-          distribution: 'temurin'  
-          cache: 'maven'
+          distribution: "temurin"
+          cache: "maven"
+
+      - name: Create application.properties
+        run: |
+          touch src/main/resources/application.properties
+          echo "spring.datasource.url=jdbc:postgresql://localhost:5432/order_service" > src/main/resources/application.properties
+          echo "spring.datasource.username=postgres" >> src/main/resources/application.properties
+          echo "spring.datasource.password=postgres" >> src/main/resources/application.properties
+          echo "spring.datasource.driver-class-name=org.postgresql.Driver" >> src/main/resources/application.properties
+          echo "spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect" >> src/main/resources/application.properties
+          echo "spring.jpa.hibernate.ddl-auto=create-drop" >> src/main/resources/application.properties
 
       - name: Set Spring profile for testing
         run: echo "spring.profiles.active=test" >> $GITHUB_ENV
 
       - name: Build with Maven
         if: ${{ github.event_name == 'pull_request' || github.event_name == 'push' && github.ref == 'refs/heads/dev' }}
-        env: # Access secrets and set Spring properties
-          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/order_service
-          SPRING_DATASOURCE_USERNAME: postgres
-          SPRING_DATASOURCE_PASSWORD: postgres
-          SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
-          SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.PostgreSQLDialect
-          SPRING_JPA_HIBERNATE_DDL-AUTO: create-drop 
-        # run: mvn -B package --file pom.xml 
+        # run: mvn -B package --file pom.xml
         run: mvn clean install
 
       - name: Run tests
         if: ${{ github.event_name == 'pull_request' || github.event_name == 'push' && github.ref == 'refs/heads/dev' }}
-        env: # Access secrets and set Spring properties
-          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/order_service
-          SPRING_DATASOURCE_USERNAME: postgres
-          SPRING_DATASOURCE_PASSWORD: postgres
-          SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
-          SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.PostgreSQLDialect
-          SPRING_JPA_HIBERNATE_DDL-AUTO: create-drop 
-        run: mvn test 
+        run: mvn test
