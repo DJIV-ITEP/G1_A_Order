@@ -17,14 +17,12 @@ import lombok.AllArgsConstructor;
 public class OrderItemController {
 
     OrderItemService itemService;
+
     @DeleteMapping("delete/{id}")
-    public ResponseEntity<String> deleteOrderItem(@PathVariable Long id) {
+    public ResponseEntity<String> deleteOrderItem(@PathVariable("id") Long id) {
 
-        if (itemService.deleteOrderItem(id))
-        {
-            return ResponseEntity.ok(ResponseMsg.SUCCESS.message);
-        }
+        itemService.deleteOrderItem(id);
+        return ResponseEntity.ok(ResponseMsg.SUCCESS.message);
 
-            return ResponseEntity.ok(ResponseMsg.NOT_FOUND.message);
     }
 }
