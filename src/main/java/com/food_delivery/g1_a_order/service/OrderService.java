@@ -1,5 +1,6 @@
 package com.food_delivery.g1_a_order.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,6 +76,7 @@ public class OrderService {
             StatusResponseHelper.notAcceptable("status is not acceptable");
 
         order.setOrderStatus(status);
+        order.setUpdatedAt(LocalDateTime.now());
         order = orderRepository.save(order);
 
         OrderShowDto dto = orderMapper
