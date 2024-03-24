@@ -68,8 +68,10 @@ public class OrderService {
 
         }
 
-        
         if (order.getOrderStatus().getSequence() > status.getSequence())
+            StatusResponseHelper.notAcceptable("status is not acceptable");
+
+        if (order.getOrderStatus().getSequence()+1 != status.getSequence())
             StatusResponseHelper.notAcceptable("status is not acceptable");
 
         order.setOrderStatus(status);
