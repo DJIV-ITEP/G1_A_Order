@@ -33,13 +33,19 @@ public class OrderStatus {
     private String value;
 
     @Builder.Default
+    @Column(nullable = false)
+    private int sequence=0;
+
+
+    @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
     private LocalDateTime updatedAt;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "orderStatus")
     private List<Order> orders;
 
-    public OrderStatus(String value) {
+    public OrderStatus(String value,int sequence) {
         this.value = value;
+        this.sequence = sequence;
     }
 }

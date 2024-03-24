@@ -68,7 +68,9 @@ public class OrderService {
 
         }
 
-        // order = Order.builder().id(orderId).orderStatus(status).build();
+        
+        if (order.getOrderStatus().getSequence() > status.getSequence())
+            StatusResponseHelper.notAcceptable("status is not acceptable");
 
         order.setOrderStatus(status);
         order = orderRepository.save(order);
