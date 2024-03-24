@@ -58,11 +58,23 @@ This repo is only for `Order` micro-service.
 
 ## Before running the project
 
-Make a cope of `src/main/resources/application.yml.example` to `src/main/resources/application.yml` and config the DB connection `username` and `password`
+1. Make a file with name `secrets.properties` in dir `src/main/resources/`.
+2. Write the secrets variables to the file.
+ > ### EX of the file content:
+ - Note: Change the variables based on your configurations.
+```
+# Database
+DB_NAME=order_service
+DB_USER=postgres
+DB_PASS=postgres
+DB_PORT=5432
+DB_HOST=localhost
+# Server
+SERVER_PORT=8080
+```
 
-#### Note:
-- Change the DB name to `order_service` to be unified for the group members
-- The `src/main/resources/application.yml` is not trackable
+## After Setting up the Secrets
+
 
 Run the following command to install dependance  
 ```bash
