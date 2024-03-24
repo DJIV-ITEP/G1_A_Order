@@ -11,11 +11,15 @@ import com.food_delivery.g1_a_order.service.OrderService;
 import lombok.AllArgsConstructor;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
 
 @RestController
 @AllArgsConstructor
@@ -41,4 +45,10 @@ public class OrderController {
         return ResponseEntity.ok(ResponseMsg.NOT_FOUND.message);
     }
 
+    @PutMapping("{orderId}/change/orderStatus/{orderStatusId}")
+    public OrderShowDto putMethodName(@PathVariable("orderId") Long orderId, @PathVariable("orderStatusId") Long orderStatusId ) {
+        
+
+        return OrderService.changeOrderStatus(orderId,orderStatusId);
+    }
 }
