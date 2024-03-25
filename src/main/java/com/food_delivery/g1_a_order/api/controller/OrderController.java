@@ -51,7 +51,7 @@ public class OrderController {
     }
 
     @PostMapping("{orderId}/confirm")
-    public ResponseEntity<String> confirmOrder(@PathVariable Long orderId) {
+    public ResponseEntity<String> confirmOrder(@PathVariable("orderId") Long orderId) {
 
         if (orderService.confirmOrder(orderId)) {
 
