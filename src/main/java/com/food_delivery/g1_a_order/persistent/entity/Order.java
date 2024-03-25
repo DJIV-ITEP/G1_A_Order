@@ -39,10 +39,15 @@ public class Order {
     @NotNull
     private Long customerId;
 
+    private Long customerAddressId;
+
     @NotNull
     private Long restaurantId;
 
+    private Long restaurantAddressId;
+
     private Long deliveryId;
+
 
     @Transient
     private float totalPrice;
