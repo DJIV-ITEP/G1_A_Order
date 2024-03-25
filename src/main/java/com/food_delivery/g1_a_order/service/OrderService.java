@@ -5,8 +5,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.food_delivery.g1_a_order.api.dto.order.OrderCreateDto;
@@ -20,7 +20,6 @@ import com.food_delivery.g1_a_order.persistent.entity.OrderStatus;
 import com.food_delivery.g1_a_order.persistent.enum_.OrderStatusEnum;
 import com.food_delivery.g1_a_order.persistent.repository.OrderRepository;
 import com.food_delivery.g1_a_order.persistent.repository.OrderStatusRepository;
-
 
 import lombok.RequiredArgsConstructor;
 
@@ -39,6 +38,7 @@ public class OrderService {
 
     private final WebClient customerEndpoint;
 
+    @Transactional
     public List<OrderShowDto> getOrders() {
 
         List<Order> orders = orderRepository.findAll();
@@ -72,7 +72,7 @@ public class OrderService {
         } catch (Exception e) {
 
             System.out.println(e);
-            StatusResponseHelper.notFound("no order nither status found");
+            StatusResponseHelper.notFound("no order neither status found");
 
         }
 
@@ -94,27 +94,28 @@ public class OrderService {
     }
 
     // confirm order
-    public OrderShowDto confirmOrder(Long orderId) {
+    @Transactional
+    public boolean confirmOrder(Long orderId) {
 
         Order order = null;
 
         try {
-            order = orderRepository.findById(orderId)
-                    .orElseThrow(() -> new Exception("no order found"));
+            order = orderRepository.findById(orderId).get();
 
-            if (null == order.getCustomerId() || null == order.getRestaurantId()
-                    || null == order.getCustomerAddressId())
+            if (null == order.getCustomerId() || null == order.getRestaurantId())
                 StatusResponseHelper.notAcceptable("order is incomplete");
 
             if (order.getOrderItems().isEmpty())
                 StatusResponseHelper.notAcceptable("order should have at least one item");
 
             // get customer address
-            Long customerAddressId = customerEndpoint.get()
-                .uri("/customer/address/" + order.getCustomerId())
-                .retrieve()
-                .bodyToMono(Long.class)
-                .block();
+            // Long customerAddressId = customerEndpoint.get()
+            //         .uri("/customer/address/" + order.getCustomerId())
+            //         .retrieve()
+            //         .bodyToMono(Long.class)
+            //         .block();
+
+            Long customerAddressId = 1L;
 
             if (null == customerAddressId)
                 StatusResponseHelper.notAcceptable("customer address not found");
@@ -131,9 +132,6 @@ public class OrderService {
             StatusResponseHelper.notFound("no order found");
         }
 
-        OrderShowDto dto = orderMapper
-                .toOrderShowDto(order);
-
-        return dto;
+        return order.equals(order);
     }
 }
