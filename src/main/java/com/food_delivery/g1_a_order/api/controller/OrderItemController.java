@@ -24,5 +24,6 @@ public class OrderItemController {
         itemService.deleteOrderItem(id);
         return ResponseEntity.ok(ResponseMsg.SUCCESS.message);
 
+
     }
 }

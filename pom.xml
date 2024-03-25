@@ -98,6 +98,7 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.8.1</version>
 				<configuration>
+
 					<annotationProcessorPaths>
 						<path>
 							<groupId>org.mapstruct</groupId>
@@ -117,6 +118,7 @@
 					</annotationProcessorPaths>
 				</configuration>
 			</plugin>
+
 
 		</plugins>
 

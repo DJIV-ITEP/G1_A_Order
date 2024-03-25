@@ -13,5 +13,6 @@ public enum OrderStatusEnum {
     READY_TO_PICKUP(OrderStatus.builder().value("ready to pickup").sequence(3).build()),
     DELIVERED(OrderStatus.builder().value("Delivered").sequence(4).build());
 
+
     public final OrderStatus status;
 }

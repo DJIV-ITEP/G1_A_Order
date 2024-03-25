@@ -44,8 +44,5 @@ public class OrderStatus {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "orderStatus")
     private List<Order> orders;
 
-    // public OrderStatus(String value,int sequence) {
-    //     this.value = value;
-    //     this.sequence = sequence;
-    // }
+
 }

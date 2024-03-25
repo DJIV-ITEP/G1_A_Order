@@ -13,6 +13,7 @@ public class StatusResponseHelper {
         throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, message);
     }
 
+
     public static void serverErr(String message) {
         throw new ResponseStatusException(HttpStatus.valueOf(500), message);
     }
