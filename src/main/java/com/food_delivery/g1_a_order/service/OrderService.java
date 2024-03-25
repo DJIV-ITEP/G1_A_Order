@@ -1,6 +1,7 @@
 package com.food_delivery.g1_a_order.service;
 
 import java.time.LocalDateTime;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import com.food_delivery.g1_a_order.persistent.enum_.ResponseMsg;
 import com.food_delivery.g1_a_order.persistent.repository.OrderRepository;
 import com.food_delivery.g1_a_order.persistent.repository.OrderStatusRepository;
 
+
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -27,15 +29,18 @@ public class OrderService {
 
     @Autowired
     OrderMapper orderMapper;
+
     @Autowired
     OrderItemMapper orderItemMapper;
 
     private final OrderRepository orderRepository;
     private final OrderStatusRepository orderStatusRepository;
 
+
     public List<OrderShowDto> getOrders() {
 
         List<Order> orders = orderRepository.findAll();
+
         return orderMapper.toOrderShowDto(orders);
     }
 
@@ -85,5 +90,6 @@ public class OrderService {
         return dto;
 
     }
+
 
 }

@@ -29,6 +29,7 @@ public class OrderStatusSeeder {
 
             List<OrderStatus> statuses = List.of(pending, inProgress, readyToPickup, delivered);
 
+
             repository.saveAll(statuses);
 
         };
