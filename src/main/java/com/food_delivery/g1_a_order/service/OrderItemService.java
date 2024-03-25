@@ -1,8 +1,11 @@
 package com.food_delivery.g1_a_order.service;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.food_delivery.g1_a_order.helper.StatusResponseHelper;
 import com.food_delivery.g1_a_order.persistent.entity.OrderItem;
+import com.food_delivery.g1_a_order.persistent.enum_.ResponseMsg;
 import com.food_delivery.g1_a_order.persistent.repository.OrderItemRepository;
 import com.food_delivery.g1_a_order.persistent.repository.OrderRepository;
 
@@ -17,31 +20,23 @@ public class OrderItemService {
 
     public boolean deleteOrderItem(Long id) {
 
-        if (itemRepository.findById(id).isPresent()) {
+        OrderItem item = null;
+        try {
 
-            OrderItem item = itemRepository.findById(id).get();
+            item = itemRepository.findById(id).get();
 
-            // System.out.println("________debug(size)_________");
-            // System.out.println(item.getOrder().getId());
-            // System.out.println("________debug_________");
+            itemRepository.deleteById(id);
 
+            if (0 == item.getOrder().getOrderItems().size());
+            orderRepository.deleteById(item.getOrder().getId());
 
-            try {
-                itemRepository.deleteById(id);
-
-                if ( 0 == item.getOrder().getOrderItems().size()) {
-                    orderRepository.deleteById(item.getOrder().getId());
-                }
-
-            } catch (IllegalArgumentException e) {
-                System.out.println(e);
-                return false;
-
-            }
-            return true;
+        } catch (Exception e) {
+            System.out.println(e);
+            StatusResponseHelper.notFound("no item nither order found");
+            return false;
         }
 
-        return false;
+        return true;
 
     }
 
