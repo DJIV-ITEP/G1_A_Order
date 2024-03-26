@@ -46,10 +46,10 @@ public class OrderService {
         return orderMapper.toOrderShowDto(orders);
     }
 
+    @Transactional
     public boolean createOrder(OrderCreateDto OrderCreateDto) {
 
         Order order = orderMapper.toOrder(OrderCreateDto);
-        order.setOrderStatus(OrderStatusEnum.PENDING.status);
 
         List<OrderItem> orderItems = orderItemMapper.toOrderItem(OrderCreateDto.orderItems());
         orderItems.forEach(orderItem -> orderItem.setOrder(order));
@@ -58,6 +58,7 @@ public class OrderService {
         return orderRepository.save(order).equals(order);
     }
 
+    @Transactional
     public OrderShowDto changeOrderStatus(Long orderId, Long orderStatusId) {
 
         Order order = null;
@@ -102,6 +103,9 @@ public class OrderService {
         try {
             order = orderRepository.findById(orderId).get();
 
+            if (order.getOrderStatus().getSequence() != OrderStatusEnum.CART.status.getSequence())
+                StatusResponseHelper.notAcceptable("test");
+
             if (null == order.getCustomerId() || null == order.getRestaurantId())
                 StatusResponseHelper.notAcceptable("order is incomplete");
 
@@ -133,6 +137,9 @@ public class OrderService {
             StatusResponseHelper.notFound("no order found");
         }
 
+
+
+        
         return order.equals(order);
     }
 
