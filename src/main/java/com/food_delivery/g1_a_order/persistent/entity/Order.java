@@ -48,7 +48,6 @@ public class Order {
 
     private Long deliveryId;
 
-
     @Transient
     private float totalPrice;
 
