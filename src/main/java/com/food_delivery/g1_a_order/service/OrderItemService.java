@@ -21,6 +21,7 @@ import com.food_delivery.g1_a_order.persistent.enum_.OrderStatusEnum;
 import com.food_delivery.g1_a_order.persistent.repository.OrderItemRepository;
 import com.food_delivery.g1_a_order.persistent.repository.OrderRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -37,6 +38,7 @@ public class OrderItemService {
     @Autowired
     private final OrderMapper orderMapper;
 
+    
     public void deleteOrderItem(Long id) {
 
         OrderItem item = null;
@@ -81,7 +83,8 @@ public class OrderItemService {
 
     }
 
-    public boolean addOrderItemToOrder(Long customerId, Long restaurantId, OrderItemsCreateDto itemDto) {
+    @Transactional
+    public boolean addOrderItemToOrder(Long customerId, Long restaurantId, List<OrderItemsCreateDto> itemDto) {
 
         Order order = null;
 
@@ -97,7 +100,16 @@ public class OrderItemService {
             System.out.println(e);
             // StatusResponseHelper.notFound("no order found");
             // handle create new order here
-            List<OrderItemsCreateDto> itemDtoList = List.of(itemDto);
+            List<OrderItemsCreateDto> itemDtoList = itemDto;
+
+            // TODO: uncomment this code when customer service is ready
+            // get customer address
+            // Long customerAddressId = customerEndpoint.get()
+            // .uri("/customer/address/" + order.getCustomerId())
+            // .retrieve()
+            // .bodyToMono(Long.class)
+            // .block();
+
 
             OrderCreateDto newOrder = orderMapper.toOrderCreateDto(
                     Order.builder()
@@ -116,7 +128,7 @@ public class OrderItemService {
         catch (Exception e) {
 
             System.out.println(e);
-            StatusResponseHelper.serverErr("contact developer team");
+            StatusResponseHelper.serverErr("contact develop team");
 
         }
 
@@ -126,17 +138,20 @@ public class OrderItemService {
         if (order.getOrderStatus().getSequence() != OrderStatusEnum.CART.status.getSequence())
             StatusResponseHelper.notAcceptable("order already confirmed");
 
-        OrderItem item = itemMapper.toOrderItem(itemDto);
-        order.getOrderItems().add(item);
+        List<OrderItem> items = itemMapper.toOrderItem(itemDto);
+        order.getOrderItems().addAll(items);
         order.setOrderItems(order.getOrderItems());
         order.setUpdatedAt(LocalDateTime.now());
-        item.setOrder(order);
+
+        final Order finalOrder = order;
+        items.forEach(item -> item.setOrder(finalOrder));
 
         orderRepository.save(order);
         return true;
 
     }
 
+    @Transactional
     public List<OrderItemShowDto> getOrderItemByOrder(Long orderId) {
 
         Order order = null;

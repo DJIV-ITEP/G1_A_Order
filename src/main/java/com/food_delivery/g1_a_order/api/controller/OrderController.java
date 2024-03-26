@@ -3,6 +3,7 @@ package com.food_delivery.g1_a_order.api.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.food_delivery.g1_a_order.api.dto.order.OrderCreateDto;
 import com.food_delivery.g1_a_order.api.dto.order.OrderShowDto;
 import com.food_delivery.g1_a_order.api.dto.orderItem.OrderItemsCreateDto;
 import com.food_delivery.g1_a_order.persistent.enum_.ResponseMsg;
@@ -37,25 +38,25 @@ public class OrderController {
     }
 
     // may be wanted
-    // @PostMapping("add")
-    // public ResponseEntity<String> addOrder(@RequestBody OrderCreateDto
-    // OrderCreateDto) {
+    @PostMapping("add/orderItem")
+    public ResponseEntity<String> addOrder(@RequestBody OrderCreateDto orderCreateDto) {
 
-    // if (orderService.createOrder(OrderCreateDto)) {
-    // return ResponseEntity.ok(ResponseMsg.SUCCESS.message);
-    // }
+        itemService.addOrderItemToOrder(
+                orderCreateDto.customerId(),
+                orderCreateDto.restaurantId(),
+                orderCreateDto.orderItems());
 
-    // return ResponseEntity.ok(ResponseMsg.NOT_FOUND.message);
-    // }
-
-    @PostMapping("/customer/{customerId}/restaurant/{restaurantId}/orderItem")
-    public ResponseEntity<String> addOrderItemToOrder(@PathVariable("customerId") Long customerId,
-            @PathVariable("restaurantId") Long restaurantId,
-            @RequestBody OrderItemsCreateDto itemDto) {
-
-        itemService.addOrderItemToOrder(customerId, restaurantId, itemDto);
         return ResponseEntity.ok(ResponseMsg.SUCCESS.message);
     }
+
+    // @PostMapping("/customer/{customerId}/restaurant/{restaurantId}/orderItem")
+    // public ResponseEntity<String> addOrderItemToOrder(@PathVariable("customerId") Long customerId,
+    //         @PathVariable("restaurantId") Long restaurantId,
+    //         @RequestBody List<OrderItemsCreateDto> itemDto) {
+
+    //     itemService.addOrderItemToOrder(customerId, restaurantId, itemDto);
+    //     return ResponseEntity.ok(ResponseMsg.SUCCESS.message);
+    // }
 
     @PutMapping("{orderId}/change/orderStatus/{orderStatusId}")
     public OrderShowDto changeOrderStatus(@PathVariable("orderId") Long orderId,
@@ -65,7 +66,7 @@ public class OrderController {
 
     }
 
-    @PostMapping("{orderId}/confirm")
+    @PutMapping("{orderId}/confirm")
     public ResponseEntity<String> confirmOrder(@PathVariable("orderId") Long orderId) {
 
         if (orderService.confirmOrder(orderId)) {
