@@ -28,25 +28,52 @@ public class OrderItemService {
 
     @Autowired
     private final OrderItemMapper itemMapper;
+
     public boolean deleteOrderItem(Long id) {
 
         OrderItem item = null;
+        Order order = null;
         try {
 
             item = itemRepository.findById(id).get();
+            order = item.getOrder();
+
+            if (order.getOrderStatus().getSequence() != OrderStatusEnum.CART.status.getSequence())
+                StatusResponseHelper.notAcceptable("order already confirmed");
 
             itemRepository.deleteById(id);
+            order.setUpdatedAt(LocalDateTime.now());
 
-            if (0 == item.getOrder().getOrderItems().size());
-            orderRepository.deleteById(item.getOrder().getId());
+            // check order items if it is zero to delete the order
+            if (0 == order.getOrderItems().size()) {
+                orderRepository.deleteById(order.getId());
+            } else {
+                orderRepository.save(order);
+            }
 
-        } catch (Exception e) {
+        }
+
+        catch (NoSuchElementException e) {
+
             System.out.println(e);
             StatusResponseHelper.notFound("no item nither order found");
-            return false;
+        }
+
+        catch (ResponseStatusException e) {
+
+            System.out.println(e);
+            StatusResponseHelper.notAcceptable("order already confirmed");
+        }
+
+        catch (Exception e) {
+
+            System.out.println(e);
+            StatusResponseHelper.serverErr("contact developer team");
         }
 
         return true;
+
+    }
 
     public void addOrderItemToOrder(Long orderId, OrderItemsCreateDto itemDto) {
 
