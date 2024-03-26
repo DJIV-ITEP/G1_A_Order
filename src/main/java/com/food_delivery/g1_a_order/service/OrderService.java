@@ -108,12 +108,13 @@ public class OrderService {
             if (order.getOrderItems().isEmpty())
                 StatusResponseHelper.notAcceptable("order should have at least one item");
 
+            // TODO: uncomment this code when customer service is ready
             // get customer address
             // Long customerAddressId = customerEndpoint.get()
-            //         .uri("/customer/address/" + order.getCustomerId())
-            //         .retrieve()
-            //         .bodyToMono(Long.class)
-            //         .block();
+            // .uri("/customer/address/" + order.getCustomerId())
+            // .retrieve()
+            // .bodyToMono(Long.class)
+            // .block();
 
             Long customerAddressId = 1L;
 
@@ -134,4 +135,5 @@ public class OrderService {
 
         return order.equals(order);
     }
+
 }

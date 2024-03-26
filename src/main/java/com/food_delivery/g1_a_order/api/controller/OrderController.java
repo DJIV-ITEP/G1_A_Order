@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,7 +41,8 @@ public class OrderController {
             return ResponseEntity.ok(ResponseMsg.SUCCESS.message);
         }
 
-        return ResponseEntity.ok(ResponseMsg.NOT_FOUND.message);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                "Failed to create order, please check if the customer id and order items are correct.");
     }
 
     @PutMapping("{orderId}/change/orderStatus/{orderStatusId}")
@@ -54,10 +56,11 @@ public class OrderController {
     public ResponseEntity<String> confirmOrder(@PathVariable("orderId") Long orderId) {
 
         if (orderService.confirmOrder(orderId)) {
-
             return ResponseEntity.ok(ResponseMsg.SUCCESS.message);
         }
-        return ResponseEntity.status(500).build();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body("Failed to confirm order, please check if the order id is correct.");
     }
 
 }
