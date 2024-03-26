@@ -9,7 +9,9 @@ import com.food_delivery.g1_a_order.api.dto.orderStatus.OrderStatusShowDto;
 public record OrderShowDto(
         Long id,
         Long customerId,
+        Long customerAddressId,
         Long restaurantId,
+        Long restaurantAddressId,
         Long deliveryId,
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
