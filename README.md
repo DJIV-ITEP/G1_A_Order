@@ -72,6 +72,8 @@ DB_PORT=5432
 DB_HOST=localhost
 # Server
 SERVER_PORT=8080
+# Other Microservices URL
+CUSTOMER_SERVICE_URL=http://localhost:8081
 ```
 
 ## After Setting up the Secrets
@@ -91,7 +93,7 @@ mvn spring-boot:run
 ```
 Navigate to the following URL to test the APIs
 ```
-http://localhost:8080/swagger-ui/index.html
+http://localhost:8080/webjars/swagger-ui/index.html
 ```
 
 
