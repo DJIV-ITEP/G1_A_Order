@@ -1,12 +1,14 @@
 package com.food_delivery.g1_a_order.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.food_delivery.g1_a_order.api.dto.orderItem.OrderItemShowDto;
 import com.food_delivery.g1_a_order.api.dto.orderItem.OrderItemsCreateDto;
 import com.food_delivery.g1_a_order.config.mapper.OrderItemMapper;
 import com.food_delivery.g1_a_order.helper.StatusResponseHelper;
@@ -29,7 +31,7 @@ public class OrderItemService {
     @Autowired
     private final OrderItemMapper itemMapper;
 
-    public boolean deleteOrderItem(Long id) {
+    public void deleteOrderItem(Long id) {
 
         OrderItem item = null;
         Order order = null;
@@ -71,8 +73,6 @@ public class OrderItemService {
             StatusResponseHelper.serverErr("contact developer team");
         }
 
-        return true;
-
     }
 
     public void addOrderItemToOrder(Long orderId, OrderItemsCreateDto itemDto) {
@@ -82,10 +82,13 @@ public class OrderItemService {
         try {
             order = orderRepository.findById(orderId).get();
 
-        } catch (NoSuchElementException e) {
+        }
+
+        catch (NoSuchElementException e) {
             System.out.println(e);
             StatusResponseHelper.notFound("no order found");
         }
+
         catch (Exception e) {
 
             System.out.println(e);
@@ -102,6 +105,28 @@ public class OrderItemService {
         item.setOrder(order);
 
         orderRepository.save(order);
+
+    }
+
+    public List<OrderItemShowDto> getOrderItemByOrder(Long orderId) {
+
+        Order order = null;
+
+        try {
+            order = orderRepository.findById(orderId).get();
+
+        } catch (NoSuchElementException e) {
+            System.out.println(e);
+            StatusResponseHelper.notFound("no order found");
+        } catch (Exception e) {
+
+            System.out.println(e);
+            StatusResponseHelper.serverErr("contact developer team");
+        }
+
+        List<OrderItemShowDto> items = itemMapper.toOrderItemShowDto(order.getOrderItems());
+
+        return items;
 
     }
 
