@@ -13,7 +13,6 @@ import com.food_delivery.g1_a_order.service.OrderService;
 import lombok.AllArgsConstructor;
 
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,21 +36,22 @@ public class OrderController {
 
     }
 
-    @PostMapping("add")
-    public ResponseEntity<String> addOrder(@RequestBody OrderCreateDto OrderCreateDto) {
+    // may be wanted
+    // @PostMapping("add")
+    // public ResponseEntity<String> addOrder(@RequestBody OrderCreateDto OrderCreateDto) {
 
-        if (orderService.createOrder(OrderCreateDto)) {
-            return ResponseEntity.ok(ResponseMsg.SUCCESS.message);
-        }
+    //     if (orderService.createOrder(OrderCreateDto)) {
+    //         return ResponseEntity.ok(ResponseMsg.SUCCESS.message);
+    //     }
 
-        return ResponseEntity.ok(ResponseMsg.NOT_FOUND.message);
-    }
+    //     return ResponseEntity.ok(ResponseMsg.NOT_FOUND.message);
+    // }
 
-    @PostMapping("{orderId}/add/orderItem")
-    public ResponseEntity<String> addOrderItemToOrder(@PathVariable("orderId") Long orderId,
+    @PostMapping("/customer/{customerId}/restaurant/{restaurantId}/orderItem")
+    public ResponseEntity<String> addOrderItemToOrder(@PathVariable("customerId") Long customerId,@PathVariable("restaurantId") Long restaurantId,
             @RequestBody OrderItemsCreateDto itemDto) {
 
-        itemService.addOrderItemToOrder(orderId, itemDto);
+        itemService.addOrderItemToOrder(customerId, restaurantId,itemDto);
         return ResponseEntity.ok(ResponseMsg.SUCCESS.message);
     }
 

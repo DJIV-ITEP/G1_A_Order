@@ -8,9 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.food_delivery.g1_a_order.api.dto.order.OrderCreateDto;
 import com.food_delivery.g1_a_order.api.dto.orderItem.OrderItemShowDto;
 import com.food_delivery.g1_a_order.api.dto.orderItem.OrderItemsCreateDto;
 import com.food_delivery.g1_a_order.config.mapper.OrderItemMapper;
+import com.food_delivery.g1_a_order.config.mapper.OrderMapper;
 import com.food_delivery.g1_a_order.helper.StatusResponseHelper;
 import com.food_delivery.g1_a_order.helper._PrintHelper;
 import com.food_delivery.g1_a_order.persistent.entity.Order;
@@ -27,9 +29,13 @@ public class OrderItemService {
 
     private final OrderItemRepository itemRepository;
     private final OrderRepository orderRepository;
+    private final OrderService orderService;
 
     @Autowired
     private final OrderItemMapper itemMapper;
+
+    @Autowired
+    private final OrderMapper orderMapper;
 
     public void deleteOrderItem(Long id) {
 
@@ -75,25 +81,47 @@ public class OrderItemService {
 
     }
 
-    public void addOrderItemToOrder(Long orderId, OrderItemsCreateDto itemDto) {
+    public boolean addOrderItemToOrder(Long customerId, Long restaurantId, OrderItemsCreateDto itemDto) {
 
         Order order = null;
 
         try {
-            order = orderRepository.findById(orderId).get();
+
+            order = orderRepository
+                    .findFirstByCustomerIdAndOrderStatusOrderByCreatedAtAsc(customerId, OrderStatusEnum.CART.status)
+                    .get();
 
         }
 
         catch (NoSuchElementException e) {
             System.out.println(e);
-            StatusResponseHelper.notFound("no order found");
-        }
+            // StatusResponseHelper.notFound("no order found");
+            // handle create new order here
+            List<OrderItemsCreateDto> itemDtoList = List.of(itemDto);
 
+            OrderCreateDto newOrder = orderMapper.toOrderCreateDto(
+                    Order.builder()
+                            .customerId(customerId)
+                            .restaurantId(restaurantId)
+                            .orderItems(
+                                    itemMapper.toOrderItem(itemDtoList))
+                            .build());
+
+            if (!orderService.createOrder(newOrder))
+                StatusResponseHelper.serverErr("contact developer team");
+
+            return true;
+
+        }
         catch (Exception e) {
 
             System.out.println(e);
             StatusResponseHelper.serverErr("contact developer team");
+
         }
+
+        if (order.getRestaurantId() != restaurantId)
+            StatusResponseHelper.notAcceptable("item from another restaurant");
 
         if (order.getOrderStatus().getSequence() != OrderStatusEnum.CART.status.getSequence())
             StatusResponseHelper.notAcceptable("order already confirmed");
@@ -105,6 +133,7 @@ public class OrderItemService {
         item.setOrder(order);
 
         orderRepository.save(order);
+        return true;
 
     }
 
