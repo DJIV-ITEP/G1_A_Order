@@ -47,7 +47,6 @@ public class OrderService {
     public boolean createOrder(OrderCreateDto OrderCreateDto) {
 
         Order order = orderMapper.toOrder(OrderCreateDto);
-        order.setOrderStatus(OrderStatusEnum.PENDING.status);
 
         List<OrderItem> orderItems = orderItemMapper.toOrderItem(OrderCreateDto.orderItems());
         orderItems.forEach(orderItem -> orderItem.setOrder(order));

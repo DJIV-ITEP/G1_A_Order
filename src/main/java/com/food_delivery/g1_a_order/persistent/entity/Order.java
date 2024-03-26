@@ -3,6 +3,8 @@ package com.food_delivery.g1_a_order.persistent.entity;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.food_delivery.g1_a_order.persistent.enum_.OrderStatusEnum;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -52,8 +54,9 @@ public class Order {
     private LocalDateTime updatedAt;
 
     @NotNull
+    @Builder.Default
     @ManyToOne
-    private OrderStatus orderStatus;
+    private OrderStatus orderStatus = OrderStatusEnum.CART.status;
 
     @NotNull
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

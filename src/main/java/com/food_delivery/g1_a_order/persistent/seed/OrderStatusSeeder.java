@@ -13,13 +13,13 @@ import com.food_delivery.g1_a_order.persistent.repository.OrderStatusRepository;
 @Configuration
 public class OrderStatusSeeder {
 
-    
-
     @Bean
     CommandLineRunner commandLineRunner(OrderStatusRepository repository) {
         return args -> {
 
-            OrderStatus pending =OrderStatusEnum.PENDING.status;
+            OrderStatus cart = OrderStatusEnum.CART.status;
+
+            OrderStatus pending = OrderStatusEnum.PENDING.status;
 
             OrderStatus inProgress = OrderStatusEnum.IN_PEOGRESS.status;
 
@@ -27,8 +27,7 @@ public class OrderStatusSeeder {
 
             OrderStatus delivered = OrderStatusEnum.DELIVERED.status;
 
-            List<OrderStatus> statuses = List.of(pending, inProgress, readyToPickup, delivered);
-
+            List<OrderStatus> statuses = List.of(pending, inProgress, readyToPickup, delivered, cart);
 
             repository.saveAll(statuses);
 
