@@ -18,12 +18,11 @@ This repo is only for `Order` micro-service.
 
     - #### ERD Image :      
 
-    ![ERD Image](https://iili.io/JjJ3gn9.jpg)
-
+    ![ERD Image](/docs/ERD/OrderService_new-ERD.jpg)
 
     - #### ERD Link to Contribute :
     
-        [Link to the ERD](https://drive.google.com/file/d/11FZMY6oAOZzh27i3cV22MedzbqIBba9L/view?usp=sharing "@It's Safe, Don't Worry :)")
+        [Link to the ERD](https://drive.google.com/file/d/1N1uJ5eSdUZ4qQhMPAPnlYcVdrjakY3bU/view?usp=drive_link "@It's Safe, Don't Worry :)")
 
 
 
