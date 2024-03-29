@@ -33,6 +33,8 @@ public class Payment {
     @Transient
     private float amount;
 
+    @Column(name = "description")
+    private String description;
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
     private LocalDateTime updatedAt;
