@@ -1,6 +1,7 @@
 package com.food_delivery.g1_a_order.api.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.food_delivery.g1_a_order.api.dto.order.OrderCreateDto;
@@ -10,6 +11,7 @@ import com.food_delivery.g1_a_order.persistent.enum_.ResponseMsg;
 import com.food_delivery.g1_a_order.service.OrderItemService;
 import com.food_delivery.g1_a_order.service.OrderService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
 
 import java.util.List;
@@ -38,6 +40,7 @@ public class OrderController {
     }
 
     // may be wanted
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("add/orderItem")
     public ResponseEntity<String> addOrder(@RequestBody OrderCreateDto orderCreateDto) {
 
@@ -50,19 +53,19 @@ public class OrderController {
     }
 
     // @PostMapping("/customer/{customerId}/restaurant/{restaurantId}/orderItem")
-    // public ResponseEntity<String> addOrderItemToOrder(@PathVariable("customerId") Long customerId,
-    //         @PathVariable("restaurantId") Long restaurantId,
-    //         @RequestBody List<OrderItemsCreateDto> itemDto) {
-
-    //     itemService.addOrderItemToOrder(customerId, restaurantId, itemDto);
-    //     return ResponseEntity.ok(ResponseMsg.SUCCESS.message);
+    // public ResponseEntity<String> addOrderItemToOrder(@PathVariable("customerId")
+    // Long customerId,
+    // @PathVariable("restaurantId") Long restaurantId,
+    // @RequestBody List<OrderItemsCreateDto> itemDto) {
+    // itemService.addOrderItemToOrder(customerId, restaurantId, itemDto);
+    // return ResponseEntity.ok(ResponseMsg.SUCCESS.message);
     // }
 
     @PutMapping("{orderId}/change/orderStatus/{orderStatusId}")
-    public OrderShowDto changeOrderStatus(@PathVariable("orderId") Long orderId,
+    public ResponseEntity<OrderShowDto> changeOrderStatus(@PathVariable("orderId") Long orderId,
             @PathVariable("orderStatusId") Long orderStatusId) {
 
-        return orderService.changeOrderStatus(orderId, orderStatusId);
+        return ResponseEntity.ok(orderService.changeOrderStatus(orderId, orderStatusId));
 
     }
 
