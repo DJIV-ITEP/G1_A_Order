@@ -17,7 +17,6 @@ public record OrderShowDto(
         LocalDateTime updatedAt,
 
         OrderStatusShowDto orderStatus,
-
         List<OrderItemShowDto> orderItems) {
 
 }
