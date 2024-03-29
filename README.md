@@ -18,8 +18,10 @@ This repo is only for `Order` micro-service.
 
     - #### ERD Image :      
 
-    ![ERD Image](https://iili.io/JjJ3gn9.jpg)
+    ![ERD Image](/docs/ERD/OrderService_new-ERD.jpg)
 
+  - #### ERD drawio file in docs folder:
+    ```docs/ERD/OrderService_new-ERD.drawio```
 
     - #### ERD Link to Contribute :
     
