@@ -15,6 +15,7 @@ import com.food_delivery.g1_a_order.persistent.repository.OrderStatusRepository;
 import lombok.AllArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @RestController
@@ -26,10 +27,10 @@ public class OrderStatusController {
     OrderStatusMapper  orderStatusMapper;
 
     @GetMapping()
-    List<OrderStatusShowDto> getOrderStatus() {
+    public ResponseEntity<List<OrderStatusShowDto>> getOrderStatus() {
 
         var orderStatus = repository.findAll();
-        return orderStatusMapper.toOrderStatusShowDto(orderStatus);
+        return ResponseEntity.ok(orderStatusMapper.toOrderStatusShowDto(orderStatus));
     }
 
 
