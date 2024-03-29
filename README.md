@@ -20,6 +20,9 @@ This repo is only for `Order` micro-service.
 
     ![ERD Image](/docs/ERD/OrderService_new-ERD.jpg)
 
+    - #### ERD drawio file in docs folder:
+        ```docs/ERD/OrderService_new-ERD.drawio```
+
     - #### ERD Link to Contribute :
     
         [Link to the ERD](https://drive.google.com/file/d/1N1uJ5eSdUZ4qQhMPAPnlYcVdrjakY3bU/view?usp=drive_link "@It's Safe, Don't Worry :)")
