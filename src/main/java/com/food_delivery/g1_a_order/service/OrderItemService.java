@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.food_delivery.g1_a_order.api.dto.order.OrderCreateDto;
 import com.food_delivery.g1_a_order.api.dto.orderItem.OrderItemShowDto;
 import com.food_delivery.g1_a_order.api.dto.orderItem.OrderItemsCreateDto;
@@ -38,11 +40,11 @@ public class OrderItemService {
     @Autowired
     private final OrderMapper orderMapper;
 
-    
+    @Transactional
     public void deleteOrderItem(Long id) {
 
-        OrderItem item = null;
-        Order order = null;
+        OrderItem item;
+        Order order;
         try {
 
             item = itemRepository.findById(id).get();
@@ -51,14 +53,14 @@ public class OrderItemService {
             if (order.getOrderStatus().getSequence() != OrderStatusEnum.CART.status.getSequence())
                 StatusResponseHelper.notAcceptable("order already confirmed");
 
-            itemRepository.deleteById(id);
-            order.setUpdatedAt(LocalDateTime.now());
-
             // check order items if it is zero to delete the order
-            if (0 == order.getOrderItems().size()) {
+            if (1 == order.getOrderItems().size()) {
                 orderRepository.deleteById(order.getId());
             } else {
+                order.getOrderItems().remove(item); 
+                order.setUpdatedAt(LocalDateTime.now());
                 orderRepository.save(order);
+                itemRepository.deleteById(id);
             }
 
         }
@@ -110,7 +112,6 @@ public class OrderItemService {
             // .bodyToMono(Long.class)
             // .block();
 
-
             OrderCreateDto newOrder = orderMapper.toOrderCreateDto(
                     Order.builder()
                             .customerId(customerId)
@@ -124,8 +125,7 @@ public class OrderItemService {
 
             return true;
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
 
             System.out.println(e);
             StatusResponseHelper.serverErr("contact develop team");
