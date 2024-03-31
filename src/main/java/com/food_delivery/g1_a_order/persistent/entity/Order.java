@@ -26,10 +26,8 @@ public class Order {
     @NotNull
     private Long customerId;
 
-    private Long customerAddressId;
-
     @ManyToOne
-    @JoinColumn(name = "address_id", nullable = false,referencedColumnName = "id")
+    @JoinColumn(name = "address_id", nullable = true,referencedColumnName = "id")
     private Address address;
 
     @NotNull
@@ -40,7 +38,8 @@ public class Order {
     private Long deliveryId;
 
     @Transient
-    private float totalPrice;
+    @Builder.Default
+    private float totalPrice=0;
 
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();

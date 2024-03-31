@@ -8,7 +8,6 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface AddressMapper {
-
     // address create dto
     Address toAddress(AddressCreateDto addressCreateDto);
     AddressCreateDto toAddressCreateDto(Address address);
@@ -18,6 +17,4 @@ public interface AddressMapper {
     AddressShowDto toAddressShowDto(Address address);
     List<AddressShowDto> toAddressShowDto(List<Address> address);
     List<Address> toAddress(List<AddressShowDto> addressShowDto);
-
-
 }

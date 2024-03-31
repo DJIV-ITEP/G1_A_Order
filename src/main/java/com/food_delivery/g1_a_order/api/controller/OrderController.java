@@ -32,12 +32,15 @@ public class OrderController {
     @PostMapping("add/orderItem")
     public ResponseEntity<String> addOrder(@RequestBody OrderCreateDto orderCreateDto) {
 
-        itemService.addOrderItemToOrder(
+     boolean isAdded=  itemService.addOrderItemToOrder(
                 orderCreateDto.customerId(),
                 orderCreateDto.restaurantId(),
                 orderCreateDto.orderItems());
-
-        return ResponseEntity.ok(ResponseMsg.SUCCESS.message);
+        if (isAdded) {
+            return ResponseEntity.ok(ResponseMsg.SUCCESS.message);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to add order");
+        }
     }
 
     // @PostMapping("/customer/{customerId}/restaurant/{restaurantId}/orderItem")
@@ -49,23 +52,21 @@ public class OrderController {
     // return ResponseEntity.ok(ResponseMsg.SUCCESS.message);
     // }
 
+
     @PutMapping("{orderId}/change/orderStatus/{orderStatusId}")
     public ResponseEntity<OrderShowDto> changeOrderStatus(@PathVariable("orderId") Long orderId,
             @PathVariable("orderStatusId") Long orderStatusId) {
-
         return ResponseEntity.ok(orderService.changeOrderStatus(orderId, orderStatusId));
-
     }
 
     @PutMapping("{orderId}/confirm")
-    public ResponseEntity<String> confirmOrder(@PathVariable("orderId") Long orderId) {
-
-        if (orderService.confirmOrder(orderId)) {
+    public ResponseEntity<String> confirmOrder(@PathVariable("orderId") Long orderId,
+                                               @RequestParam("addressId") Long addressId) {
+        boolean isConfirmed = orderService.confirmOrder(orderId, addressId);
+        if (isConfirmed) {
             return ResponseEntity.ok(ResponseMsg.SUCCESS.message);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to confirm order, please check if the order id and customer address id are correct.");
         }
-
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body("Failed to confirm order, please check if the order id is correct.");
     }
-
 }
