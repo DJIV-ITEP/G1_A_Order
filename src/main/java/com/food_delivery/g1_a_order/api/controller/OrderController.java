@@ -32,7 +32,7 @@ public class OrderController {
     @PostMapping("add/orderItem")
     public ResponseEntity<String> addOrder(@RequestBody OrderCreateDto orderCreateDto) {
 
-     boolean isAdded=  itemService.addOrderItemToOrder(
+        boolean isAdded = itemService.addOrderItemToOrder(
                 orderCreateDto.customerId(),
                 orderCreateDto.restaurantId(),
                 orderCreateDto.orderItems());
@@ -52,7 +52,7 @@ public class OrderController {
     // return ResponseEntity.ok(ResponseMsg.SUCCESS.message);
     // }
 
-
+    // todo: change return type
     @PutMapping("{orderId}/change/orderStatus/{orderStatusId}")
     public ResponseEntity<OrderShowDto> changeOrderStatus(@PathVariable("orderId") Long orderId,
             @PathVariable("orderStatusId") Long orderStatusId) {
@@ -61,12 +61,13 @@ public class OrderController {
 
     @PutMapping("{orderId}/confirm")
     public ResponseEntity<String> confirmOrder(@PathVariable("orderId") Long orderId,
-                                               @RequestParam("addressId") Long addressId) {
+            @RequestParam("addressId") Long addressId) {
         boolean isConfirmed = orderService.confirmOrder(orderId, addressId);
         if (isConfirmed) {
             return ResponseEntity.ok(ResponseMsg.SUCCESS.message);
         } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to confirm order, please check if the order id and customer address id are correct.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Failed to confirm order, please check if the order id and customer address id are correct.");
         }
     }
 }
