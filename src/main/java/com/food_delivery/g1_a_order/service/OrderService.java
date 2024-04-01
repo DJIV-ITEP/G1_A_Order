@@ -89,7 +89,7 @@ public class OrderService {
     public boolean confirmOrder(Long orderId, Long customerAddressId) {
 
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new NoSuchElementException("No order found with id: " + orderId));
+                .orElseThrow(() -> StatusResponseHelper.getNotFound("No order found with id: " + orderId));
 
         if (order.getOrderStatus().getSequence() != OrderStatusEnum.CART.status.getSequence())
             StatusResponseHelper.notAcceptable("Order status is not CART");
