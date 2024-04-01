@@ -34,13 +34,13 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final OrderStatusRepository orderStatusRepository;
-    private  final AddressRepository addressRepository;
+    private final AddressRepository addressRepository;
     private final WebClient customerEndpoint;
 
     @Transactional
     public List<OrderShowDto> getOrders() {
         List<Order> orders = orderRepository.findAll();
-        System.out.println("orders orders orders orders"+orders.size());
+        System.out.println("orders orders orders orders" + orders.size());
         return orderMapper.toOrderShowDto(orders);
     }
 
@@ -79,15 +79,18 @@ public class OrderService {
         order.setUpdatedAt(LocalDateTime.now());
         order = orderRepository.save(order);
 
-  return orderMapper
+        return orderMapper
                 .toOrderShowDto(order);
 
     }
+
     // confirm order
     @Transactional
     public boolean confirmOrder(Long orderId, Long customerAddressId) {
+
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new NoSuchElementException("No order found with id: " + orderId));
+
         if (order.getOrderStatus().getSequence() != OrderStatusEnum.CART.status.getSequence())
             StatusResponseHelper.notAcceptable("Order status is not CART");
 
@@ -100,7 +103,7 @@ public class OrderService {
         if (customerAddressId == null || !addressExists(customerAddressId))
             StatusResponseHelper.notFound("Customer address not found");
 
-        System.out.println(" customerAddressId customerAddressId customerAddressId: "+customerAddressId);
+        System.out.println(" customerAddressId customerAddressId customerAddressId: " + customerAddressId);
         order.setAddress(addressRepository.findById(customerAddressId).get());
         order.setOrderStatus(OrderStatusEnum.PENDING.status);
         order.setUpdatedAt(LocalDateTime.now());

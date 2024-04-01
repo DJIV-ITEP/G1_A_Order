@@ -42,13 +42,15 @@ public class OrderItemService {
         OrderItem item;
         Order order;
         try {
+
             item = itemRepository.findById(id).get();
             order = item.getOrder();
 
             if (order.getOrderStatus().getSequence() != OrderStatusEnum.CART.status.getSequence())
                 StatusResponseHelper.notAcceptable("order already confirmed");
+
             // check order items if it is zero to delete the order
-            if (1 == order.getOrderItems().size()) {
+            if (1 >= order.getOrderItems().size()) {
                 orderRepository.deleteById(order.getId());
             } else {
                 order.getOrderItems().remove(item);
@@ -59,7 +61,7 @@ public class OrderItemService {
 
         } catch (NoSuchElementException e) {
             System.out.println(e);
-            StatusResponseHelper.notFound("no item nither order found");
+            StatusResponseHelper.notFound("no item found");
         } catch (ResponseStatusException e) {
             System.out.println(e);
             StatusResponseHelper.notAcceptable("order already confirmed");

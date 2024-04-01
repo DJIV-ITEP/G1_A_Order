@@ -18,7 +18,7 @@ public class AddressController {
     private final AddressService addressService;
 
     @GetMapping("/customer/{customerId}")
-    public ResponseEntity<List<AddressShowDto>> getAddressesByCustomerId(@PathVariable Long customerId) {
+    public ResponseEntity<List<AddressShowDto>> getAddressesByCustomerId(@PathVariable("customerId") Long customerId) {
         List<AddressShowDto> addresses = addressService.getAddressesByCustomerId(customerId);
         return ResponseEntity.ok(addresses);
     }
@@ -31,13 +31,13 @@ public class AddressController {
     }
 
     @DeleteMapping("/customer/{customerId}")
-    public ResponseEntity<String> deleteAddressesByCustomerId(@PathVariable Long customerId) {
+    public ResponseEntity<String> deleteAddressesByCustomerId(@PathVariable("customerId") Long customerId) {
         addressService.deleteAddressesByCustomerId(customerId);
         return ResponseEntity.ok(ResponseMsg.SUCCESS.message);
     }
 
     @GetMapping("/{addressId}")
-    public ResponseEntity<AddressShowDto> getAddress(@PathVariable Long addressId) {
+    public ResponseEntity<AddressShowDto> getAddress(@PathVariable("addressId") Long addressId) {
         AddressShowDto address = addressService.getAddress(addressId);
         return ResponseEntity.ok(address);
     }

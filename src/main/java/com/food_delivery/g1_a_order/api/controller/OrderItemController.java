@@ -15,7 +15,7 @@ import java.util.List;
 @RequestMapping("api/v1/orderItem")
 public class OrderItemController {
 
-    OrderItemService itemService;
+    private final OrderItemService itemService;
 
     @DeleteMapping("{id}/delete")
     public ResponseEntity<String> deleteOrderItem(@PathVariable("id") Long id) {
