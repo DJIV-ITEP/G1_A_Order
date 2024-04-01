@@ -1,35 +1,37 @@
 package com.food_delivery.g1_a_order.persistent.entity;
-
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-@ToString
+// @Data
+@Setter
+@Getter
 @Builder
 @Entity
-@Table(name = "order_status")
-public class OrderStatus {
+@ToString
+@Table(name = "addresses")
+public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @NotNull
     private Long id;
-    @Column(nullable = false)
-    private String value;
+    @NotNull
+    private Long customerId;
 
-    @Builder.Default
-    @Column(nullable = false)
-    private int sequence=0;
+    @Column(name = "latitude")
+    private Double latitude;
+
+    @Column(name = "longitude")
+    private Double longitude;
+
+    @Column(name = "description")
+    private String description;
 
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
     private LocalDateTime updatedAt;
-
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "orderStatus")
-    private List<Order> orders;
-
-
 }

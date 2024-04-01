@@ -1,27 +1,12 @@
 package com.food_delivery.g1_a_order.persistent.entity;
 
+import com.food_delivery.g1_a_order.persistent.enum_.OrderStatusEnum;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
+
 import java.time.LocalDateTime;
 import java.util.List;
-
-import com.food_delivery.g1_a_order.persistent.enum_.OrderStatusEnum;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
-import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -41,7 +26,9 @@ public class Order {
     @NotNull
     private Long customerId;
 
-    private Long customerAddressId;
+    @ManyToOne
+    @JoinColumn(name = "address_id", nullable = true,referencedColumnName = "id")
+    private Address address;
 
     @NotNull
     private Long restaurantId;
@@ -51,7 +38,8 @@ public class Order {
     private Long deliveryId;
 
     @Transient
-    private float totalPrice;
+    @Builder.Default
+    private float totalPrice=0;
 
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -65,4 +53,5 @@ public class Order {
     @NotNull
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OrderItem> orderItems;
+
 }

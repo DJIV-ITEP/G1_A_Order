@@ -1,31 +1,19 @@
 package com.food_delivery.g1_a_order.api.controller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.food_delivery.g1_a_order.api.dto.order.OrderCreateDto;
 import com.food_delivery.g1_a_order.api.dto.order.OrderShowDto;
-import com.food_delivery.g1_a_order.api.dto.orderItem.OrderItemsCreateDto;
 import com.food_delivery.g1_a_order.persistent.enum_.ResponseMsg;
 import com.food_delivery.g1_a_order.service.OrderItemService;
 import com.food_delivery.g1_a_order.service.OrderService;
-
-import io.swagger.v3.oas.annotations.Operation;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("api/v1/order")
 public class OrderController {
 
@@ -44,12 +32,15 @@ public class OrderController {
     @PostMapping("add/orderItem")
     public ResponseEntity<String> addOrder(@RequestBody OrderCreateDto orderCreateDto) {
 
-        itemService.addOrderItemToOrder(
+        boolean isAdded = itemService.addOrderItemToOrder(
                 orderCreateDto.customerId(),
                 orderCreateDto.restaurantId(),
                 orderCreateDto.orderItems());
-
-        return ResponseEntity.ok(ResponseMsg.SUCCESS.message);
+        if (isAdded) {
+            return ResponseEntity.ok(ResponseMsg.SUCCESS.message);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to add order");
+        }
     }
 
     // @PostMapping("/customer/{customerId}/restaurant/{restaurantId}/orderItem")
@@ -65,20 +56,18 @@ public class OrderController {
     @PutMapping("{orderId}/change/orderStatus/{orderStatusId}")
     public ResponseEntity<OrderShowDto> changeOrderStatus(@PathVariable("orderId") Long orderId,
             @PathVariable("orderStatusId") Long orderStatusId) {
-
         return ResponseEntity.ok(orderService.changeOrderStatus(orderId, orderStatusId));
-
     }
 
     @PutMapping("{orderId}/confirm")
-    public ResponseEntity<String> confirmOrder(@PathVariable("orderId") Long orderId) {
-
-        if (orderService.confirmOrder(orderId)) {
+    public ResponseEntity<String> confirmOrder(@PathVariable("orderId") Long orderId,
+            @RequestParam("addressId") Long addressId) {
+        boolean isConfirmed = orderService.confirmOrder(orderId, addressId);
+        if (isConfirmed) {
             return ResponseEntity.ok(ResponseMsg.SUCCESS.message);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Failed to confirm order, please check if the order id and customer address id are correct.");
         }
-
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body("Failed to confirm order, please check if the order id is correct.");
     }
-
 }
