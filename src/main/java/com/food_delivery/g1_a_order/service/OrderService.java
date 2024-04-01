@@ -50,7 +50,7 @@ public class OrderService {
         List<OrderItem> orderItems = orderItemMapper.toOrderItem(OrderCreateDto.orderItems());
         orderItems.forEach(orderItem -> orderItem.setOrder(order));
         order.setOrderItems(orderItems);
-        return orderRepository.save(order);
+        return orderRepository.saveAndFlush(order);
     }
 
     @Transactional

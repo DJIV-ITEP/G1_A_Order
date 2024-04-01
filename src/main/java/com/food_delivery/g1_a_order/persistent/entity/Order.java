@@ -1,5 +1,6 @@
 package com.food_delivery.g1_a_order.persistent.entity;
 
+import com.food_delivery.g1_a_order.persistent.entity.base.BaseEntity;
 import com.food_delivery.g1_a_order.persistent.enum_.OrderStatusEnum;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -10,24 +11,19 @@ import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
-// @Data
 @Setter
 @Getter
 @Builder
 @Entity
 @ToString
 @Table(name = "orders")
-public class Order {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @NotNull
-    private Long id;
+public class Order extends BaseEntity {
 
     @NotNull
     private Long customerId;
 
     @ManyToOne
-    @JoinColumn(name = "address_id", nullable = true,referencedColumnName = "id")
+    @JoinColumn(name = "address_id", nullable = true, referencedColumnName = "id")
     private Address address;
 
     @NotNull
@@ -39,11 +35,7 @@ public class Order {
 
     @Transient
     @Builder.Default
-    private float totalPrice=0;
-
-    @Builder.Default
-    private LocalDateTime createdAt = LocalDateTime.now();
-    private LocalDateTime updatedAt;
+    private float totalPrice = 0;
 
     @NotNull
     @Builder.Default
@@ -53,5 +45,11 @@ public class Order {
     @NotNull
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OrderItem> orderItems;
+
+    public void setOrderItems(List<OrderItem> orderItems) {
+        this.orderItems = orderItems;
+        this.updatedAt = LocalDateTime.now();
+
+    }
 
 }

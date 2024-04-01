@@ -37,37 +37,26 @@ public class OrderItemService {
     private final OrderMapper orderMapper;
 
     @Transactional
-    public void deleteOrderItem(Long id) {
+    public void deleteOrderItem(Long itemId) {
 
-        OrderItem item;
-        Order order;
-        try {
+        OrderItem item = itemRepository
+                .findById(itemId)
+                .orElseThrow(() -> StatusResponseHelper.getNotFound("no item found"));
 
-            item = itemRepository.findById(id).get();
-            order = item.getOrder();
+        Order order = item.getOrder();
 
-            if (order.getOrderStatus().getSequence() != OrderStatusEnum.CART.status.getSequence())
-                StatusResponseHelper.notAcceptable("order already confirmed");
-
-            // check order items if it is zero to delete the order
-            if (1 >= order.getOrderItems().size()) {
-                orderRepository.deleteById(order.getId());
-            } else {
-                order.getOrderItems().remove(item);
-                order.setUpdatedAt(LocalDateTime.now());
-                orderRepository.save(order);
-                itemRepository.deleteById(id);
-            }
-
-        } catch (NoSuchElementException e) {
-            System.out.println(e);
-            StatusResponseHelper.notFound("no item found");
-        } catch (ResponseStatusException e) {
-            System.out.println(e);
+        if (order.getOrderStatus().getSequence() != OrderStatusEnum.CART.status.getSequence())
             StatusResponseHelper.notAcceptable("order already confirmed");
-        } catch (Exception e) {
-            System.out.println(e);
-            StatusResponseHelper.serverErr("contact developer team");
+
+        // check order items if it is zero to delete the order
+        if (1 >= order.getOrderItems().size()) {
+            orderRepository.deleteById(order.getId());
+        } else {
+            order.getOrderItems().remove(item);
+            order.setOrderItems(order.getOrderItems());
+            // order.setUpdatedAt(LocalDateTime.now());
+            orderRepository.saveAndFlush(order);
+            itemRepository.deleteById(itemId);
         }
 
     }
@@ -87,17 +76,8 @@ public class OrderItemService {
 
         catch (NoSuchElementException e) {
             System.out.println(e);
-            // StatusResponseHelper.notFound("no order found");
             // handle create new order here
             List<OrderItemsCreateDto> itemDtoList = itemDto;
-
-            // TODO: uncomment this code when customer service is ready
-            // get customer address
-            // Long customerAddressId = customerEndpoint.get()
-            // .uri("/customer/address/" + order.getCustomerId())
-            // .retrieve()
-            // .bodyToMono(Long.class)
-            // .block();
 
             OrderCreateDto newOrder = orderMapper.toOrderCreateDto(
                     Order.builder()
@@ -107,10 +87,8 @@ public class OrderItemService {
                                     itemMapper.toOrderItem(itemDtoList))
                             .build());
 
-            // if (!orderService.createOrder(newOrder))
-            // StatusResponseHelper.serverErr("contact developer team");
-
             Order createdOrder = orderService.createOrder(newOrder);
+
             if (createdOrder == null) {
                 StatusResponseHelper.serverErr("contact developer team");
             }
@@ -130,15 +108,17 @@ public class OrderItemService {
         if (order.getOrderStatus().getSequence() != OrderStatusEnum.CART.status.getSequence())
             StatusResponseHelper.notAcceptable("order already confirmed");
 
+        // update order
         List<OrderItem> items = itemMapper.toOrderItem(itemDto);
-        order.getOrderItems().addAll(items);
-        order.setOrderItems(order.getOrderItems());
+        List<OrderItem> orderItems = order.getOrderItems();
+        orderItems.addAll(items);
+        order.setOrderItems(orderItems);
         order.setUpdatedAt(LocalDateTime.now());
 
         final Order finalOrder = order;
         items.forEach(item -> item.setOrder(finalOrder));
 
-        orderRepository.save(order);
+        orderRepository.saveAndFlush(finalOrder);
         return true;
 
     }

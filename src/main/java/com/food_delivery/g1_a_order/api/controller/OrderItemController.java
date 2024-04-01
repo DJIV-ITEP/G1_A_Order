@@ -17,10 +17,10 @@ public class OrderItemController {
 
     private final OrderItemService itemService;
 
-    @DeleteMapping("{id}/delete")
-    public ResponseEntity<String> deleteOrderItem(@PathVariable("id") Long id) {
+    @DeleteMapping("{itemId}")
+    public ResponseEntity<String> deleteOrderItem(@PathVariable("itemId") Long itemId) {
 
-        itemService.deleteOrderItem(id);
+        itemService.deleteOrderItem(itemId);
         return ResponseEntity.ok(ResponseMsg.SUCCESS.message);
     }
 

@@ -17,7 +17,7 @@ import java.util.List;
 @RequestMapping("api/v1/orderStatus")
 public class OrderStatusController {
 
-    OrderStatusRepository repository;
+    private final OrderStatusRepository repository;
     @Autowired
     OrderStatusMapper  orderStatusMapper;
 
