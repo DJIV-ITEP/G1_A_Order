@@ -6,7 +6,6 @@ import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.food_delivery.g1_a_order.api.dto.order.OrderCreateDto;
 import com.food_delivery.g1_a_order.api.dto.orderItem.OrderItemShowDto;
@@ -19,13 +18,14 @@ import com.food_delivery.g1_a_order.persistent.entity.OrderItem;
 import com.food_delivery.g1_a_order.persistent.enum_.OrderStatusEnum;
 import com.food_delivery.g1_a_order.persistent.repository.OrderItemRepository;
 import com.food_delivery.g1_a_order.persistent.repository.OrderRepository;
+import com.food_delivery.g1_a_order.service.base.BaseService;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Service
-public class OrderItemService {
+public class OrderItemService extends BaseService {
     private final OrderItemRepository itemRepository;
     private final OrderRepository orderRepository;
     private final OrderService orderService;
@@ -41,12 +41,12 @@ public class OrderItemService {
 
         OrderItem item = itemRepository
                 .findById(itemId)
-                .orElseThrow(() -> StatusResponseHelper.getNotFound("no item found"));
+                .orElseThrow(() -> handleNotFound("no item found"));
 
         Order order = item.getOrder();
 
         if (order.getOrderStatus().getSequence() != OrderStatusEnum.CART.status.getSequence())
-            StatusResponseHelper.notAcceptable("order already confirmed");
+            handleNotFound("order already confirmed");
 
         // check order items if it is zero to delete the order
         if (1 >= order.getOrderItems().size()) {
@@ -66,47 +66,32 @@ public class OrderItemService {
 
         Order order = null;
 
-        try {
+        order = orderRepository
+                .findFirstByCustomerIdAndOrderStatusOrderByCreatedAtAsc(customerId, OrderStatusEnum.CART.status)
+                .orElseGet(() -> {
+                    List<OrderItemsCreateDto> itemDtoList = itemDto;
 
-            order = orderRepository
-                    .findFirstByCustomerIdAndOrderStatusOrderByCreatedAtAsc(customerId, OrderStatusEnum.CART.status)
-                    .get();
+                    OrderCreateDto newOrder = orderMapper.toOrderCreateDto(
+                            Order.builder()
+                                    .customerId(customerId)
+                                    .restaurantId(restaurantId)
+                                    .orderItems(
+                                            itemMapper.toOrderItem(itemDtoList))
+                                    .build());
 
-        }
+                    Order createdOrder = orderService.createOrder(newOrder);
 
-        catch (NoSuchElementException e) {
-            System.out.println(e);
-            // handle create new order here
-            List<OrderItemsCreateDto> itemDtoList = itemDto;
-
-            OrderCreateDto newOrder = orderMapper.toOrderCreateDto(
-                    Order.builder()
-                            .customerId(customerId)
-                            .restaurantId(restaurantId)
-                            .orderItems(
-                                    itemMapper.toOrderItem(itemDtoList))
-                            .build());
-
-            Order createdOrder = orderService.createOrder(newOrder);
-
-            if (createdOrder == null) {
-                StatusResponseHelper.serverErr("contact developer team");
-            }
-
-            return true;
-
-        } catch (Exception e) {
-
-            System.out.println(e);
-            StatusResponseHelper.serverErr("contact develop team");
-
-        }
+                    if (createdOrder == null) {
+                        handleServerError("contact developer team");
+                    }
+                    return createdOrder;
+                });
 
         if (order.getRestaurantId() != restaurantId)
-            StatusResponseHelper.notAcceptable("item from another restaurant");
+            handleNotAcceptable("there is an item exists from another restaurant");
 
         if (order.getOrderStatus().getSequence() != OrderStatusEnum.CART.status.getSequence())
-            StatusResponseHelper.notAcceptable("order already confirmed");
+            handleNotAcceptable("order already confirmed");
 
         // update order
         List<OrderItem> items = itemMapper.toOrderItem(itemDto);
@@ -125,18 +110,10 @@ public class OrderItemService {
 
     @Transactional
     public List<OrderItemShowDto> getOrderItemByOrder(Long orderId) {
-        Order order = null;
-        try {
-            order = orderRepository.findById(orderId).get();
 
-        } catch (NoSuchElementException e) {
-            System.out.println(e);
-            StatusResponseHelper.notFound("no order found");
-        } catch (Exception e) {
-
-            System.out.println(e);
-            StatusResponseHelper.serverErr("contact developer team");
-        }
+        Order order = orderRepository
+                .findById(orderId)
+                .orElseThrow(() -> handleNotFound("no order found"));
 
         List<OrderItemShowDto> items = itemMapper.toOrderItemShowDto(order.getOrderItems());
 
