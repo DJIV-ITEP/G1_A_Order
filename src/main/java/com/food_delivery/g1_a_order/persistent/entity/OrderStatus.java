@@ -18,7 +18,7 @@ import com.food_delivery.g1_a_order.persistent.entity.base.BaseEntity;
 @Table(name = "order_status")
 public class OrderStatus extends BaseEntity {
 
-    @Column(nullable = false)
+    @Column(nullable = false,name = "status_value")
     private String value;
 
     @Builder.Default
