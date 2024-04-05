@@ -13,25 +13,39 @@ ifndef::imagesdir[:imagesdir: ../../images]
 [[section-architecture-constraints]]
 == Architecture Constraints
 
+=== Technical Constraints
 
-[role="arc42help"]
-****
-.Contents
-Any requirement that constraints software architects in their freedom of design and implementation decisions or decision about the development process. These constraints sometimes go beyond individual systems and are valid for whole organizations and companies.
+==== Order Micro-Service
 
-.Motivation
-Architects should know exactly where they are free in their design decisions and where they must adhere to constraints.
-Constraints must always be dealt with; they may be negotiable, though.
+[options="header",cols="1,2,3"]
+|===
+|No. |Constraint | Background and / or motivation
+| TC1 | Implementation in Java | The application should be part of a Java 17 and Spring Boot 3 show case. The interface (i.e. the api) should be language and framework agnostic, however. It should be possible that clients can be implemented using various frameworks and languages. 
+| TC2 | Dependencies | the Dependencies manager is maven to install Third party packages. 
+| TC3 | OS independent development | The application should be compilable on all 2 mayor operation systems (Linux and Windows)
+| TC4 | Deployable to AWS | The application should be deployable to Amazon Elastic Kubernetes Service.
+|===
 
-.Form
-Simple tables of constraints with explanations.
-If needed you can subdivide them into
-technical constraints, organizational and political constraints and
-conventions (e.g. programming or versioning guidelines, documentation or naming conventions)
+==== Customer Micro-Service
 
+**<make your table here>**
 
-.Further Information
+==== Restaurant Micro-Service
 
-See https://docs.arc42.org/section-2/[Architecture Constraints] in the arc42 documentation.
+**<make your table here>**
 
-****
+==== Delivery Micro-Service
+
+**<make your table here>**
+
+=== Organizational Constraints
+
+[options="header",cols="1,2,3"]
+|===
+|No. |Constraint | Background and / or motivation
+| OC1 | Team | 3 teams, each team work on micro-service/s, each team contain of 5 developers.   
+| OC2 | Time schedule | starting in Feb. 2024 until Apr. 2024
+| OC3 | Project setup | Phe project should integrate with GitHub Actions workflow for each service 
+| OC4 | Configuration and version control / management | Privet repository on Github, and Github issues setup as Scrum.
+| OC5 | Testing | The system should have Unit testing coverage 80% At least 1 acceptance test 
+|===

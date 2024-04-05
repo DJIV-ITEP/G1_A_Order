@@ -13,91 +13,70 @@ ifndef::imagesdir[:imagesdir: ../../images]
 [[section-introduction-and-goals]]
 == Introduction and Goals
 
-[role="arc42help"]
-****
-Describes the relevant requirements and the driving forces that software architects and development team must consider. 
-These include
-
-* underlying business goals, 
-* essential features, 
-* essential functional requirements, 
-* quality goals for the architecture and
-* relevant stakeholders and their expectations
-****
 
 === Requirements Overview
 
-[role="arc42help"]
-****
-.Contents
-Short description of the functional requirements, driving forces, extract (or abstract)
-of requirements. Link to (hopefully existing) requirements documents
-(with version number and information where to find it).
+==== What is Wasale?
 
-.Motivation
-From the point of view of the end users a system is created or modified to
-improve support of a business activity and/or improve the quality.
-
-.Form
-Short textual description, probably in tabular use-case format.
-If requirements documents exist this overview should refer to these documents.
-
-Keep these excerpts as short as possible. Balance readability of this document with potential redundancy w.r.t to requirements documents.
+Wasale is a popular delivery company that wants to build a food delivery system that facilitates ordering food from different restaurants. The system shall support adding/removing different restaurants to the restaurant catalog.
 
 
-.Further Information
+==== Main Features
 
-See https://docs.arc42.org/section-1/[Introduction and Goals] in the arc42 documentation.
+===== Restaurant Management
+    * System administrators can add/remove restaurants to the system.
+    * Restaurants can edit their own information, including menus, location, and description. 
 
-****
+===== User Registration and Profiles
+    * Users can register/deregister to the system.
+    * Users provide the necessary details to enable the service (name, delivery address, contact details). 
 
+===== Ordering & Search:
+    * Customers can explore the existing restaurants.
+    * Customers can browse restaurants using query criteria (e.g., selecting a seafood restaurant).
+    * Customers can view restaurant details (menu, location, and description). 
+    * Customers can place orders online.
+
+===== Order Management:
+    * Restaurants receive orders on order screens and begin preparation.
+    * Restaurants can change the order status (submitted, received by the restaurant).
+    * Couriers/drivers deliver orders and update the order status to "on the way."
+    * Customers can track orders and optionally register for order notifications.
+
+===== Administrator Tools
+    * System administrators can search for orders based on restaurant name and order status.
+
+<<<
 === Quality Goals
 
-[role="arc42help"]
-****
-.Contents
-The top three (max five) quality goals for the architecture whose fulfillment is of highest importance to the major stakeholders. 
-We really mean quality goals for the architecture. Don't confuse them with project goals.
-They are not necessarily identical.
 
-Consider this overview of potential topics (based upon the ISO 25010 standard):
+[options="header",cols="1,2,2"]
+|===
+|No.|Quality|Motivation
+| 1 | Agility | It’s important to support the dynamic business changes, so that the system should consider the agility for the development process. 
 
-image::01_2_iso-25010-topics-EN.drawio.png["Categories of Quality Requirements"]
+It's a newly borned idea, the feedback from the system's users and business owner shall bring many changes to the system.
 
-.Motivation
-You should know the quality goals of your most important stakeholders, since they will influence fundamental architectural decisions. 
-Make sure to be very concrete about these qualities, avoid buzzwords.
-If you as an architect do not know how the quality of your work will be judged...
+| 2 | Elasticity | The system should support the big number of customers that might order food on the peak time.
 
-.Form
-A table with quality goals and concrete scenarios, ordered by priorities
-****
+| 3 | Scalability | It’s first phase at the capital with high expectation for success and would be extended to different areas in the country. 
+
+The system should support [10 restaurants, 1000 customers, 300 orders/day] at the first phase, expecting to increase the system capacity to accept [60 restaurants, 10,000 customers, 4000 orders/day] after 6 months.
+
+| 4 | Performance |  The customer should be able to get confirmation about placing the order within 5 sec after submitting the order.
+
+| 5 | Testability | The system should be easy to test.
+
+|===
 
 === Stakeholders
-
-[role="arc42help"]
-****
-.Contents
-Explicit overview of stakeholders of the system, i.e. all person, roles or organizations that
-
-* should know the architecture
-* have to be convinced of the architecture
-* have to work with the architecture or with code
-* need the documentation of the architecture for their work
-* have to come up with decisions about the system or its development
-
-.Motivation
-You should know all parties involved in development of the system or affected by the system.
-Otherwise, you may get nasty surprises later in the development process.
-These stakeholders determine the extent and the level of detail of your work and its results.
-
-.Form
-Table with role names, person names, and their expectations with respect to the architecture and its documentation.
-****
 
 [options="header",cols="1,2,2"]
 |===
 |Role/Name|Contact|Expectations
-| _<Role-1>_ | _<Contact-1>_ | _<Expectation-1>_
-| _<Role-2>_ | _<Contact-2>_ | _<Expectation-2>_
+| Developers | - | Build a highly scalable food delivery platform with Spring Boot, Laravel and ASP.NET core.
+| Wasale (Delivery Company) | - | Seeks to expand their service offerings with a robust food delivery system, providing customers with access to a wide variety of restaurants.
+| Restaurants | - | Gain increased visibility and potential for more orders by partnering with the "Wasale" platform.
+| Customers | - | Desire a convenient and user-friendly way to order food from their favorite local restaurants.
+| Drivers | - | Seek flexible work opportunities and a reliable platform to complete delivery orders efficiently.
 |===
