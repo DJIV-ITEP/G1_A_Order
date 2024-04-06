@@ -50,6 +50,9 @@ public class Order {
     @ManyToOne
     private OrderStatus orderStatus = OrderStatusEnum.CART.status;
 
+    @ManyToOne
+    @JoinColumn(name = "payment_id", nullable = true,referencedColumnName = "id")
+    private Payment payment;
     @NotNull
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OrderItem> orderItems;
