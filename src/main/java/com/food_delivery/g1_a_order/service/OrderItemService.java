@@ -24,7 +24,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Service
 public class OrderItemService extends BaseService {
-    
+
     private final OrderItemRepository itemRepository;
     private final OrderRepository orderRepository;
     private final OrderService orderService;
@@ -63,19 +63,16 @@ public class OrderItemService extends BaseService {
     @Transactional
     public boolean addOrderItemToOrder(Long customerId, Long restaurantId, List<OrderItemsCreateDto> itemDto) {
 
-        Order order = null;
-
-        order = orderRepository
+        Order order = orderRepository
                 .findFirstByCustomerIdAndOrderStatusOrderByCreatedAtAsc(customerId, OrderStatusEnum.CART.status)
                 .orElseGet(() -> {
-                    List<OrderItemsCreateDto> itemDtoList = itemDto;
 
                     OrderCreateDto newOrder = orderMapper.toOrderCreateDto(
                             Order.builder()
                                     .customerId(customerId)
                                     .restaurantId(restaurantId)
-                                    .orderItems(
-                                            itemMapper.toOrderItem(itemDtoList))
+                                    // .orderItems(
+                                    //         itemMapper.toOrderItem(itemDto))
                                     .build());
 
                     Order createdOrder = orderService.createOrder(newOrder);
@@ -86,6 +83,8 @@ public class OrderItemService extends BaseService {
                     return createdOrder;
                 });
 
+
+
         if (order.getRestaurantId() != restaurantId)
             handleNotAcceptable("there is an item exists from another restaurant");
 
@@ -93,16 +92,8 @@ public class OrderItemService extends BaseService {
             handleNotAcceptable("order already confirmed");
 
         // update order
-        List<OrderItem> items = itemMapper.toOrderItem(itemDto);
-        List<OrderItem> orderItems = order.getOrderItems();
-        orderItems.addAll(items);
-        order.setOrderItems(orderItems);
-        order.setUpdatedAt(LocalDateTime.now());
 
-        final Order finalOrder = order;
-        items.forEach(item -> item.setOrder(finalOrder));
-
-        orderRepository.saveAndFlush(finalOrder);
+        orderService.addNewOrderItemsToOrder(itemDto, order.getId());
         return true;
 
     }
