@@ -1,16 +1,11 @@
 package com.food_delivery.g1_a_order.persistent.entity;
 
-import java.time.LocalDateTime;
-
 import com.food_delivery.g1_a_order.persistent.enum_.PaymentStatusEnum;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+
+import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -29,10 +24,8 @@ public class Payment {
 
     @NotNull
     private Long customerId;
-
-    @Transient
-    private float amount;
-
+    @Column(name = "amount")
+    private Double amount;
     @Column(name = "description")
     private String description;
     @Builder.Default
@@ -45,7 +38,7 @@ public class Payment {
     private PaymentStatus paymentStatus = PaymentStatusEnum.PENDING.status;
 
     @ManyToOne
-    @JoinColumn(name = "payment_method_id", nullable = false,referencedColumnName = "id")
+    @JoinColumn(name = "payment_method_id", nullable = false, referencedColumnName = "id")
     private PaymentMethod paymentMethod;
 
 }
