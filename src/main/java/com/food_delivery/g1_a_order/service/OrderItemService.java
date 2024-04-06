@@ -14,7 +14,6 @@ import com.food_delivery.g1_a_order.api.dto.orderItem.OrderItemsCreateDto;
 import com.food_delivery.g1_a_order.config.mapper.OrderItemMapper;
 import com.food_delivery.g1_a_order.config.mapper.OrderMapper;
 import com.food_delivery.g1_a_order.helper.StatusResponseHelper;
-import com.food_delivery.g1_a_order.helper._PrintHelper;
 import com.food_delivery.g1_a_order.persistent.entity.Order;
 import com.food_delivery.g1_a_order.persistent.entity.OrderItem;
 import com.food_delivery.g1_a_order.persistent.enum_.OrderStatusEnum;
@@ -27,7 +26,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Service
 public class OrderItemService {
-
     private final OrderItemRepository itemRepository;
     private final OrderRepository orderRepository;
     private final OrderService orderService;
@@ -38,11 +36,11 @@ public class OrderItemService {
     @Autowired
     private final OrderMapper orderMapper;
 
-    
+    @Transactional
     public void deleteOrderItem(Long id) {
 
-        OrderItem item = null;
-        Order order = null;
+        OrderItem item;
+        Order order;
         try {
 
             item = itemRepository.findById(id).get();
@@ -51,32 +49,23 @@ public class OrderItemService {
             if (order.getOrderStatus().getSequence() != OrderStatusEnum.CART.status.getSequence())
                 StatusResponseHelper.notAcceptable("order already confirmed");
 
-            itemRepository.deleteById(id);
-            order.setUpdatedAt(LocalDateTime.now());
-
             // check order items if it is zero to delete the order
-            if (0 == order.getOrderItems().size()) {
+            if (1 >= order.getOrderItems().size()) {
                 orderRepository.deleteById(order.getId());
             } else {
+                order.getOrderItems().remove(item);
+                order.setUpdatedAt(LocalDateTime.now());
                 orderRepository.save(order);
+                itemRepository.deleteById(id);
             }
 
-        }
-
-        catch (NoSuchElementException e) {
-
+        } catch (NoSuchElementException e) {
             System.out.println(e);
-            StatusResponseHelper.notFound("no item nither order found");
-        }
-
-        catch (ResponseStatusException e) {
-
+            StatusResponseHelper.notFound("no item found");
+        } catch (ResponseStatusException e) {
             System.out.println(e);
             StatusResponseHelper.notAcceptable("order already confirmed");
-        }
-
-        catch (Exception e) {
-
+        } catch (Exception e) {
             System.out.println(e);
             StatusResponseHelper.serverErr("contact developer team");
         }
@@ -110,7 +99,6 @@ public class OrderItemService {
             // .bodyToMono(Long.class)
             // .block();
 
-
             OrderCreateDto newOrder = orderMapper.toOrderCreateDto(
                     Order.builder()
                             .customerId(customerId)
@@ -119,13 +107,17 @@ public class OrderItemService {
                                     itemMapper.toOrderItem(itemDtoList))
                             .build());
 
-            if (!orderService.createOrder(newOrder))
+            // if (!orderService.createOrder(newOrder))
+            // StatusResponseHelper.serverErr("contact developer team");
+
+            Order createdOrder = orderService.createOrder(newOrder);
+            if (createdOrder == null) {
                 StatusResponseHelper.serverErr("contact developer team");
+            }
 
             return true;
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
 
             System.out.println(e);
             StatusResponseHelper.serverErr("contact develop team");
@@ -153,9 +145,7 @@ public class OrderItemService {
 
     @Transactional
     public List<OrderItemShowDto> getOrderItemByOrder(Long orderId) {
-
         Order order = null;
-
         try {
             order = orderRepository.findById(orderId).get();
 
