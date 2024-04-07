@@ -5,6 +5,7 @@ import static org.mockito.Mockito.verify;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -20,12 +21,13 @@ public class OrderStatusServiceTest {
     @Mock
     private OrderStatusMapper mapper;
 
+    @InjectMocks
     private OrderStatusService underTest;
 
-    @BeforeEach
-    void setUp() {
-        underTest = new OrderStatusService(repository, mapper);
-    }
+    // @BeforeEach
+    // void setUp() {
+    //     underTest = new OrderStatusService(repository, mapper);
+    // }
 
     @Test
     void testGetOrderStatus() {
