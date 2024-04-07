@@ -46,7 +46,7 @@ public class Order extends BaseEntity {
 
     @NotNull
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<OrderItem> orderItems ;
+    private List<OrderItem> orderItems = new ArrayList<>() ;
 
     public void setOrderItems(List<OrderItem> orderItems) {
         this.orderItems = orderItems;
