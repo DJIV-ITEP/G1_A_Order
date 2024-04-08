@@ -2,6 +2,7 @@ package com.food_delivery.g1_a_order.service;
 
 import com.food_delivery.g1_a_order.api.dto.order.OrderCreateDto;
 import com.food_delivery.g1_a_order.api.dto.order.OrderShowDto;
+import com.food_delivery.g1_a_order.api.dto.orderItem.OrderItemsCreateDto;
 import com.food_delivery.g1_a_order.config.mapper.OrderItemMapper;
 import com.food_delivery.g1_a_order.config.mapper.OrderMapper;
 import com.food_delivery.g1_a_order.helper.StatusResponseHelper;
@@ -47,10 +48,33 @@ public class OrderService {
     @Transactional
     public Order createOrder(OrderCreateDto OrderCreateDto) {
         Order order = orderMapper.toOrder(OrderCreateDto);
-        List<OrderItem> orderItems = orderItemMapper.toOrderItem(OrderCreateDto.orderItems());
-        orderItems.forEach(orderItem -> orderItem.setOrder(order));
-        order.setOrderItems(orderItems);
-        return orderRepository.save(order);
+        // List<OrderItem> orderItems =
+        // orderItemMapper.toOrderItem(OrderCreateDto.orderItems());
+        // orderItems.forEach(orderItem -> orderItem.setOrder(order));
+        // order.setOrderItems(orderItems);
+        return orderRepository.saveAndFlush(order);
+    }
+
+    @Transactional
+    public Order addNewOrderItemsToOrder(List<OrderItemsCreateDto> itemsCreateDtos, Long orderId) {
+
+        Order order = orderRepository
+                .findById(orderId)
+                .orElseThrow(() -> StatusResponseHelper.getNotFound("no order found"));
+
+        List<OrderItem> dtoItems = orderItemMapper.toOrderItem(itemsCreateDtos);
+        List<OrderItem> orderItem = order.getOrderItems();
+        
+        if (orderItem != null) {
+            orderItem.addAll(dtoItems);
+            order.setOrderItems(orderItem);
+        } else
+            order.setOrderItems(dtoItems);
+
+        dtoItems.forEach(Item -> Item.setOrder(order));
+
+        order.setUpdatedAt(LocalDateTime.now());
+        return orderRepository.saveAndFlush(order);
     }
 
     @Transactional
