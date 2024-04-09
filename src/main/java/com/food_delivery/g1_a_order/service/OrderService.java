@@ -146,4 +146,11 @@ public class OrderService extends BaseService {
                 .orElseThrow(() -> handleNotFound("no order found"));
         return orderMapper.toOrderShowDto(orders);
     }
+
+    @Transactional
+    public List<OrderShowDto> getOrdersByStatusAndRestaurant(Long restaurantId, OrderStatus status) {
+        List<Order> orders = orderRepository.findByRestaurantIdAndOrderStatusOrderByUpdatedAtAsc(restaurantId, status)
+                .orElseThrow(() -> handleNotFound("no order found"));
+        return orderMapper.toOrderShowDto(orders);
+    }
 }

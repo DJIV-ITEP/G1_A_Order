@@ -77,4 +77,18 @@ public class OrderController {
     public ResponseEntity<List<OrderShowDto>> getOrdersByCustomer(@PathVariable("customerId") Long customerId) {
         return ResponseEntity.ok(orderService.getOrdersByCustomer(customerId));
     }
+
+    @GetMapping("pending/restaurant/{restaurantId}")
+    public ResponseEntity<List<OrderShowDto>> getPendingOrdersByRestaurant(
+            @PathVariable("restaurantId") Long restaurantId) {
+        return ResponseEntity
+                .ok(orderService.getOrdersByStatusAndRestaurant(restaurantId, OrderStatusEnum.PENDING.status));
+    }
+
+    @GetMapping("inProgress/restaurant/{restaurantId}")
+    public ResponseEntity<List<OrderShowDto>> getInProgressOrdersByRestaurant(
+            @PathVariable("restaurantId") Long restaurantId) {
+        return ResponseEntity
+                .ok(orderService.getOrdersByStatusAndRestaurant(restaurantId, OrderStatusEnum.IN_PEOGRESS.status));
+    }
 }
