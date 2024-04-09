@@ -49,10 +49,15 @@ public class AddressService extends BaseService {
                 .orElseThrow(() -> handleServerError("No address found for this customer at the given location"));
         return addressMapper.toAddressShowDto(address);
     }
+
     public void deleteAddressesByCustomerId(Long customerId) {
         List<Address> addresses = addressRepository.findByCustomerId(customerId)
-                .orElseThrow(() ->  handleServerError("No addresses found for this customer"));
+                .orElseThrow(() -> handleServerError("No addresses found for this customer"));
         addressRepository.deleteAll(addresses);
+    }
+    
+    public boolean addressExists(Long addressId) {
+        return addressRepository.existsById(addressId);
     }
 
 }

@@ -38,6 +38,8 @@ public class OrderService extends BaseService {
     private final OrderRepository orderRepository;
     private final OrderStatusRepository orderStatusRepository;
     private final AddressRepository addressRepository;
+    private final AddressService addressService;
+
     private final WebClient customerEndpoint;
 
     @Transactional
@@ -111,7 +113,7 @@ public class OrderService extends BaseService {
 
     // confirm order
     @Transactional
-    public boolean confirmOrder(Long orderId, Long customerAddressId) {
+    public OrderShowDto customerConfirmOrder(Long orderId, Long customerAddressId) {
 
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> StatusResponseHelper.getNotFound("No order found with id: " + orderId));
@@ -125,7 +127,7 @@ public class OrderService extends BaseService {
         if (order.getOrderItems().isEmpty())
             StatusResponseHelper.notAcceptable("Order should have at least one item");
 
-        if (customerAddressId == null || !addressExists(customerAddressId))
+        if (customerAddressId == null || !addressService.addressExists(customerAddressId))
             StatusResponseHelper.notFound("Customer address not found");
 
         System.out.println(" customerAddressId customerAddressId customerAddressId: " + customerAddressId);
@@ -133,11 +135,7 @@ public class OrderService extends BaseService {
         order.setOrderStatus(OrderStatusEnum.PENDING.status);
         order.setUpdatedAt(LocalDateTime.now());
         orderRepository.save(order);
-        return true;
-    }
-
-    public boolean addressExists(Long addressId) {
-        return addressRepository.existsById(addressId);
+        return orderMapper.toOrderShowDto(orderRepository.saveAndFlush(order));
     }
 
     @Transactional
@@ -152,5 +150,30 @@ public class OrderService extends BaseService {
         List<Order> orders = orderRepository.findByRestaurantIdAndOrderStatusOrderByUpdatedAtAsc(restaurantId, status)
                 .orElseThrow(() -> handleNotFound("no order found"));
         return orderMapper.toOrderShowDto(orders);
+    }
+
+    @Transactional
+    public List<OrderShowDto> getOrdersByStatusAndDelivery(Long deliveryId, OrderStatus status) {
+
+        List<Order> orders = orderRepository.findByDeliveryIdAndOrderStatusOrderByUpdatedAtAsc(deliveryId, status)
+                .orElseThrow(() -> handleNotFound("no order found"));
+        return orderMapper.toOrderShowDto(orders);
+    }
+
+    @Transactional
+    public OrderShowDto assignDeliveryToOrder(Long orderId, Long deliveryId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> handleNotFound("no order found"));
+
+        if (order.getOrderStatus().getSequence() != OrderStatusEnum.READY_TO_PICKUP.status.getSequence())
+            handleNotAcceptable("Order status is not " + OrderStatusEnum.READY_TO_PICKUP.status.getValue());
+
+        if (null == order.getAddress())
+            handleNotAcceptable("Order address is not presented");
+
+        order.setDeliveryId(deliveryId);
+
+        return orderMapper.toOrderShowDto(orderRepository.saveAndFlush(order));
+
     }
 }
