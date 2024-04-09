@@ -2,6 +2,7 @@ package com.food_delivery.g1_a_order.api.controller;
 
 import com.food_delivery.g1_a_order.api.dto.order.OrderCreateDto;
 import com.food_delivery.g1_a_order.api.dto.order.OrderShowDto;
+import com.food_delivery.g1_a_order.persistent.enum_.OrderStatusEnum;
 import com.food_delivery.g1_a_order.persistent.enum_.ResponseMsg;
 import com.food_delivery.g1_a_order.service.OrderItemService;
 import com.food_delivery.g1_a_order.service.OrderService;
@@ -11,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequiredArgsConstructor
@@ -52,7 +55,6 @@ public class OrderController {
     // return ResponseEntity.ok(ResponseMsg.SUCCESS.message);
     // }
 
-    // todo: change return type
     @PutMapping("{orderId}/change/orderStatus/{orderStatusId}")
     public ResponseEntity<OrderShowDto> changeOrderStatus(@PathVariable("orderId") Long orderId,
             @PathVariable("orderStatusId") Long orderStatusId) {
@@ -69,5 +71,10 @@ public class OrderController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("Failed to confirm order, please check if the order id and customer address id are correct.");
         }
+    }
+
+    @GetMapping("customer/{customerId}")
+    public ResponseEntity<List<OrderShowDto>> getOrdersByCustomer(@PathVariable("customerId") Long customerId) {
+        return ResponseEntity.ok(orderService.getOrdersByCustomer(customerId));
     }
 }

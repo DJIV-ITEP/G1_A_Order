@@ -13,6 +13,8 @@ import com.food_delivery.g1_a_order.persistent.enum_.OrderStatusEnum;
 import com.food_delivery.g1_a_order.persistent.repository.AddressRepository;
 import com.food_delivery.g1_a_order.persistent.repository.OrderRepository;
 import com.food_delivery.g1_a_order.persistent.repository.OrderStatusRepository;
+import com.food_delivery.g1_a_order.service.base.BaseService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,7 +27,7 @@ import java.util.NoSuchElementException;
 
 @RequiredArgsConstructor
 @Service
-public class OrderService {
+public class OrderService extends BaseService {
 
     @Autowired
     OrderMapper orderMapper;
@@ -41,7 +43,6 @@ public class OrderService {
     @Transactional
     public List<OrderShowDto> getOrders() {
         List<Order> orders = orderRepository.findAll();
-        System.out.println("orders orders orders orders" + orders.size());
         return orderMapper.toOrderShowDto(orders);
     }
 
@@ -64,7 +65,7 @@ public class OrderService {
 
         List<OrderItem> dtoItems = orderItemMapper.toOrderItem(itemsCreateDtos);
         List<OrderItem> orderItem = order.getOrderItems();
-        
+
         if (orderItem != null) {
             orderItem.addAll(dtoItems);
             order.setOrderItems(orderItem);
@@ -137,5 +138,12 @@ public class OrderService {
 
     public boolean addressExists(Long addressId) {
         return addressRepository.existsById(addressId);
+    }
+
+    @Transactional
+    public List<OrderShowDto> getOrdersByCustomer(Long customerId) {
+        List<Order> orders = orderRepository.findByCustomerId(customerId)
+                .orElseThrow(() -> handleNotFound("no order found"));
+        return orderMapper.toOrderShowDto(orders);
     }
 }
