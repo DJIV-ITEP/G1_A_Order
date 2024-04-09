@@ -57,4 +57,12 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OrderItem> orderItems;
 
+    public float getTotalPrice() {
+        float total = 0;
+        for (OrderItem item : getOrderItems()) {
+            total += item.getPrice() * item.getQuantity();
+        }
+        return total;
+    }
+
 }

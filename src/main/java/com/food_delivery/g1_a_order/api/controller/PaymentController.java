@@ -19,10 +19,23 @@ public class PaymentController {
         List<PaymentShowDto> payments = paymentService.getAll();
         return ResponseEntity.ok(payments);
     }
+    @GetMapping("{id}")
+    public ResponseEntity<PaymentShowDto> getPayment(@PathVariable("id") Long id) {
+        PaymentShowDto payment = paymentService.getPayment(id);
+        return ResponseEntity.ok(payment);
+    }
+
+    @GetMapping("/status/{statusId}")
+    public ResponseEntity<List<PaymentShowDto>> getPaymentsByStatus(@PathVariable("statusId") Long statusId) {
+        List<PaymentShowDto> payments = paymentService.getPaymentsByStatus(statusId);
+        return ResponseEntity.ok(payments);
+    }
 
     @GetMapping("/customer/{customerId}")
-    public ResponseEntity<List<PaymentShowDto>> getAddressesByCustomerId(@PathVariable("customerId") Long customerId) {
+    public ResponseEntity<List<PaymentShowDto>> getPaymentsByCustomerId(@PathVariable("customerId") Long customerId) {
         List<PaymentShowDto> payments = paymentService.getPaymentsByCustomerId(customerId);
         return ResponseEntity.ok(payments);
     }
+
+
 }
