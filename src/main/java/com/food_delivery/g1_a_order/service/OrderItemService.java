@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.food_delivery.g1_a_order.api.dto.order.OrderCreateDto;
+import com.food_delivery.g1_a_order.api.dto.order.OrderShowDto;
 import com.food_delivery.g1_a_order.api.dto.orderItem.OrderItemShowDto;
 import com.food_delivery.g1_a_order.api.dto.orderItem.OrderItemsCreateDto;
 import com.food_delivery.g1_a_order.config.mapper.OrderItemMapper;
@@ -61,7 +62,7 @@ public class OrderItemService extends BaseService {
     }
 
     @Transactional
-    public boolean addOrderItemToOrder(Long customerId, Long restaurantId, List<OrderItemsCreateDto> itemDto) {
+    public OrderShowDto addOrderItemToOrder(Long customerId, Long restaurantId, List<OrderItemsCreateDto> itemDto) {
 
         Order order = orderRepository
                 .findFirstByCustomerIdAndOrderStatusOrderByCreatedAtAsc(customerId, OrderStatusEnum.CART.status)
@@ -72,18 +73,12 @@ public class OrderItemService extends BaseService {
                                     .customerId(customerId)
                                     .restaurantId(restaurantId)
                                     // .orderItems(
-                                    //         itemMapper.toOrderItem(itemDto))
+                                    // itemMapper.toOrderItem(itemDto))
                                     .build());
 
                     Order createdOrder = orderService.createOrder(newOrder);
-
-                    if (createdOrder == null) {
-                        handleServerError("contact developer team");
-                    }
                     return createdOrder;
                 });
-
-
 
         if (order.getRestaurantId() != restaurantId)
             handleNotAcceptable("there is an item exists from another restaurant");
@@ -93,8 +88,12 @@ public class OrderItemService extends BaseService {
 
         // update order
 
-        orderService.addNewOrderItemsToOrder(itemDto, order.getId());
-        return true;
+        // orderService.addNewOrderItemsToOrder(itemDto, order.getId());
+        OrderShowDto orderShowDto = orderMapper.toOrderShowDto(
+                orderService
+                        .addNewOrderItemsToOrder(itemDto, order.getId()));
+
+        return orderShowDto;
 
     }
 

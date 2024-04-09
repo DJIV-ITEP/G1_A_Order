@@ -33,17 +33,13 @@ public class OrderController {
     // may be wanted
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("add/orderItem")
-    public ResponseEntity<String> addOrder(@RequestBody OrderCreateDto orderCreateDto) {
+    public ResponseEntity<OrderShowDto> addOrderItems(@RequestBody OrderCreateDto orderCreateDto) {
 
-        boolean isAdded = itemService.addOrderItemToOrder(
+        return ResponseEntity.ok(itemService.addOrderItemToOrder(
                 orderCreateDto.customerId(),
                 orderCreateDto.restaurantId(),
-                orderCreateDto.orderItems());
-        if (isAdded) {
-            return ResponseEntity.ok(ResponseMsg.SUCCESS.message);
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to add order");
-        }
+                orderCreateDto.orderItems()));
+
     }
 
     // @PostMapping("/customer/{customerId}/restaurant/{restaurantId}/orderItem")
@@ -65,8 +61,9 @@ public class OrderController {
     public ResponseEntity<OrderShowDto> customerConfirmOrder(@PathVariable("orderId") Long orderId,
             @RequestParam("addressId") Long addressId) {
 
-            return ResponseEntity.ok(orderService.customerConfirmOrder(orderId, addressId));
-  
+        return ResponseEntity.ok(orderService.customerConfirmOrder(orderId, addressId));
+
+
     }
 
     @GetMapping("customer/{customerId}")
@@ -99,6 +96,7 @@ public class OrderController {
     public ResponseEntity<OrderShowDto> assignDeliveryToOrder(
             @PathVariable("orderId") Long orderId, @PathVariable("deliveryId") Long deliveryId) {
         return ResponseEntity
-                .ok(orderService.assignDeliveryToOrder(orderId,deliveryId));
+                .ok(orderService.assignDeliveryToOrder(orderId, deliveryId));
+
     }
 }
