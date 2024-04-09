@@ -21,6 +21,7 @@ public class OrderItem {
     private Long id;
     private Long itemId;
     private Long quantity;
+    private Double price;
 
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
