@@ -77,10 +77,6 @@ public class OrderItemService extends BaseService {
                                     .build());
 
                     Order createdOrder = orderService.createOrder(newOrder);
-
-                    if (createdOrder == null) {
-                        handleServerError("contact developer team");
-                    }
                     return createdOrder;
                 });
 
@@ -93,9 +89,11 @@ public class OrderItemService extends BaseService {
         // update order
 
         // orderService.addNewOrderItemsToOrder(itemDto, order.getId());
-        return orderMapper.toOrderShowDto(
+        OrderShowDto orderShowDto = orderMapper.toOrderShowDto(
                 orderService
                         .addNewOrderItemsToOrder(itemDto, order.getId()));
+
+        return orderShowDto;
 
     }
 

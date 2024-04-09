@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -17,10 +18,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
+import org.springframework.boot.test.autoconfigure.core.AutoConfigureCache;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 
+import com.food_delivery.g1_a_order.api.dto.address.AddressShowDto;
 import com.food_delivery.g1_a_order.api.dto.order.OrderCreateDto;
+import com.food_delivery.g1_a_order.api.dto.order.OrderShowDto;
 import com.food_delivery.g1_a_order.api.dto.orderItem.OrderItemShowDto;
 import com.food_delivery.g1_a_order.api.dto.orderItem.OrderItemsCreateDto;
+import com.food_delivery.g1_a_order.api.dto.orderStatus.OrderStatusShowDto;
 import com.food_delivery.g1_a_order.config.mapper.OrderItemMapper;
 import com.food_delivery.g1_a_order.config.mapper.OrderMapper;
 import com.food_delivery.g1_a_order.persistent.entity.Order;
@@ -31,6 +38,7 @@ import com.food_delivery.g1_a_order.persistent.repository.OrderRepository;
 import org.mockito.InjectMocks;
 
 @ExtendWith(MockitoExtension.class)
+@AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
 public class OrderItemServiceTest {
 
     @Mock
@@ -48,25 +56,39 @@ public class OrderItemServiceTest {
     private OrderItemService underTest;
 
     @Test
-    // @Disabled
     void testAddOrderItemToOrderWhenOrderExist() {
 
         Long customerId = 1L;
         Long restaurantId = 1L;
-        List<OrderItemsCreateDto> itemDto = new ArrayList<>();
 
-        Order order = new Order();
-        order.setCustomerId(customerId);
-        order.setRestaurantId(restaurantId);
-        order.setOrderStatus(OrderStatusEnum.CART.status);
+        OrderItem item = OrderItem.builder()
+                .quantity(1l)
+                .itemId(1l)
+                .build();
+
+        List<OrderItemsCreateDto> itemDto = List.of();
+
+        Order order = Order.builder()
+                .customerId(customerId)
+                .restaurantId(restaurantId)
+                .orderStatus(OrderStatusEnum.CART.status)
+                .orderItems(List.of(item))
+                .build();
+
+        OrderShowDto actual = orderMapper.toOrderShowDto(order);
+
+        when(orderMapper.toOrderShowDto(any(Order.class))).thenReturn(actual);
 
         when(orderRepository.findFirstByCustomerIdAndOrderStatusOrderByCreatedAtAsc(customerId,
                 OrderStatusEnum.CART.status))
                 .thenReturn(Optional.of(order));
 
-        boolean result = underTest.addOrderItemToOrder(customerId, restaurantId, itemDto);
+        when(orderService.addNewOrderItemsToOrder(itemDto, order.getId())).thenReturn(order);
 
-        assertThat(result).isTrue();
+        OrderShowDto result = underTest.addOrderItemToOrder(customerId, restaurantId, itemDto);
+
+        assertThat(result).isEqualTo(actual);
+
         verify(orderRepository, times(1)).findFirstByCustomerIdAndOrderStatusOrderByCreatedAtAsc(customerId,
                 OrderStatusEnum.CART.status);
         verify(orderService, times(1)).addNewOrderItemsToOrder(itemDto, order.getId());
@@ -75,34 +97,47 @@ public class OrderItemServiceTest {
 
     @Test
     public void testAddOrderItemToOrderWhenOrderDoesNotExist() {
-
+    
         Long customerId = 1L;
         Long restaurantId = 1L;
+    
+        OrderItem item = OrderItem.builder()
+                .quantity(1l)
+                .itemId(1l)
+                .build();
+    
         List<OrderItemsCreateDto> itemDto = new ArrayList<>();
-
-        Order order = new Order();
-        order.setCustomerId(customerId);
-        order.setRestaurantId(restaurantId);
-        order.setOrderStatus(OrderStatusEnum.CART.status);
-
+    
+        Order order = Order.builder()
+                .customerId(customerId)
+                .restaurantId(restaurantId)
+                .orderStatus(OrderStatusEnum.CART.status)
+                .orderItems(List.of(item))
+                .build();
+    
         when(orderRepository.findFirstByCustomerIdAndOrderStatusOrderByCreatedAtAsc(customerId,
-            OrderStatusEnum.CART.status))
-            .thenReturn(Optional.empty());
-
-        OrderCreateDto newOrder = new OrderCreateDto(customerId,restaurantId,itemDto);
-        when(orderMapper.toOrderCreateDto(any(Order.class))).thenReturn(newOrder);
-
-        when(orderService.createOrder(newOrder)).thenReturn(order);
-
-        boolean result = underTest.addOrderItemToOrder(customerId, restaurantId, itemDto);
-
-        assertThat(result).isTrue();
+                OrderStatusEnum.CART.status))
+                .thenReturn(Optional.empty());
+    
+        OrderCreateDto newOrderDto = orderMapper.toOrderCreateDto(order);
+        when(orderMapper.toOrderCreateDto(any(Order.class))).thenReturn(newOrderDto);
+    
+        OrderShowDto actual = orderMapper.toOrderShowDto(order);
+        when(orderMapper.toOrderShowDto(any(Order.class))).thenReturn(actual);
+    
+        when(orderService.createOrder(newOrderDto)).thenReturn(order);
+    
+        when(orderService.addNewOrderItemsToOrder(itemDto, order.getId())).thenReturn(order);
+    
+        OrderShowDto result = underTest.addOrderItemToOrder(customerId, restaurantId, itemDto);
+    
+        assertThat(result).isEqualTo(actual);
+    
         verify(orderRepository, times(1)).findFirstByCustomerIdAndOrderStatusOrderByCreatedAtAsc(customerId,
                 OrderStatusEnum.CART.status);
-        verify(orderService, times(1)).createOrder(newOrder);
+        verify(orderService, times(1)).createOrder(newOrderDto);
         verify(orderService, times(1)).addNewOrderItemsToOrder(itemDto, order.getId());
     }
-
     @Test
     public void testDeleteOrderItem() {
 
