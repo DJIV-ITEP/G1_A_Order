@@ -63,6 +63,7 @@ public class OrderController {
 
         return ResponseEntity.ok(orderService.customerConfirmOrder(orderId, addressId));
 
+
     }
 
     @GetMapping("customer/{customerId}")
@@ -96,5 +97,6 @@ public class OrderController {
             @PathVariable("orderId") Long orderId, @PathVariable("deliveryId") Long deliveryId) {
         return ResponseEntity
                 .ok(orderService.assignDeliveryToOrder(orderId, deliveryId));
+
     }
 }
