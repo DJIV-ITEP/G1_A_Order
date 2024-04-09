@@ -6,10 +6,10 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public enum PaymentStatusEnum {
 
-    PENDING(PaymentStatus.builder().value("Pending").sequence(0).build()),
-    PAID(PaymentStatus.builder().value("Paid ").sequence(1).build()),
-    REFUND(PaymentStatus.builder().value("Refund").sequence(2).build()),
-    FAILED(PaymentStatus.builder().value("Failed").sequence(3).build());
-
+    PENDING(PaymentStatus.builder().value("Pending").sequence(1).build()),
+    PAID(PaymentStatus.builder().value("Paid").sequence(2).build()),
+    REFUND(PaymentStatus.builder().value("Refund").sequence(3).build()),
+    FAILED(PaymentStatus.builder().value("Failed").sequence(4).build());
+    
     public final PaymentStatus status;
 }

@@ -8,5 +8,8 @@ import java.util.Optional;
 
 public interface PaymentMethodRepository extends JpaRepository<PaymentMethod, Long> {
     Optional<List<PaymentMethod>> findByEnabledTrue();
+
+    Optional<PaymentMethod> findByRoute(String route);
+
 }
 

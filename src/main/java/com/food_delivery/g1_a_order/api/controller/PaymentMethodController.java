@@ -14,11 +14,12 @@ import java.util.List;
 @RequestMapping("/api/v1/payment-methods")
 public class PaymentMethodController {
     private final PaymentMethodService paymentMethodService;
-    @PostMapping("/add")
-    public ResponseEntity<PaymentMethodShowDto> createPaymentMethod(@RequestBody PaymentMethodCreateDto paymentMethodCreateDto) {
-        PaymentMethodShowDto paymentMethod = paymentMethodService.createPaymentMethod(paymentMethodCreateDto);
-        return ResponseEntity.ok(paymentMethod);
-    }
+    
+//    @PostMapping("/add")
+//    public ResponseEntity<PaymentMethodShowDto> createPaymentMethod(@RequestBody PaymentMethodCreateDto paymentMethodCreateDto) {
+//        PaymentMethodShowDto paymentMethod = paymentMethodService.createPaymentMethod(paymentMethodCreateDto);
+//        return ResponseEntity.ok(paymentMethod);
+//    }
 
     @GetMapping
     public ResponseEntity<List<PaymentMethodShowDto>> getAllPaymentMethods() {
