@@ -20,6 +20,7 @@ public class OrderItem extends BaseEntity {
 
     private Long itemId;
     private Long quantity;
+    private Double price;
 
     @ManyToOne
     @JoinColumn(name = "order_id", nullable = false, referencedColumnName = "id")

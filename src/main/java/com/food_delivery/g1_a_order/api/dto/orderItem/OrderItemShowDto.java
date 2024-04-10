@@ -7,7 +7,8 @@ public record OrderItemShowDto(
         Long id,
         Long itemId,
         Long quantity,
+        Double price,
         LocalDateTime createdAt,
-        LocalDateTime updatedAt) {
+        LocalDateTime updatedAt ) {
 
 }

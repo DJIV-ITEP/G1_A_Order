@@ -44,6 +44,9 @@ public class Order extends BaseEntity {
     @ManyToOne
     private OrderStatus orderStatus = OrderStatusEnum.CART.status;
 
+    @ManyToOne
+    @JoinColumn(name = "payment_id", nullable = true,referencedColumnName = "id")
+    private Payment payment;
     @NotNull
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OrderItem> orderItems = new ArrayList<>() ;
@@ -52,6 +55,14 @@ public class Order extends BaseEntity {
         this.orderItems = orderItems;
         this.updatedAt = LocalDateTime.now();
 
+    }
+
+    public float getTotalPrice() {
+        float total = 0;
+        for (OrderItem item : getOrderItems()) {
+            total += item.getPrice() * item.getQuantity();
+        }
+        return total;
     }
 
 }
