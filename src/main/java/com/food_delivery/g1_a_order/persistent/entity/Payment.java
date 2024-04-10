@@ -1,5 +1,6 @@
 package com.food_delivery.g1_a_order.persistent.entity;
 
+import com.food_delivery.g1_a_order.persistent.entity.base.BaseEntity;
 import com.food_delivery.g1_a_order.persistent.enum_.PaymentStatusEnum;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -16,11 +17,7 @@ import java.time.LocalDateTime;
 @Entity
 @ToString
 @Table(name = "payments")
-public class Payment {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @NotNull
-    private Long id;
+public class Payment  extends BaseEntity {
 
     @NotNull
     private Long customerId;
@@ -28,9 +25,6 @@ public class Payment {
     private Double amount;
     @Column(name = "description")
     private String description;
-    @Builder.Default
-    private LocalDateTime createdAt = LocalDateTime.now();
-    private LocalDateTime updatedAt;
 
     @NotNull
     @Builder.Default
