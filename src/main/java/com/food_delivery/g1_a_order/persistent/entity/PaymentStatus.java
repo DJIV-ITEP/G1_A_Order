@@ -17,7 +17,7 @@ public class PaymentStatus {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
+    @Column(nullable = false,name = "status_value")
     private String value;
 
     @Builder.Default

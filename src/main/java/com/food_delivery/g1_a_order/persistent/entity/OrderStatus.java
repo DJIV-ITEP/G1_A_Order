@@ -27,6 +27,4 @@ public class OrderStatus extends BaseEntity {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "orderStatus")
     private List<Order> orders;
-
-
 }
