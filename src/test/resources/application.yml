@@ -1,0 +1,24 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:db;DB_CLOSE_DELAY=-1
+    username: sa
+    password: sa
+    driver-class-name: org.h2.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true # Set to true to see SQL queries in console
+    properties:
+      hibernate:
+        format_sql: true # Format SQL queries in console
+
+server:
+  port: 8080
+  error:
+    include-message: ALWAYS
+
+customer:
+  service:
+    url: http://localhost:8081/
+

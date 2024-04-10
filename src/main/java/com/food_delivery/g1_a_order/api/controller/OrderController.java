@@ -2,6 +2,7 @@ package com.food_delivery.g1_a_order.api.controller;
 
 import com.food_delivery.g1_a_order.api.dto.order.OrderCreateDto;
 import com.food_delivery.g1_a_order.api.dto.order.OrderShowDto;
+import com.food_delivery.g1_a_order.persistent.enum_.OrderStatusEnum;
 import com.food_delivery.g1_a_order.persistent.enum_.ResponseMsg;
 import com.food_delivery.g1_a_order.service.OrderItemService;
 import com.food_delivery.g1_a_order.service.OrderService;
@@ -11,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,17 +33,13 @@ public class OrderController {
     // may be wanted
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("add/orderItem")
-    public ResponseEntity<String> addOrder(@RequestBody OrderCreateDto orderCreateDto) {
+    public ResponseEntity<OrderShowDto> addOrderItems(@RequestBody OrderCreateDto orderCreateDto) {
 
-        boolean isAdded = itemService.addOrderItemToOrder(
+        return ResponseEntity.ok(itemService.addOrderItemToOrder(
                 orderCreateDto.customerId(),
                 orderCreateDto.restaurantId(),
-                orderCreateDto.orderItems());
-        if (isAdded) {
-            return ResponseEntity.ok(ResponseMsg.SUCCESS.message);
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to add order");
-        }
+                orderCreateDto.orderItems()));
+
     }
 
     // @PostMapping("/customer/{customerId}/restaurant/{restaurantId}/orderItem")
@@ -52,22 +51,52 @@ public class OrderController {
     // return ResponseEntity.ok(ResponseMsg.SUCCESS.message);
     // }
 
-    // todo: change return type
     @PutMapping("{orderId}/change/orderStatus/{orderStatusId}")
     public ResponseEntity<OrderShowDto> changeOrderStatus(@PathVariable("orderId") Long orderId,
             @PathVariable("orderStatusId") Long orderStatusId) {
         return ResponseEntity.ok(orderService.changeOrderStatus(orderId, orderStatusId));
     }
 
-    @PutMapping("{orderId}/confirm")
-    public ResponseEntity<String> confirmOrder(@PathVariable("orderId") Long orderId,
+    @PutMapping("{orderId}/customerConfirm")
+    public ResponseEntity<OrderShowDto> customerConfirmOrder(@PathVariable("orderId") Long orderId,
             @RequestParam("addressId") Long addressId) {
-        boolean isConfirmed = orderService.confirmOrder(orderId, addressId);
-        if (isConfirmed) {
-            return ResponseEntity.ok(ResponseMsg.SUCCESS.message);
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Failed to confirm order, please check if the order id and customer address id are correct.");
-        }
+
+        return ResponseEntity.ok(orderService.customerConfirmOrder(orderId, addressId));
+
+
+    }
+
+    @GetMapping("customer/{customerId}")
+    public ResponseEntity<List<OrderShowDto>> getOrdersByCustomer(@PathVariable("customerId") Long customerId) {
+        return ResponseEntity.ok(orderService.getOrdersByCustomer(customerId));
+    }
+
+    @GetMapping("pending/restaurant/{restaurantId}")
+    public ResponseEntity<List<OrderShowDto>> getPendingOrdersByRestaurant(
+            @PathVariable("restaurantId") Long restaurantId) {
+        return ResponseEntity
+                .ok(orderService.getOrdersByStatusAndRestaurant(restaurantId, OrderStatusEnum.PENDING.status));
+    }
+
+    @GetMapping("inProgress/restaurant/{restaurantId}")
+    public ResponseEntity<List<OrderShowDto>> getInProgressOrdersByRestaurant(
+            @PathVariable("restaurantId") Long restaurantId) {
+        return ResponseEntity
+                .ok(orderService.getOrdersByStatusAndRestaurant(restaurantId, OrderStatusEnum.IN_PEOGRESS.status));
+    }
+
+    @GetMapping("readyToPickup/delivery/{deliveryId}")
+    public ResponseEntity<List<OrderShowDto>> getReadyToPickupOrdersByDelivery(
+            @PathVariable("deliveryId") Long deliveryId) {
+        return ResponseEntity
+                .ok(orderService.getOrdersByStatusAndDelivery(deliveryId, OrderStatusEnum.READY_TO_PICKUP.status));
+    }
+
+    @PutMapping("{orderId}/assign/delivery/{deliveryId}")
+    public ResponseEntity<OrderShowDto> assignDeliveryToOrder(
+            @PathVariable("orderId") Long orderId, @PathVariable("deliveryId") Long deliveryId) {
+        return ResponseEntity
+                .ok(orderService.assignDeliveryToOrder(orderId, deliveryId));
+
     }
 }

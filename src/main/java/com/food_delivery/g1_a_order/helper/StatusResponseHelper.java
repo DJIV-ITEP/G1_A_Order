@@ -15,12 +15,12 @@ public class StatusResponseHelper {
     }
 
     public static void serverErr(String message) {
-        throw new ResponseStatusException(HttpStatus.valueOf(500), message);
+        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, message);
     }
 
     // return exception
     public static ResponseStatusException getServerErr(String message) {
-        return new ResponseStatusException(HttpStatus.valueOf(500), message);
+        return new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, message);
     }
 
     public static ResponseStatusException getNotFound(String message) {

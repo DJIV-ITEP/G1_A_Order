@@ -6,6 +6,8 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
+import com.food_delivery.g1_a_order.persistent.entity.base.BaseEntity;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
@@ -14,20 +16,13 @@ import java.time.LocalDateTime;
 @Builder
 @Entity
 @Table(name = "order_items")
-public class OrderItem {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @NotNull
-    private Long id;
+public class OrderItem extends BaseEntity {
+
     private Long itemId;
     private Long quantity;
     private Double price;
 
-    @Builder.Default
-    private LocalDateTime createdAt = LocalDateTime.now();
-    private LocalDateTime updatedAt;
-
     @ManyToOne
-    @JoinColumn(name = "order_id", nullable = false,referencedColumnName = "id")
+    @JoinColumn(name = "order_id", nullable = false, referencedColumnName = "id")
     private Order order;
 }
