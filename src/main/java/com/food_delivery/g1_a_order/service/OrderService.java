@@ -14,7 +14,6 @@ import com.food_delivery.g1_a_order.persistent.repository.AddressRepository;
 import com.food_delivery.g1_a_order.persistent.repository.OrderRepository;
 import com.food_delivery.g1_a_order.persistent.repository.OrderStatusRepository;
 import com.food_delivery.g1_a_order.service.base.BaseService;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,7 +22,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @RequiredArgsConstructor
 @Service
@@ -73,9 +71,7 @@ public class OrderService extends BaseService {
             order.setOrderItems(orderItem);
         } else
             order.setOrderItems(dtoItems);
-
         dtoItems.forEach(Item -> Item.setOrder(order));
-
         order.setUpdatedAt(LocalDateTime.now());
         return orderRepository.saveAndFlush(order);
     }
@@ -85,15 +81,11 @@ public class OrderService extends BaseService {
         Order order = null;
         OrderStatus status = null;
         try {
-
             order = orderRepository.findById(orderId).get();
             status = orderStatusRepository.findById(orderStatusId).get();
-
         } catch (Exception e) {
-
             System.out.println(e);
             StatusResponseHelper.notFound("no order neither status found");
-
         }
 
         if (order.getOrderStatus().getSequence() > status.getSequence())
@@ -113,13 +105,13 @@ public class OrderService extends BaseService {
 
     // confirm order
     @Transactional
-    public OrderShowDto customerConfirmOrder(Long orderId, Long customerAddressId) {
+    public OrderShowDto customerConfirmOrderAddress(Long orderId, Long customerAddressId) {
 
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> StatusResponseHelper.getNotFound("No order found with id: " + orderId));
 
         if (order.getOrderStatus().getSequence() != OrderStatusEnum.CART.status.getSequence())
-            StatusResponseHelper.notAcceptable("Order status is not CART");
+            throwHandleNotAcceptable("Order status is not CART");
 
         if (order.getCustomerId() == null || order.getRestaurantId() == null)
             StatusResponseHelper.notAcceptable("Order is incomplete");
@@ -130,9 +122,8 @@ public class OrderService extends BaseService {
         if (customerAddressId == null || !addressService.addressExists(customerAddressId))
             StatusResponseHelper.notFound("Customer address not found");
 
-        System.out.println(" customerAddressId customerAddressId customerAddressId: " + customerAddressId);
         order.setAddress(addressRepository.findById(customerAddressId).get());
-        order.setOrderStatus(OrderStatusEnum.PENDING.status);
+//        order.setOrderStatus(OrderStatusEnum.PENDING.status); this after confirm payment
         order.setUpdatedAt(LocalDateTime.now());
         orderRepository.save(order);
         return orderMapper.toOrderShowDto(orderRepository.saveAndFlush(order));
@@ -166,10 +157,10 @@ public class OrderService extends BaseService {
                 .orElseThrow(() -> handleNotFound("no order found"));
 
         if (order.getOrderStatus().getSequence() != OrderStatusEnum.READY_TO_PICKUP.status.getSequence())
-            handleNotAcceptable("Order status is not " + OrderStatusEnum.READY_TO_PICKUP.status.getValue());
+            throwHandleNotAcceptable("Order status is not " + OrderStatusEnum.READY_TO_PICKUP.status.getValue());
 
         if (null == order.getAddress())
-            handleNotAcceptable("Order address is not presented");
+            throwHandleNotAcceptable("Order address is not presented");
 
         order.setDeliveryId(deliveryId);
 
