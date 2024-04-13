@@ -3,7 +3,6 @@ package com.food_delivery.g1_a_order.api.controller;
 import com.food_delivery.g1_a_order.api.dto.order.OrderCreateDto;
 import com.food_delivery.g1_a_order.api.dto.order.OrderShowDto;
 import com.food_delivery.g1_a_order.persistent.enum_.OrderStatusEnum;
-import com.food_delivery.g1_a_order.persistent.enum_.ResponseMsg;
 import com.food_delivery.g1_a_order.service.OrderItemService;
 import com.food_delivery.g1_a_order.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -12,8 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,7 +22,6 @@ public class OrderController {
 
     @GetMapping
     public ResponseEntity<List<OrderShowDto>> getOrders() {
-
         return ResponseEntity.ok(orderService.getOrders());
 
     }
@@ -53,15 +49,15 @@ public class OrderController {
 
     @PutMapping("{orderId}/change/orderStatus/{orderStatusId}")
     public ResponseEntity<OrderShowDto> changeOrderStatus(@PathVariable("orderId") Long orderId,
-            @PathVariable("orderStatusId") Long orderStatusId) {
+                                                          @PathVariable("orderStatusId") Long orderStatusId) {
         return ResponseEntity.ok(orderService.changeOrderStatus(orderId, orderStatusId));
     }
 
-    @PutMapping("{orderId}/customerConfirm")
-    public ResponseEntity<OrderShowDto> customerConfirmOrder(@PathVariable("orderId") Long orderId,
-            @RequestParam("addressId") Long addressId) {
+    @PutMapping("{orderId}/setOrderAddress")
+    public ResponseEntity<OrderShowDto> customerConfirmOrderAddress(@PathVariable("orderId") Long orderId,
+                                                             @RequestParam("addressId") Long addressId) {
 
-        return ResponseEntity.ok(orderService.customerConfirmOrder(orderId, addressId));
+        return ResponseEntity.ok(orderService.customerConfirmOrderAddress(orderId, addressId));
 
 
     }
