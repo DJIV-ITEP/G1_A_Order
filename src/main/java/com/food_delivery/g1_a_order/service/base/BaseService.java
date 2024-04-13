@@ -13,4 +13,8 @@ public abstract class BaseService {
     protected ResponseStatusException handleServerError(String message) {
         throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, message);
     }
+    protected static void throwHandleNotAcceptable(String message) {
+        throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, message);
+    }
+
 }
