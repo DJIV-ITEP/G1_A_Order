@@ -9,10 +9,14 @@ import com.food_delivery.g1_a_order.helper.StatusResponseHelper;
 import com.food_delivery.g1_a_order.persistent.entity.Order;
 import com.food_delivery.g1_a_order.persistent.entity.OrderItem;
 import com.food_delivery.g1_a_order.persistent.entity.OrderStatus;
+import com.food_delivery.g1_a_order.persistent.entity.Payment;
 import com.food_delivery.g1_a_order.persistent.enum_.OrderStatusEnum;
+import com.food_delivery.g1_a_order.persistent.enum_.PaymentMethodEnum;
+import com.food_delivery.g1_a_order.persistent.enum_.PaymentStatusEnum;
 import com.food_delivery.g1_a_order.persistent.repository.AddressRepository;
 import com.food_delivery.g1_a_order.persistent.repository.OrderRepository;
 import com.food_delivery.g1_a_order.persistent.repository.OrderStatusRepository;
+import com.food_delivery.g1_a_order.persistent.repository.PaymentRepository;
 import com.food_delivery.g1_a_order.service.base.BaseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,13 +36,14 @@ public class OrderService extends BaseService {
 
     @Autowired
     OrderItemMapper orderItemMapper;
-
     private final OrderRepository orderRepository;
     private final OrderStatusRepository orderStatusRepository;
     private final AddressRepository addressRepository;
     private final AddressService addressService;
 
     private final WebClient customerEndpoint;
+    @Autowired
+    private PaymentRepository paymentRepository;
 
     @Transactional
     public List<OrderShowDto> getOrders() {
@@ -96,6 +101,7 @@ public class OrderService extends BaseService {
 
         order.setOrderStatus(status);
         order.setUpdatedAt(LocalDateTime.now());
+        order = changeOrderPaymentBasedOrderStatusIfCash(order);
         order = orderRepository.save(order);
 
         return orderMapper
@@ -103,7 +109,19 @@ public class OrderService extends BaseService {
 
     }
 
-    // confirm order
+    private Order changeOrderPaymentBasedOrderStatusIfCash(Order order) {
+        if (order.getOrderStatus().getSequence() == OrderStatusEnum.DELIVERED.status.getSequence()) {
+            if (order.getPayment().getPaymentMethod().getRoute().equals(PaymentMethodEnum.COD.paymentMethod.getRoute())) {
+                Payment orderPayment = order.getPayment();
+                orderPayment.setPaymentStatus(PaymentStatusEnum.PAID.status);
+                paymentRepository.save(orderPayment);
+            }
+        }
+
+        return order;
+
+    }
+
     @Transactional
     public OrderShowDto customerConfirmOrderAddress(Long orderId, Long customerAddressId) {
 
