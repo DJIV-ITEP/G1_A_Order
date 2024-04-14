@@ -47,8 +47,8 @@ public class OrderCustomerController {
 
     @PutMapping("customer/confirm")
     public ResponseEntity<OrderShowDto> customerConfirmOrder(
-            @RequestParam("orderId") Long orderId,
-            @RequestParam("addressId") Long addressId) {
+            @RequestBody Long orderId,
+            @RequestBody Long addressId) {
 
         return ResponseEntity.ok(orderService.customerChangeOrderStatus(
                 orderId,

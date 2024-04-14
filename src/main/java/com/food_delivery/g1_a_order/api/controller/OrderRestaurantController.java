@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,8 +26,8 @@ public class OrderRestaurantController {
 
     @PutMapping("restaurant/startPreparing")
     public ResponseEntity<OrderShowDto> restaurantStartPreparingOrder(
-            @RequestParam("orderId") Long orderId,
-            @RequestParam("restaurantId") Long restaurantId) {
+            @RequestBody Long orderId,
+            @RequestBody Long restaurantId) {
 
         return ResponseEntity.ok(orderService.restaurantChangeOrderStatus(
                 orderId,
@@ -37,8 +38,8 @@ public class OrderRestaurantController {
 
     @PutMapping("restaurant/readyToPickup")
     public ResponseEntity<OrderShowDto> restaurantCompleteOrder(
-            @RequestParam("orderId") Long orderId,
-            @RequestParam("restaurantId") Long restaurantId) {
+            @RequestBody Long orderId,
+            @RequestBody Long restaurantId) {
 
         return ResponseEntity.ok(orderService.restaurantChangeOrderStatus(
                 orderId,
@@ -49,8 +50,8 @@ public class OrderRestaurantController {
 
     @PutMapping("restaurant/cancel")
     public ResponseEntity<OrderShowDto> restaurantCancel(
-            @RequestParam("orderId") Long orderId,
-            @RequestParam("restaurantId") Long restaurantId) {
+            @RequestBody Long orderId,
+            @RequestBody Long restaurantId) {
 
         return ResponseEntity.ok(orderService.restaurantChangeOrderStatus(
                 orderId,
@@ -61,8 +62,8 @@ public class OrderRestaurantController {
 
     @PutMapping("restaurant/reject")
     public ResponseEntity<OrderShowDto> restaurantReject(
-            @RequestParam("orderId") Long orderId,
-            @RequestParam("restaurantId") Long restaurantId) {
+            @RequestBody Long orderId,
+            @RequestBody Long restaurantId) {
 
         return ResponseEntity.ok(orderService.restaurantChangeOrderStatus(
                 orderId,
