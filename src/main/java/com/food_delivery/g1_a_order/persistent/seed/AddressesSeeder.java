@@ -27,6 +27,12 @@ public class AddressesSeeder {
             repository.save(new Address( 2L, 13.3154, 43.2473, "Beach Rd, Al Hudaydah, Yemen"));
             repository.save(new Address( 2L, 16.9398, 43.8498, "Valley St, Sa'dah, Yemen"));
             // Add more seed data as needed
+            repository.save(new Address( 0L, 13.9668, 44.1831, "Main St, Ibb City, Yemen"));
+            repository.save(new Address( 0L, 15.3694, 44.1910, "Central St, Sana'a, Yemen"));
+            repository.save(new Address( 0L, 12.7855, 45.0187, "Market St, Aden, Yemen"));
+            repository.save(new Address( 0L, 14.7981, 42.9545, "Coastal Rd, Hudaydah, Yemen"));
+            repository.save(new Address( 0L, 13.6123, 46.1062, "Hill St, Mukalla, Yemen"));
+           
         };
     }
 
