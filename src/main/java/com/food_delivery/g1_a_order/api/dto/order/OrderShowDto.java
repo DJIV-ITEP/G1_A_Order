@@ -9,16 +9,17 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public record OrderShowDto(
-        Long id,
-        Long customerId,
-        Long restaurantId,
-        Long restaurantAddressId,
-        Long deliveryId,
-        LocalDateTime createdAt,
-        LocalDateTime updatedAt,
-        OrderStatusShowDto orderStatus,
-        AddressShowDto address,
-        PaymentShowDto payment,
-        List<OrderItemShowDto> orderItems) {
+                Long id,
+                Long customerId,
+                Long restaurantId,
+                Long restaurantAddressId,
+                Long deliveryId,
+                float totalPrice,
+                LocalDateTime createdAt,
+                LocalDateTime updatedAt,
+                OrderStatusShowDto orderStatus,
+                AddressShowDto address,
+                PaymentShowDto payment,
+                List<OrderItemShowDto> orderItems) {
 
 }

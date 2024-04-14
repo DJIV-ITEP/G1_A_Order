@@ -36,8 +36,7 @@ public class Order extends BaseEntity {
     private Long deliveryId;
 
     @Transient
-    @Builder.Default
-    private float totalPrice = 0;
+    private float totalPrice;
 
     @NotNull
     @Builder.Default
@@ -58,11 +57,10 @@ public class Order extends BaseEntity {
     }
 
     public float getTotalPrice() {
-        float total = 0;
         for (OrderItem item : getOrderItems()) {
-            total += item.getPrice() * item.getQuantity();
+            this.totalPrice += item.getPrice() * item.getQuantity();
         }
-        return total;
+        return this.totalPrice;
     }
 
 }
