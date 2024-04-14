@@ -23,10 +23,9 @@ public class OrderDeliveryController {
 
     private final OrderService orderService;
 
-
-
-    @PutMapping("{orderId}/delivery/{deliveryId}/accept")
-    public ResponseEntity<OrderShowDto> deliveryAcceptOrder(@PathVariable("orderId") Long orderId,
+    @PutMapping("delivery/accept")
+    public ResponseEntity<OrderShowDto> deliveryAcceptOrder(
+            @RequestParam("orderId") Long orderId,
             @RequestParam("deliveryId") Long deliveryId) {
 
         return ResponseEntity.ok(orderService.deliveryChangeOrderStatus(
@@ -34,22 +33,23 @@ public class OrderDeliveryController {
                 deliveryId,
                 OrderStatusEnum.ON_THE_WAY.status,
                 OrderStatusEnum.READY_TO_PICKUP.status
-            
-                ));
+
+        ));
     }
 
-    @PutMapping("{orderId}/delivery/{deliveryId}/delivered")
-    public ResponseEntity<OrderShowDto> orderDelivered(@PathVariable("orderId") Long orderId,
+    @PutMapping("delivery/delivered")
+    public ResponseEntity<OrderShowDto> orderDelivered(
+            @RequestParam("orderId") Long orderId,
             @RequestParam("deliveryId") Long deliveryId) {
 
-                return ResponseEntity.ok(orderService.deliveryChangeOrderStatus(
-                    orderId,
-                    deliveryId,
-                    OrderStatusEnum.DELIVERED.status,
-                    OrderStatusEnum.ON_THE_WAY.status
-                
-                    ));    }
+        return ResponseEntity.ok(orderService.deliveryChangeOrderStatus(
+                orderId,
+                deliveryId,
+                OrderStatusEnum.DELIVERED.status,
+                OrderStatusEnum.ON_THE_WAY.status
 
+        ));
+    }
 
     @GetMapping("readyToPickup/delivery/{deliveryId}")
     public ResponseEntity<List<OrderShowDto>> getReadyToPickupOrdersByDelivery(

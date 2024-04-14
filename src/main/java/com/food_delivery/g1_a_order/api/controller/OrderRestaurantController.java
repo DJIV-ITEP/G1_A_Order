@@ -23,10 +23,10 @@ public class OrderRestaurantController {
 
     private final OrderService orderService;
 
-    @PutMapping("{orderId}/restaurant/{restaurantId}/startPreparing")
+    @PutMapping("restaurant/startPreparing")
     public ResponseEntity<OrderShowDto> restaurantStartPreparingOrder(
-            @PathVariable("orderId") Long orderId,
-            @PathVariable("restaurantId") Long restaurantId) {
+            @RequestParam("orderId") Long orderId,
+            @RequestParam("restaurantId") Long restaurantId) {
 
         return ResponseEntity.ok(orderService.restaurantChangeOrderStatus(
                 orderId,
@@ -35,10 +35,10 @@ public class OrderRestaurantController {
                 OrderStatusEnum.PENDING.status));
     }
 
-    @PutMapping("{orderId}/restaurant/{restaurantId}/readyToPickup")
+    @PutMapping("restaurant/readyToPickup")
     public ResponseEntity<OrderShowDto> restaurantCompleteOrder(
-            @PathVariable("orderId") Long orderId,
-            @PathVariable("restaurantId") Long restaurantId) {
+            @RequestParam("orderId") Long orderId,
+            @RequestParam("restaurantId") Long restaurantId) {
 
         return ResponseEntity.ok(orderService.restaurantChangeOrderStatus(
                 orderId,
@@ -47,10 +47,10 @@ public class OrderRestaurantController {
                 OrderStatusEnum.IN_PEOGRESS.status));
     }
 
-    @PutMapping("{orderId}/restaurant/{restaurantId}/cancel")
+    @PutMapping("restaurant/cancel")
     public ResponseEntity<OrderShowDto> restaurantCancel(
-            @PathVariable("orderId") Long orderId,
-            @PathVariable("restaurantId") Long restaurantId) {
+            @RequestParam("orderId") Long orderId,
+            @RequestParam("restaurantId") Long restaurantId) {
 
         return ResponseEntity.ok(orderService.restaurantChangeOrderStatus(
                 orderId,
@@ -59,10 +59,10 @@ public class OrderRestaurantController {
                 OrderStatusEnum.IN_PEOGRESS.status));
     }
 
-    @PutMapping("{orderId}/restaurant/{restaurantId}/reject")
+    @PutMapping("restaurant/reject")
     public ResponseEntity<OrderShowDto> restaurantReject(
-            @PathVariable("orderId") Long orderId,
-            @PathVariable("restaurantId") Long restaurantId) {
+            @RequestParam("orderId") Long orderId,
+            @RequestParam("restaurantId") Long restaurantId) {
 
         return ResponseEntity.ok(orderService.restaurantChangeOrderStatus(
                 orderId,

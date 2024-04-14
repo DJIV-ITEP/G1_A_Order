@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -32,7 +33,7 @@ public class OrderCustomerController {
     private final OrderItemService itemService;
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("add/item")
+    @PostMapping("customer/add/item")
     public ResponseEntity<OrderShowDto> addOrderItems(@Valid @RequestBody OrderCreateDto orderCreateDto) {
 
         return ResponseEntity
@@ -44,10 +45,10 @@ public class OrderCustomerController {
 
     }
 
-    @PutMapping("{orderId}/customerAddress/{addressId}/confirm")
+    @PutMapping("customer/confirm")
     public ResponseEntity<OrderShowDto> customerConfirmOrder(
-            @PathVariable("orderId") Long orderId,
-            @PathVariable("addressId") Long addressId) {
+            @RequestParam("orderId") Long orderId,
+            @RequestParam("addressId") Long addressId) {
 
         return ResponseEntity.ok(orderService.customerChangeOrderStatus(
                 orderId,
