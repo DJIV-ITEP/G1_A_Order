@@ -6,6 +6,7 @@ import com.food_delivery.g1_a_order.api.dto.orderItem.OrderItemsCreateDto;
 import com.food_delivery.g1_a_order.config.mapper.OrderItemMapper;
 import com.food_delivery.g1_a_order.config.mapper.OrderMapper;
 import com.food_delivery.g1_a_order.helper.StatusResponseHelper;
+import com.food_delivery.g1_a_order.persistent.entity.Address;
 import com.food_delivery.g1_a_order.persistent.entity.Order;
 import com.food_delivery.g1_a_order.persistent.entity.OrderItem;
 import com.food_delivery.g1_a_order.persistent.entity.OrderStatus;
@@ -23,7 +24,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @RequiredArgsConstructor
 @Service
@@ -116,25 +116,33 @@ public class OrderService extends BaseService {
     public OrderShowDto customerConfirmOrder(Long orderId, Long customerAddressId) {
 
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> StatusResponseHelper.getNotFound("No order found with id: " + orderId));
+                .orElseThrow(() -> handleNotFound("No order found with id: " + orderId));
 
         if (order.getOrderStatus().getSequence() != OrderStatusEnum.CART.status.getSequence())
-            StatusResponseHelper.notAcceptable("Order status is not CART");
+            handleNotAcceptable("Order status is not " + OrderStatusEnum.CART.status.getValue());
 
         if (order.getCustomerId() == null || order.getRestaurantId() == null)
-            StatusResponseHelper.notAcceptable("Order is incomplete");
+            handleNotAcceptable("Order is incomplete");
 
         if (order.getOrderItems().isEmpty())
-            StatusResponseHelper.notAcceptable("Order should have at least one item");
+            handleNotAcceptable("Order should have at least one item");
 
         if (customerAddressId == null || !addressService.addressExists(customerAddressId))
-            StatusResponseHelper.notFound("Customer address not found");
+            handleNotFound("Customer address not found");
 
-        System.out.println(" customerAddressId customerAddressId customerAddressId: " + customerAddressId);
-        order.setAddress(addressRepository.findById(customerAddressId).get());
+        // todo: handle get Restaurant address from restaurant service
+        // if (order.getRestaurantAddressId()==null )
+        // handleNotFound("Restaurant address not found");    
+
+        Address address = addressRepository.findById(customerAddressId).get();
+
+
+        if (address.getCustomerId() != order.getCustomerId())
+            handleNotAcceptable("Address does not belong to customer");
+
+        order.setAddress(address);
         order.setOrderStatus(OrderStatusEnum.PENDING.status);
         order.setUpdatedAt(LocalDateTime.now());
-        orderRepository.save(order);
         return orderMapper.toOrderShowDto(orderRepository.saveAndFlush(order));
     }
 
