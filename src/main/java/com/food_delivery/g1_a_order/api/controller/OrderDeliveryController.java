@@ -1,6 +1,7 @@
 package com.food_delivery.g1_a_order.api.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,41 +23,54 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("api/v1/order")
 public class OrderDeliveryController {
 
-    private final OrderService orderService;
+        private final OrderService orderService;
 
-    @PutMapping("delivery/accept")
-    public ResponseEntity<OrderShowDto> deliveryAcceptOrder(
-            @RequestBody Long orderId,
-            @RequestBody Long deliveryId) {
+            /**
+     * deliveryConfirmDto
+     */
+    private record deliveryConfirmDto(
+        Long orderId,
+        Long deliveryId) {
+}
 
-        return ResponseEntity.ok(orderService.deliveryChangeOrderStatus(
-                orderId,
-                deliveryId,
-                OrderStatusEnum.ON_THE_WAY.status,
-                OrderStatusEnum.READY_TO_PICKUP.status
+        @PutMapping("delivery/accept")
+        public ResponseEntity<OrderShowDto> deliveryAcceptOrder(@RequestBody deliveryConfirmDto body) {
 
-        ));
-    }
+                Long orderId = body.orderId();
+                Long deliveryId = body.deliveryId();
 
-    @PutMapping("delivery/delivered")
-    public ResponseEntity<OrderShowDto> orderDelivered(
-            @RequestBody Long orderId,
-            @RequestBody Long deliveryId) {
+                return ResponseEntity.ok(orderService.deliveryChangeOrderStatus(
+                                orderId,
+                                deliveryId,
+                                OrderStatusEnum.ON_THE_WAY.status,
+                                OrderStatusEnum.READY_TO_PICKUP.status
 
-        return ResponseEntity.ok(orderService.deliveryChangeOrderStatus(
-                orderId,
-                deliveryId,
-                OrderStatusEnum.DELIVERED.status,
-                OrderStatusEnum.ON_THE_WAY.status
+                ));
+        }
 
-        ));
-    }
+        @PutMapping("delivery/delivered")
+        public ResponseEntity<OrderShowDto> orderDelivered(@RequestBody deliveryConfirmDto body) {
 
-    @GetMapping("readyToPickup/delivery/{deliveryId}")
-    public ResponseEntity<List<OrderShowDto>> getReadyToPickupOrdersByDelivery(
-            @PathVariable("deliveryId") Long deliveryId) {
-        return ResponseEntity
-                .ok(orderService.getOrdersByStatusAndDelivery(deliveryId, OrderStatusEnum.READY_TO_PICKUP.status));
-    }
+                Long orderId = body.orderId();
+                Long deliveryId = body.deliveryId();
+
+                return ResponseEntity.ok(orderService.deliveryChangeOrderStatus(
+                                orderId,
+                                deliveryId,
+                                OrderStatusEnum.DELIVERED.status,
+                                OrderStatusEnum.ON_THE_WAY.status
+
+                ));
+        }
+
+        @GetMapping("readyToPickup/delivery/{deliveryId}")
+        public ResponseEntity<List<OrderShowDto>> getReadyToPickupOrdersByDelivery(
+                        @PathVariable("deliveryId") Long deliveryId) {
+                return ResponseEntity
+                                .ok(
+                                        orderService.getOrdersByStatusAndDelivery(deliveryId,
+                                                                OrderStatusEnum.READY_TO_PICKUP.status
+                                                ));
+        }
 
 }

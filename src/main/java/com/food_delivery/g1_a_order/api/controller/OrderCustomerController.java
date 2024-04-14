@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 
@@ -32,6 +33,14 @@ public class OrderCustomerController {
     private final OrderService orderService;
     private final OrderItemService itemService;
 
+    /**
+     * confirmDto
+     */
+    private record customerConfirmDto(
+            Long orderId,
+            Long addressId) {
+    }
+
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("customer/add/item")
     public ResponseEntity<OrderShowDto> addOrderItems(@Valid @RequestBody OrderCreateDto orderCreateDto) {
@@ -46,9 +55,10 @@ public class OrderCustomerController {
     }
 
     @PutMapping("customer/confirm")
-    public ResponseEntity<OrderShowDto> customerConfirmOrder(
-            @RequestBody Long orderId,
-            @RequestBody Long addressId) {
+    public ResponseEntity<OrderShowDto> customerConfirmOrder(@RequestBody customerConfirmDto body) {
+
+        Long orderId = body.orderId();
+        Long addressId = body.addressId();
 
         return ResponseEntity.ok(orderService.customerChangeOrderStatus(
                 orderId,
