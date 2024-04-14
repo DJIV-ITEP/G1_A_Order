@@ -85,6 +85,14 @@ public class OrderController {
 
         return ResponseEntity.ok(orderService.deliveryAcceptOrder(orderId, deliveryId));
     }
+
+    @PutMapping("{orderId}/orderDelivered")
+    public ResponseEntity<OrderShowDto> orderDelivered(@PathVariable("orderId") Long orderId,
+            @RequestParam("deliveryId") Long deliveryId) {
+
+        return ResponseEntity.ok(orderService.orderDelivered(orderId, deliveryId));
+    }
+
     @GetMapping("customer/{customerId}")
     public ResponseEntity<List<OrderShowDto>> getOrdersByCustomer(@PathVariable("customerId") Long customerId) {
         return ResponseEntity.ok(orderService.getOrdersByCustomer(customerId));
