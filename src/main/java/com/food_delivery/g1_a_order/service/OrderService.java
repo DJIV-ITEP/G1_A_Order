@@ -147,7 +147,7 @@ public class OrderService extends BaseService {
     }
 
     @Transactional
-    public OrderShowDto restaurantConfirmOrder(Long orderId, Long restaurantId) {
+    public OrderShowDto restaurantStartPreparingOrder(Long orderId, Long restaurantId) {
 
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> handleNotFound("No order found with id: " + orderId));
@@ -164,6 +164,11 @@ public class OrderService extends BaseService {
         if (order.getAddress() == null)
             handleNotFound("Customer address not found");
 
+        order.setOrderStatus(OrderStatusEnum.IN_PEOGRESS.status);
+        order.setUpdatedAt(LocalDateTime.now());
+        // orderRepository.save(order);
+        return orderMapper.toOrderShowDto(orderRepository.saveAndFlush(order));
+    }
         order.setOrderStatus(OrderStatusEnum.READY_TO_PICKUP.status);
         order.setUpdatedAt(LocalDateTime.now());
         // orderRepository.save(order);
