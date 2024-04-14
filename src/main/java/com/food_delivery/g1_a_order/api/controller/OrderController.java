@@ -71,9 +71,12 @@ public class OrderController {
 
         return ResponseEntity.ok(orderService.restaurantStartPreparingOrder(orderId, restaurantId));
     }
+
+    @PutMapping("{orderId}/restaurantComplete")
+    public ResponseEntity<OrderShowDto> restaurantCompleteOrder(@PathVariable("orderId") Long orderId,
             @RequestParam("restaurantId") Long restaurantId) {
 
-        return ResponseEntity.ok(orderService.restaurantConfirmOrder(orderId,restaurantId));
+        return ResponseEntity.ok(orderService.restaurantCompleteOrder(orderId, restaurantId));
     }
 
     @GetMapping("customer/{customerId}")

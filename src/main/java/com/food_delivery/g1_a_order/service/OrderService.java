@@ -111,7 +111,7 @@ public class OrderService extends BaseService {
 
     }
 
-    // confirm order
+    // todo: handle get Restaurant address from restaurant service
     @Transactional
     public OrderShowDto customerConfirmOrder(Long orderId, Long customerAddressId) {
 
@@ -130,12 +130,10 @@ public class OrderService extends BaseService {
         if (customerAddressId == null || !addressService.addressExists(customerAddressId))
             handleNotFound("Customer address not found");
 
-        // todo: handle get Restaurant address from restaurant service
         // if (order.getRestaurantAddressId()==null )
-        // handleNotFound("Restaurant address not found");    
+        // handleNotFound("Restaurant address not found");
 
         Address address = addressRepository.findById(customerAddressId).get();
-
 
         if (address.getCustomerId() != order.getCustomerId())
             handleNotAcceptable("Address does not belong to customer");
@@ -169,12 +167,30 @@ public class OrderService extends BaseService {
         // orderRepository.save(order);
         return orderMapper.toOrderShowDto(orderRepository.saveAndFlush(order));
     }
+
+    @Transactional
+    public OrderShowDto restaurantCompleteOrder(Long orderId, Long restaurantId) {
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> handleNotFound("No order found with id: " + orderId));
+
+        if (order.getOrderStatus().getSequence() != OrderStatusEnum.IN_PEOGRESS.status.getSequence())
+            handleNotAcceptable("Order status is not " + OrderStatusEnum.IN_PEOGRESS.status.getValue());
+
+        if (order.getRestaurantId() != restaurantId)
+            handleNotAcceptable("Order does not belong to restaurant");
+
+        if (order.getOrderItems().isEmpty())
+            handleNotAcceptable("Order should have at least one item");
+
+        if (order.getAddress() == null)
+            handleNotFound("Customer address not found");
+
         order.setOrderStatus(OrderStatusEnum.READY_TO_PICKUP.status);
         order.setUpdatedAt(LocalDateTime.now());
         // orderRepository.save(order);
         return orderMapper.toOrderShowDto(orderRepository.saveAndFlush(order));
     }
-    
 
     @Transactional
     public List<OrderShowDto> getOrdersByCustomer(Long customerId) {
