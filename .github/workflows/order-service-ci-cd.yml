@@ -72,9 +72,7 @@ jobs:
           echo POSTGRES_DB=${{ secrets.DB_NAME }} >> .env
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: ./Dockerfile-springboot
-          push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/order_service:latest
+        run: |
+          docker build -t amjadfqs/g1_a_order_service .
+          docker tag amjadfqs/g1_a_order_service amjadfqs/g1_a_order_service:latest
+          docker push amjadfqs/g1_a_order_service:latest
