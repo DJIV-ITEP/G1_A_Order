@@ -147,6 +147,31 @@ public class OrderService extends BaseService {
     }
 
     @Transactional
+    public OrderShowDto restaurantConfirmOrder(Long orderId, Long restaurantId) {
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> handleNotFound("No order found with id: " + orderId));
+
+        if (order.getOrderStatus().getSequence() != OrderStatusEnum.PENDING.status.getSequence())
+            handleNotAcceptable("Order status is not " + OrderStatusEnum.PENDING.status.getValue());
+
+        if (order.getRestaurantId() != restaurantId)
+            handleNotAcceptable("Order does not belong to restaurant");
+
+        if (order.getOrderItems().isEmpty())
+            handleNotAcceptable("Order should have at least one item");
+
+        if (order.getAddress() == null)
+            handleNotFound("Customer address not found");
+
+        order.setOrderStatus(OrderStatusEnum.READY_TO_PICKUP.status);
+        order.setUpdatedAt(LocalDateTime.now());
+        // orderRepository.save(order);
+        return orderMapper.toOrderShowDto(orderRepository.saveAndFlush(order));
+    }
+    
+
+    @Transactional
     public List<OrderShowDto> getOrdersByCustomer(Long customerId) {
         List<Order> orders = orderRepository.findByCustomerId(customerId)
                 .orElseThrow(() -> handleNotFound("no order found"));
