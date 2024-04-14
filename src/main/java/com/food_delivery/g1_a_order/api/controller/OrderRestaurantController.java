@@ -23,7 +23,7 @@ public class OrderRestaurantController {
 
     private final OrderService orderService;
 
-    @PutMapping("{orderId}/restaurant/{restaurantId}/StartPreparing")
+    @PutMapping("{orderId}/restaurant/{restaurantId}/startPreparing")
     public ResponseEntity<OrderShowDto> restaurantStartPreparingOrder(
             @PathVariable("orderId") Long orderId,
             @PathVariable("restaurantId") Long restaurantId) {
@@ -35,7 +35,7 @@ public class OrderRestaurantController {
                 OrderStatusEnum.PENDING.status));
     }
 
-    @PutMapping("{orderId}/restaurant/{restaurantId}/ReadyToPickup")
+    @PutMapping("{orderId}/restaurant/{restaurantId}/readyToPickup")
     public ResponseEntity<OrderShowDto> restaurantCompleteOrder(
             @PathVariable("orderId") Long orderId,
             @PathVariable("restaurantId") Long restaurantId) {
@@ -47,7 +47,7 @@ public class OrderRestaurantController {
                 OrderStatusEnum.IN_PEOGRESS.status));
     }
 
-    @PutMapping("{orderId}/restaurant/{restaurantId}/Cancel")
+    @PutMapping("{orderId}/restaurant/{restaurantId}/cancel")
     public ResponseEntity<OrderShowDto> restaurantCancel(
             @PathVariable("orderId") Long orderId,
             @PathVariable("restaurantId") Long restaurantId) {
@@ -59,7 +59,7 @@ public class OrderRestaurantController {
                 OrderStatusEnum.IN_PEOGRESS.status));
     }
 
-    @PutMapping("{orderId}/restaurant/{restaurantId}/Reject")
+    @PutMapping("{orderId}/restaurant/{restaurantId}/reject")
     public ResponseEntity<OrderShowDto> restaurantReject(
             @PathVariable("orderId") Long orderId,
             @PathVariable("restaurantId") Long restaurantId) {

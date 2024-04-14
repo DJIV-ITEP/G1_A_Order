@@ -27,27 +27,4 @@ public class OrderController {
 
 
 
-
-    @PutMapping("{orderId}/deliveryAccept")
-    public ResponseEntity<OrderShowDto> deliveryAcceptOrder(@PathVariable("orderId") Long orderId,
-            @RequestParam("deliveryId") Long deliveryId) {
-
-        return ResponseEntity.ok(orderService.deliveryAcceptOrder(orderId, deliveryId));
-    }
-
-    @PutMapping("{orderId}/orderDelivered")
-    public ResponseEntity<OrderShowDto> orderDelivered(@PathVariable("orderId") Long orderId,
-            @RequestParam("deliveryId") Long deliveryId) {
-
-        return ResponseEntity.ok(orderService.orderDelivered(orderId, deliveryId));
-    }
-
-
-    @GetMapping("readyToPickup/delivery/{deliveryId}")
-    public ResponseEntity<List<OrderShowDto>> getReadyToPickupOrdersByDelivery(
-            @PathVariable("deliveryId") Long deliveryId) {
-        return ResponseEntity
-                .ok(orderService.getOrdersByStatusAndDelivery(deliveryId, OrderStatusEnum.READY_TO_PICKUP.status));
-    }
-
 }
