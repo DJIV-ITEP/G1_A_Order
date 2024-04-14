@@ -58,6 +58,7 @@ public class OrderService extends BaseService {
         return orderRepository.saveAndFlush(order);
     }
 
+    // todo: vlidate item qty and price
     @Transactional
     public Order addNewOrderItemsToOrder(List<OrderItemsCreateDto> itemsCreateDtos, Long orderId) {
 
@@ -80,14 +81,15 @@ public class OrderService extends BaseService {
         return orderRepository.saveAndFlush(order);
     }
 
-    // @Transactional
+    // todo: vlidate payment
+    @Transactional
     public OrderShowDto changeOrderStatus(Order order, OrderStatus status) {
 
         // if (order.getOrderStatus().getSequence() > status.getSequence())
-        //     handleNotAcceptable("status is not acceptable");
+        // handleNotAcceptable("status is not acceptable");
 
         // if (order.getOrderStatus().getSequence() + 1 != status.getSequence())
-        //     handleNotAcceptable("status is not acceptable");
+        // handleNotAcceptable("status is not acceptable");
 
         if (order.getOrderItems().isEmpty())
             handleNotAcceptable("Order should have at least one item");
@@ -133,9 +135,9 @@ public class OrderService extends BaseService {
 
         order.setAddress(address);
         order.setUpdatedAt(LocalDateTime.now());
-        orderRepository.saveAndFlush(order);
+        Order savedOrder = orderRepository.saveAndFlush(order);
 
-        return changeOrderStatus(order, newStatus);
+        return changeOrderStatus(savedOrder, newStatus);
     }
 
     @Transactional
@@ -163,51 +165,25 @@ public class OrderService extends BaseService {
 
     // todo: handle get deliveryId from delivery service
     @Transactional
-    public OrderShowDto deliveryAcceptOrder(Long orderId, Long deliveryId) {
+    public OrderShowDto deliveryChangeOrderStatus(Long orderId,
+            Long deliveryId,
+            OrderStatus newStatus,
+            OrderStatus currentStatus) {
 
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> handleNotFound("No order found with id: " + orderId));
 
-        if (order.getOrderStatus().getSequence() != OrderStatusEnum.READY_TO_PICKUP.status.getSequence())
-            handleNotAcceptable("Order status is not " + OrderStatusEnum.READY_TO_PICKUP.status.getValue());
-
-        if (order.getOrderItems().isEmpty())
-            handleNotAcceptable("Order should have at least one item");
-
-        if (order.getAddress() == null)
-            handleNotFound("Customer address not found");
+        if (order.getOrderStatus().getSequence() != currentStatus.getSequence())
+            handleNotAcceptable("Order status is not " + currentStatus.getValue());
 
         order.setDeliveryId(deliveryId);
 
-        order.setOrderStatus(OrderStatusEnum.ON_THE_WAY.status);
         order.setUpdatedAt(LocalDateTime.now());
-        // orderRepository.save(order);
-        return orderMapper.toOrderShowDto(orderRepository.saveAndFlush(order));
+        Order savedOrder = orderRepository.saveAndFlush(order);
+
+        return changeOrderStatus(savedOrder, newStatus);
     }
 
-    @Transactional
-    public OrderShowDto orderDelivered(Long orderId, Long deliveryId) {
-
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> handleNotFound("No order found with id: " + orderId));
-
-        if (order.getOrderStatus().getSequence() != OrderStatusEnum.ON_THE_WAY.status.getSequence())
-            handleNotAcceptable("Order status is not " + OrderStatusEnum.ON_THE_WAY.status.getValue());
-
-        if (order.getOrderItems().isEmpty())
-            handleNotAcceptable("Order should have at least one item");
-
-        if (order.getDeliveryId() != deliveryId)
-            handleNotAcceptable("Order does not belong to delivery");
-
-        if (order.getAddress() == null)
-            handleNotFound("Customer address not found");
-
-        order.setOrderStatus(OrderStatusEnum.DELIVERED.status);
-        order.setUpdatedAt(LocalDateTime.now());
-        // orderRepository.save(order);
-        return orderMapper.toOrderShowDto(orderRepository.saveAndFlush(order));
-    }
 
     @Transactional
     public List<OrderShowDto> getOrdersByCustomer(Long customerId) {
