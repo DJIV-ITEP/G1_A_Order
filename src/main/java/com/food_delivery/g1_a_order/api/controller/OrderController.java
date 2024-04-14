@@ -42,43 +42,18 @@ public class OrderController {
 
     }
 
-    // @PostMapping("/customer/{customerId}/restaurant/{restaurantId}/orderItem")
-    // public ResponseEntity<String> addOrderItemToOrder(@PathVariable("customerId")
-    // Long customerId,
-    // @PathVariable("restaurantId") Long restaurantId,
-    // @RequestBody List<OrderItemsCreateDto> itemDto) {
-    // itemService.addOrderItemToOrder(customerId, restaurantId, itemDto);
-    // return ResponseEntity.ok(ResponseMsg.SUCCESS.message);
-    // }
-
-    @PutMapping("{orderId}/change/orderStatus/{orderStatusId}")
-    public ResponseEntity<OrderShowDto> changeOrderStatus(@PathVariable("orderId") Long orderId,
-            @PathVariable("orderStatusId") Long orderStatusId) {
-        return ResponseEntity.ok(orderService.changeOrderStatus(orderId, orderStatusId));
-    }
-
     @PutMapping("{orderId}/customerConfirm")
     public ResponseEntity<OrderShowDto> customerConfirmOrder(@PathVariable("orderId") Long orderId,
             @RequestParam("addressId") Long addressId) {
 
-        return ResponseEntity.ok(orderService.customerConfirmOrder(orderId, addressId));
+        return ResponseEntity.ok(orderService.customerChangeOrderStatus(
+                orderId,
+                addressId,
+                OrderStatusEnum.PENDING.status,
+                OrderStatusEnum.CART.status));
 
     }
-    
-    @PutMapping("{orderId}/restaurantStartPreparing")
-    public ResponseEntity<OrderShowDto> restaurantStartPreparingOrder(@PathVariable("orderId") Long orderId,
-            @RequestParam("restaurantId") Long restaurantId) {
 
-        return ResponseEntity.ok(orderService.restaurantStartPreparingOrder(orderId, restaurantId));
-    }
-
-    @PutMapping("{orderId}/restaurantComplete")
-    public ResponseEntity<OrderShowDto> restaurantCompleteOrder(@PathVariable("orderId") Long orderId,
-            @RequestParam("restaurantId") Long restaurantId) {
-
-        return ResponseEntity.ok(orderService.restaurantCompleteOrder(orderId, restaurantId));
-    }
-    
     @PutMapping("{orderId}/deliveryAccept")
     public ResponseEntity<OrderShowDto> deliveryAcceptOrder(@PathVariable("orderId") Long orderId,
             @RequestParam("deliveryId") Long deliveryId) {
@@ -96,20 +71,6 @@ public class OrderController {
     @GetMapping("customer/{customerId}")
     public ResponseEntity<List<OrderShowDto>> getOrdersByCustomer(@PathVariable("customerId") Long customerId) {
         return ResponseEntity.ok(orderService.getOrdersByCustomer(customerId));
-    }
-
-    @GetMapping("pending/restaurant/{restaurantId}")
-    public ResponseEntity<List<OrderShowDto>> getPendingOrdersByRestaurant(
-            @PathVariable("restaurantId") Long restaurantId) {
-        return ResponseEntity
-                .ok(orderService.getOrdersByStatusAndRestaurant(restaurantId, OrderStatusEnum.PENDING.status));
-    }
-
-    @GetMapping("inProgress/restaurant/{restaurantId}")
-    public ResponseEntity<List<OrderShowDto>> getInProgressOrdersByRestaurant(
-            @PathVariable("restaurantId") Long restaurantId) {
-        return ResponseEntity
-                .ok(orderService.getOrdersByStatusAndRestaurant(restaurantId, OrderStatusEnum.IN_PEOGRESS.status));
     }
 
     @GetMapping("readyToPickup/delivery/{deliveryId}")
