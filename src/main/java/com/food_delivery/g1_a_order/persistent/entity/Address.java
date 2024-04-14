@@ -1,4 +1,5 @@
 package com.food_delivery.g1_a_order.persistent.entity;
+import com.food_delivery.g1_a_order.persistent.entity.base.BaseEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -14,11 +15,7 @@ import java.time.LocalDateTime;
 @Entity
 @ToString
 @Table(name = "addresses")
-public class Address {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @NotNull
-    private Long id;
+public class Address extends BaseEntity{
     @NotNull
     private Long customerId;
 
@@ -30,8 +27,4 @@ public class Address {
 
     @Column(name = "description")
     private String description;
-
-    @Builder.Default
-    private LocalDateTime createdAt = LocalDateTime.now();
-    private LocalDateTime updatedAt;
 }
