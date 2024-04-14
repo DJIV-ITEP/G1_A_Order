@@ -22,68 +22,87 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("api/v1/order")
 public class OrderRestaurantController {
 
-    private final OrderService orderService;
+        private final OrderService orderService;
 
-    @PutMapping("restaurant/startPreparing")
-    public ResponseEntity<OrderShowDto> restaurantStartPreparingOrder(
-            @RequestBody Long orderId,
-            @RequestBody Long restaurantId) {
+        /**
+         * restaurantConfirmDto
+         */
+        private record restaurantConfirmDto(
+                        Long orderId,
+                        Long restaurantId) {
+        }
 
-        return ResponseEntity.ok(orderService.restaurantChangeOrderStatus(
-                orderId,
-                restaurantId,
-                OrderStatusEnum.IN_PEOGRESS.status,
-                OrderStatusEnum.PENDING.status));
-    }
+        @PutMapping("restaurant/startPreparing")
+        public ResponseEntity<OrderShowDto> restaurantStartPreparingOrder(
+                        @RequestBody restaurantConfirmDto body) {
 
-    @PutMapping("restaurant/readyToPickup")
-    public ResponseEntity<OrderShowDto> restaurantCompleteOrder(
-            @RequestBody Long orderId,
-            @RequestBody Long restaurantId) {
+                Long orderId = body.orderId();
+                Long restaurantId = body.restaurantId();
 
-        return ResponseEntity.ok(orderService.restaurantChangeOrderStatus(
-                orderId,
-                restaurantId,
-                OrderStatusEnum.READY_TO_PICKUP.status,
-                OrderStatusEnum.IN_PEOGRESS.status));
-    }
+                return ResponseEntity.ok(orderService.restaurantChangeOrderStatus(
+                                orderId,
+                                restaurantId,
+                                OrderStatusEnum.IN_PEOGRESS.status,
+                                OrderStatusEnum.PENDING.status));
+        }
 
-    @PutMapping("restaurant/cancel")
-    public ResponseEntity<OrderShowDto> restaurantCancel(
-            @RequestBody Long orderId,
-            @RequestBody Long restaurantId) {
+        @PutMapping("restaurant/readyToPickup")
+        public ResponseEntity<OrderShowDto> restaurantCompleteOrder(
+                        @RequestBody restaurantConfirmDto body) {
 
-        return ResponseEntity.ok(orderService.restaurantChangeOrderStatus(
-                orderId,
-                restaurantId,
-                OrderStatusEnum.CANCELED.status,
-                OrderStatusEnum.IN_PEOGRESS.status));
-    }
+                Long orderId = body.orderId();
+                Long restaurantId = body.restaurantId();
 
-    @PutMapping("restaurant/reject")
-    public ResponseEntity<OrderShowDto> restaurantReject(
-            @RequestBody Long orderId,
-            @RequestBody Long restaurantId) {
+                return ResponseEntity.ok(orderService.restaurantChangeOrderStatus(
+                                orderId,
+                                restaurantId,
+                                OrderStatusEnum.READY_TO_PICKUP.status,
+                                OrderStatusEnum.IN_PEOGRESS.status));
+        }
 
-        return ResponseEntity.ok(orderService.restaurantChangeOrderStatus(
-                orderId,
-                restaurantId,
-                OrderStatusEnum.REJECT.status,
-                OrderStatusEnum.PENDING.status));
-    }
+        @PutMapping("restaurant/cancel")
+        public ResponseEntity<OrderShowDto> restaurantCancel(
+                        @RequestBody restaurantConfirmDto body) {
 
-    @GetMapping("pending/restaurant/{restaurantId}")
-    public ResponseEntity<List<OrderShowDto>> getPendingOrdersByRestaurant(
-            @PathVariable("restaurantId") Long restaurantId) {
-        return ResponseEntity
-                .ok(orderService.getOrdersByStatusAndRestaurant(restaurantId, OrderStatusEnum.PENDING.status));
-    }
+                Long orderId = body.orderId();
+                Long restaurantId = body.restaurantId();
 
-    @GetMapping("inProgress/restaurant/{restaurantId}")
-    public ResponseEntity<List<OrderShowDto>> getInProgressOrdersByRestaurant(
-            @PathVariable("restaurantId") Long restaurantId) {
-        return ResponseEntity
-                .ok(orderService.getOrdersByStatusAndRestaurant(restaurantId, OrderStatusEnum.IN_PEOGRESS.status));
-    }
+                return ResponseEntity.ok(orderService.restaurantChangeOrderStatus(
+                                orderId,
+                                restaurantId,
+                                OrderStatusEnum.CANCELED.status,
+                                OrderStatusEnum.IN_PEOGRESS.status));
+        }
+
+        @PutMapping("restaurant/reject")
+        public ResponseEntity<OrderShowDto> restaurantReject(
+                        @RequestBody restaurantConfirmDto body) {
+
+                Long orderId = body.orderId();
+                Long restaurantId = body.restaurantId();
+
+                return ResponseEntity.ok(orderService.restaurantChangeOrderStatus(
+                                orderId,
+                                restaurantId,
+                                OrderStatusEnum.REJECT.status,
+                                OrderStatusEnum.PENDING.status));
+        }
+
+        @GetMapping("pending/restaurant/{restaurantId}")
+        public ResponseEntity<List<OrderShowDto>> getPendingOrdersByRestaurant(
+                        @PathVariable("restaurantId") Long restaurantId) {
+                return ResponseEntity
+                                .ok(orderService.getOrdersByStatusAndRestaurant(restaurantId,
+                                                OrderStatusEnum.PENDING.status));
+        }
+
+        @GetMapping("inProgress/restaurant/{restaurantId}")
+        public ResponseEntity<List<OrderShowDto>> getInProgressOrdersByRestaurant(
+                        @PathVariable("restaurantId") Long restaurantId) {
+                return ResponseEntity
+                                .ok(orderService.getOrdersByStatusAndRestaurant(restaurantId,
+                                                OrderStatusEnum.IN_PEOGRESS.status));
+        }
+
 
 }
