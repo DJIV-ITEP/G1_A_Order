@@ -105,19 +105,20 @@ public class OrderService extends BaseService {
 
     // todo: handle get Restaurant address from restaurant service
     @Transactional
-    public OrderShowDto customerConfirmOrder(Long orderId, Long customerAddressId) {
+    public OrderShowDto customerChangeOrderStatus(
+            Long orderId,
+            Long customerAddressId,
+            OrderStatus newStatus,
+            OrderStatus currentStatus) {
 
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> handleNotFound("No order found with id: " + orderId));
 
-        if (order.getOrderStatus().getSequence() != OrderStatusEnum.CART.status.getSequence())
-            handleNotAcceptable("Order status is not " + OrderStatusEnum.CART.status.getValue());
+        if (order.getOrderStatus().getSequence() != currentStatus.getSequence())
+            handleNotAcceptable("Order status is not " + currentStatus.getValue());
 
         if (order.getCustomerId() == null || order.getRestaurantId() == null)
             handleNotAcceptable("Order is incomplete");
-
-        if (order.getOrderItems().isEmpty())
-            handleNotAcceptable("Order should have at least one item");
 
         if (customerAddressId == null || !addressService.addressExists(customerAddressId))
             handleNotFound("Customer address not found");
@@ -131,10 +132,8 @@ public class OrderService extends BaseService {
             handleNotAcceptable("Address does not belong to customer");
 
         order.setAddress(address);
-        order.setOrderStatus(OrderStatusEnum.PENDING.status);
         order.setUpdatedAt(LocalDateTime.now());
-        return orderMapper.toOrderShowDto(orderRepository.saveAndFlush(order));
-    }
+        orderRepository.saveAndFlush(order);
 
     @Transactional
     public OrderShowDto restaurantStartPreparingOrder(Long orderId, Long restaurantId) {
