@@ -25,9 +25,11 @@ public class OrderStatusSeeder {
 
             OrderStatus readyToPickup = OrderStatusEnum.READY_TO_PICKUP.status;
 
+            OrderStatus onTheWay = OrderStatusEnum.ON_THE_WAY.status;
+
             OrderStatus delivered = OrderStatusEnum.DELIVERED.status;
 
-            List<OrderStatus> statuses = List.of(pending, inProgress, readyToPickup, delivered, cart);
+            List<OrderStatus> statuses = List.of(cart, pending, inProgress, readyToPickup, onTheWay, delivered);
 
             repository.saveAll(statuses);
 
