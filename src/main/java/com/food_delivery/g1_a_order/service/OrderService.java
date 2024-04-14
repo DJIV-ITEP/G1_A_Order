@@ -80,34 +80,26 @@ public class OrderService extends BaseService {
         return orderRepository.saveAndFlush(order);
     }
 
-    @Transactional
-    public OrderShowDto changeOrderStatus(Long orderId, Long orderStatusId) {
-        Order order = null;
-        OrderStatus status = null;
-        try {
+    // @Transactional
+    public OrderShowDto changeOrderStatus(Order order, OrderStatus status) {
 
-            order = orderRepository.findById(orderId).get();
-            status = orderStatusRepository.findById(orderStatusId).get();
+        // if (order.getOrderStatus().getSequence() > status.getSequence())
+        //     handleNotAcceptable("status is not acceptable");
 
-        } catch (Exception e) {
+        // if (order.getOrderStatus().getSequence() + 1 != status.getSequence())
+        //     handleNotAcceptable("status is not acceptable");
 
-            System.out.println(e);
-            StatusResponseHelper.notFound("no order neither status found");
+        if (order.getOrderItems().isEmpty())
+            handleNotAcceptable("Order should have at least one item");
 
-        }
-
-        if (order.getOrderStatus().getSequence() > status.getSequence())
-            StatusResponseHelper.notAcceptable("status is not acceptable");
-
-        if (order.getOrderStatus().getSequence() + 1 != status.getSequence())
-            StatusResponseHelper.notAcceptable("status is not acceptable");
+        if (order.getAddress() == null)
+            handleNotFound("Customer address not found");
 
         order.setOrderStatus(status);
         order.setUpdatedAt(LocalDateTime.now());
-        order = orderRepository.save(order);
 
         return orderMapper
-                .toOrderShowDto(order);
+                .toOrderShowDto(orderRepository.saveAndFlush(order));
 
     }
 
