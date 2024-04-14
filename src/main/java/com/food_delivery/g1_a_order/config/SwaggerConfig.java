@@ -19,7 +19,7 @@ public class SwaggerConfig {
                 return new OpenAPI()
                                 .info(new Info().title("Order Service")
                                                 .description("This is order service use for managing order of food delivery application.")
-                                                .version("v1.3.0")
+                                                .version("v1.4.0")
                                                 .license(new License().name("Apache 2.0").url("http://springdoc.org")))
 
                                 .externalDocs(new ExternalDocumentation()
