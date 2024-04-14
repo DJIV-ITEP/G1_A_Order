@@ -1,0 +1,17 @@
+# Ignore Gradle build files
+build/
+*/build/
+
+# Ignore IDE files
+.idea/
+*.iml
+.vscode/
+
+# Ignore logs and temporary files
+logs/
+*.log
+*.tmp
+
+# Ignore Docker-related files (optional)
+.dockerignore
+Dockerfile
