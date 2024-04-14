@@ -265,20 +265,4 @@ public class OrderService extends BaseService {
         return orderMapper.toOrderShowDto(orders);
     }
 
-    @Transactional
-    public OrderShowDto assignDeliveryToOrder(Long orderId, Long deliveryId) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> handleNotFound("no order found"));
-
-        if (order.getOrderStatus().getSequence() != OrderStatusEnum.READY_TO_PICKUP.status.getSequence())
-            handleNotAcceptable("Order status is not " + OrderStatusEnum.READY_TO_PICKUP.status.getValue());
-
-        if (null == order.getAddress())
-            handleNotAcceptable("Order address is not presented");
-
-        order.setDeliveryId(deliveryId);
-
-        return orderMapper.toOrderShowDto(orderRepository.saveAndFlush(order));
-
-    }
 }

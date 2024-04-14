@@ -119,11 +119,4 @@ public class OrderController {
                 .ok(orderService.getOrdersByStatusAndDelivery(deliveryId, OrderStatusEnum.READY_TO_PICKUP.status));
     }
 
-    @PutMapping("{orderId}/assign/delivery/{deliveryId}")
-    public ResponseEntity<OrderShowDto> assignDeliveryToOrder(
-            @PathVariable("orderId") Long orderId, @PathVariable("deliveryId") Long deliveryId) {
-        return ResponseEntity
-                .ok(orderService.assignDeliveryToOrder(orderId, deliveryId));
-
-    }
 }
