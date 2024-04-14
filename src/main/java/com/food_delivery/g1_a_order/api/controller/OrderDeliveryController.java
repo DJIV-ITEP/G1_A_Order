@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,8 +26,8 @@ public class OrderDeliveryController {
 
     @PutMapping("delivery/accept")
     public ResponseEntity<OrderShowDto> deliveryAcceptOrder(
-            @RequestParam("orderId") Long orderId,
-            @RequestParam("deliveryId") Long deliveryId) {
+            @RequestBody Long orderId,
+            @RequestBody Long deliveryId) {
 
         return ResponseEntity.ok(orderService.deliveryChangeOrderStatus(
                 orderId,
@@ -39,8 +40,8 @@ public class OrderDeliveryController {
 
     @PutMapping("delivery/delivered")
     public ResponseEntity<OrderShowDto> orderDelivered(
-            @RequestParam("orderId") Long orderId,
-            @RequestParam("deliveryId") Long deliveryId) {
+            @RequestBody Long orderId,
+            @RequestBody Long deliveryId) {
 
         return ResponseEntity.ok(orderService.deliveryChangeOrderStatus(
                 orderId,
