@@ -14,20 +14,19 @@ This repo is only for `Order` micro-service.
 
 - ### Entity Relationship Diagram
 
-    ### Note : The ERD is still in working Process.
+  ### Note : The ERD is still in working Process.
 
-    - #### ERD Image :      
+  - #### ERD Image :
 
-    ![ERD Image](/docs/ERD/OrderService_new-ERD.jpg)
+  ![ERD Image](/docs/ERD/OrderService_new-ERD.jpg)
 
-    - #### ERD drawio file in docs folder:
-        ```docs/ERD/OrderService_new-ERD.drawio```
+  - #### ERD drawio file in docs folder:
 
-    - #### ERD Link to Contribute :
-    
-        [Link to the ERD](https://drive.google.com/file/d/1N1uJ5eSdUZ4qQhMPAPnlYcVdrjakY3bU/view?usp=drive_link "@It's Safe, Don't Worry :)")
+    `docs/ERD/OrderService_new-ERD.drawio`
 
+  - #### ERD Link to Contribute :
 
+    [Link to the ERD](https://drive.google.com/file/d/1N1uJ5eSdUZ4qQhMPAPnlYcVdrjakY3bU/view?usp=drive_link "@It's Safe, Don't Worry :)")
 
 ## File Structure
 
@@ -49,8 +48,8 @@ This repo is only for `Order` micro-service.
 ├── persistent # contains DB logic
 │   │
 │   ├── entity # contains DB entity
-│   │  
-│   ├── enum_ # contains enums 
+│   │
+│   ├── enum_ # contains enums
 │   │
 │   ├── seed # contains DB seeders
 │   │
@@ -63,8 +62,10 @@ This repo is only for `Order` micro-service.
 
 1. Make a file with name `secrets.properties` in dir `src/main/resources/`.
 2. Write the secrets variables to the file.
- > ### EX of the file content:
- - Note: Change the variables based on your configurations.
+   > ### EX of the file content:
+
+- Note: Change the variables based on your configurations.
+
 ```
 # Database
 DB_NAME=order_service
@@ -80,24 +81,52 @@ CUSTOMER_SERVICE_URL=http://localhost:8081
 
 ## After Setting up the Secrets
 
+Run the following command to install dependance
 
-Run the following command to install dependance  
 ```bash
 mvn clean install
 ```
-Run the following command to list dependance  
+
+Run the following command to list dependance
+
 ```bash
  mvn dependency:tree
 ```
+
 Run the following command to start the app
+
 ```bash
 mvn spring-boot:run
 ```
+
 Navigate to the following URL to test the APIs
+
 ```
 http://localhost:8080/webjars/swagger-ui/index.html
 ```
 
+---
+
+# Docker and Docker-Compose :
+
+#### 1. Create `.env` file in root dir
+
+#### 2. Paste the following to the `.env` file:
+
+```
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=123
+POSTGRES_DB=order_service
+```
+
+#### 3. Run the following commands:
+
+```
+- docker-compose build
+- docker-compose up
+```
+
+---
 
 ## Team Members
 
