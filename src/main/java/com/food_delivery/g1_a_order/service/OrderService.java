@@ -192,6 +192,31 @@ public class OrderService extends BaseService {
         return orderMapper.toOrderShowDto(orderRepository.saveAndFlush(order));
     }
 
+
+    // todo: handle get deliveryId from delivery service
+    @Transactional
+    public OrderShowDto deliveryAcceptOrder(Long orderId, Long deliveryId) {
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> handleNotFound("No order found with id: " + orderId));
+
+        if (order.getOrderStatus().getSequence() != OrderStatusEnum.READY_TO_PICKUP.status.getSequence())
+            handleNotAcceptable("Order status is not " + OrderStatusEnum.READY_TO_PICKUP.status.getValue());
+
+        if (order.getOrderItems().isEmpty())
+            handleNotAcceptable("Order should have at least one item");
+
+        if (order.getAddress() == null)
+            handleNotFound("Customer address not found");
+
+        order.setDeliveryId(deliveryId);
+
+        order.setOrderStatus(OrderStatusEnum.ON_THE_WAY.status);
+        order.setUpdatedAt(LocalDateTime.now());
+        // orderRepository.save(order);
+        return orderMapper.toOrderShowDto(orderRepository.saveAndFlush(order));
+    }
+
     @Transactional
     public List<OrderShowDto> getOrdersByCustomer(Long customerId) {
         List<Order> orders = orderRepository.findByCustomerId(customerId)
