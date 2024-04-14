@@ -29,7 +29,18 @@ public class OrderStatusSeeder {
 
             OrderStatus delivered = OrderStatusEnum.DELIVERED.status;
 
-            List<OrderStatus> statuses = List.of(cart, pending, inProgress, readyToPickup, onTheWay, delivered);
+            OrderStatus reject = OrderStatusEnum.REJECT.status;
+
+            OrderStatus canceled = OrderStatusEnum.CANCELED.status;
+
+            List<OrderStatus> statuses = List.of(cart,
+                    pending,
+                    inProgress,
+                    readyToPickup,
+                    onTheWay,
+                    delivered,
+                    reject,
+                    canceled);
 
             repository.saveAll(statuses);
 
