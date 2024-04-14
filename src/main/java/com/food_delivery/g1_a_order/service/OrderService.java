@@ -135,54 +135,31 @@ public class OrderService extends BaseService {
         order.setUpdatedAt(LocalDateTime.now());
         orderRepository.saveAndFlush(order);
 
+        return changeOrderStatus(order, newStatus);
+    }
+
     @Transactional
-    public OrderShowDto restaurantStartPreparingOrder(Long orderId, Long restaurantId) {
+    public OrderShowDto restaurantChangeOrderStatus(
+            Long orderId,
+            Long restaurantId,
+            OrderStatus newStatus,
+            OrderStatus currentStatus) {
 
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> handleNotFound("No order found with id: " + orderId));
 
-        if (order.getOrderStatus().getSequence() != OrderStatusEnum.PENDING.status.getSequence())
-            handleNotAcceptable("Order status is not " + OrderStatusEnum.PENDING.status.getValue());
+        if (OrderStatusEnum.CANCELED.status.getSequence() == newStatus.getSequence() &&
+                order.getOrderStatus().getSequence() == currentStatus.getSequence())
+            return changeOrderStatus(order, newStatus);
+
+        if (order.getOrderStatus().getSequence() != currentStatus.getSequence())
+            handleNotAcceptable("Order status is not " + currentStatus.getValue());
 
         if (order.getRestaurantId() != restaurantId)
             handleNotAcceptable("Order does not belong to restaurant");
 
-        if (order.getOrderItems().isEmpty())
-            handleNotAcceptable("Order should have at least one item");
-
-        if (order.getAddress() == null)
-            handleNotFound("Customer address not found");
-
-        order.setOrderStatus(OrderStatusEnum.IN_PEOGRESS.status);
-        order.setUpdatedAt(LocalDateTime.now());
-        // orderRepository.save(order);
-        return orderMapper.toOrderShowDto(orderRepository.saveAndFlush(order));
+        return changeOrderStatus(order, newStatus);
     }
-
-    @Transactional
-    public OrderShowDto restaurantCompleteOrder(Long orderId, Long restaurantId) {
-
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> handleNotFound("No order found with id: " + orderId));
-
-        if (order.getOrderStatus().getSequence() != OrderStatusEnum.IN_PEOGRESS.status.getSequence())
-            handleNotAcceptable("Order status is not " + OrderStatusEnum.IN_PEOGRESS.status.getValue());
-
-        if (order.getRestaurantId() != restaurantId)
-            handleNotAcceptable("Order does not belong to restaurant");
-
-        if (order.getOrderItems().isEmpty())
-            handleNotAcceptable("Order should have at least one item");
-
-        if (order.getAddress() == null)
-            handleNotFound("Customer address not found");
-
-        order.setOrderStatus(OrderStatusEnum.READY_TO_PICKUP.status);
-        order.setUpdatedAt(LocalDateTime.now());
-        // orderRepository.save(order);
-        return orderMapper.toOrderShowDto(orderRepository.saveAndFlush(order));
-    }
-
 
     // todo: handle get deliveryId from delivery service
     @Transactional
@@ -208,7 +185,6 @@ public class OrderService extends BaseService {
         return orderMapper.toOrderShowDto(orderRepository.saveAndFlush(order));
     }
 
-
     @Transactional
     public OrderShowDto orderDelivered(Long orderId, Long deliveryId) {
 
@@ -221,12 +197,11 @@ public class OrderService extends BaseService {
         if (order.getOrderItems().isEmpty())
             handleNotAcceptable("Order should have at least one item");
 
-            if (order.getDeliveryId() != deliveryId)
+        if (order.getDeliveryId() != deliveryId)
             handleNotAcceptable("Order does not belong to delivery");
 
         if (order.getAddress() == null)
             handleNotFound("Customer address not found");
-
 
         order.setOrderStatus(OrderStatusEnum.DELIVERED.status);
         order.setUpdatedAt(LocalDateTime.now());
