@@ -6,16 +6,15 @@ import com.food_delivery.g1_a_order.api.dto.orderItem.OrderItemsCreateDto;
 import com.food_delivery.g1_a_order.config.mapper.OrderItemMapper;
 import com.food_delivery.g1_a_order.config.mapper.OrderMapper;
 import com.food_delivery.g1_a_order.helper.StatusResponseHelper;
-import com.food_delivery.g1_a_order.persistent.entity.Address;
-import com.food_delivery.g1_a_order.persistent.entity.Order;
-import com.food_delivery.g1_a_order.persistent.entity.OrderItem;
-import com.food_delivery.g1_a_order.persistent.entity.OrderStatus;
+import com.food_delivery.g1_a_order.persistent.entity.*;
 import com.food_delivery.g1_a_order.persistent.enum_.OrderStatusEnum;
+import com.food_delivery.g1_a_order.persistent.enum_.PaymentMethodEnum;
+import com.food_delivery.g1_a_order.persistent.enum_.PaymentStatusEnum;
 import com.food_delivery.g1_a_order.persistent.repository.AddressRepository;
 import com.food_delivery.g1_a_order.persistent.repository.OrderRepository;
 import com.food_delivery.g1_a_order.persistent.repository.OrderStatusRepository;
+import com.food_delivery.g1_a_order.persistent.repository.PaymentRepository;
 import com.food_delivery.g1_a_order.service.base.BaseService;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,13 +33,14 @@ public class OrderService extends BaseService {
 
     @Autowired
     OrderItemMapper orderItemMapper;
-
     private final OrderRepository orderRepository;
     private final OrderStatusRepository orderStatusRepository;
     private final AddressRepository addressRepository;
     private final AddressService addressService;
 
     private final WebClient customerEndpoint;
+    @Autowired
+    private PaymentRepository paymentRepository;
 
     @Transactional
     public List<OrderShowDto> getOrders() {
@@ -74,9 +74,7 @@ public class OrderService extends BaseService {
             order.setOrderItems(orderItem);
         } else
             order.setOrderItems(dtoItems);
-
         dtoItems.forEach(Item -> Item.setOrder(order));
-
         order.setUpdatedAt(LocalDateTime.now());
         return orderRepository.saveAndFlush(order);
     }
@@ -99,28 +97,38 @@ public class OrderService extends BaseService {
 
         order.setOrderStatus(status);
         order.setUpdatedAt(LocalDateTime.now());
+        order = changePaymentStausBasedOrderStatusIfCash(order);
 
         return orderMapper
                 .toOrderShowDto(orderRepository.saveAndFlush(order));
 
     }
 
+    private Order changePaymentStausBasedOrderStatusIfCash(Order order) {
+        if (order.getOrderStatus().getSequence() == OrderStatusEnum.DELIVERED.status.getSequence()) {
+            if (order.getPayment().getPaymentMethod().getRoute().equals(PaymentMethodEnum.COD.paymentMethod.getRoute())) {
+                Payment orderPayment = order.getPayment();
+                orderPayment.setPaymentStatus(PaymentStatusEnum.PAID.status);
+                paymentRepository.save(orderPayment);
+            }
+        }
+
+        return order;
+
+    }
+
+
     // todo: handle get Restaurant address from restaurant service
     @Transactional
-    public OrderShowDto customerChangeOrderStatus(
+    public OrderShowDto customerSetOrderAddresses(
             Long orderId,
-            Long customerAddressId,
-            OrderStatus newStatus,
-            OrderStatus currentStatus) {
+            Long customerAddressId) {
 
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> handleNotFound("No order found with id: " + orderId));
 
-        if (order.getOrderStatus().getSequence() != currentStatus.getSequence())
-            handleNotAcceptable("Order status is not " + currentStatus.getValue());
-
         if (order.getCustomerId() == null || order.getRestaurantId() == null)
-            handleNotAcceptable("Order is incomplete");
+            throwHandleNotAcceptable("Order is incomplete");
 
         if (customerAddressId == null || !addressService.addressExists(customerAddressId))
             handleNotFound("Customer address not found");
@@ -129,15 +137,13 @@ public class OrderService extends BaseService {
         // handleNotFound("Restaurant address not found");
 
         Address address = addressRepository.findById(customerAddressId).get();
-
         if (address.getCustomerId() != order.getCustomerId())
-            handleNotAcceptable("Address does not belong to customer");
+            throwHandleNotAcceptable("Address does not belong to customer");
 
         order.setAddress(address);
         order.setUpdatedAt(LocalDateTime.now());
         Order savedOrder = orderRepository.saveAndFlush(order);
-
-        return changeOrderStatus(savedOrder, newStatus);
+        return orderMapper.toOrderShowDto(savedOrder);
     }
 
     @Transactional
@@ -166,9 +172,9 @@ public class OrderService extends BaseService {
     // todo: handle get deliveryId from delivery service
     @Transactional
     public OrderShowDto deliveryChangeOrderStatus(Long orderId,
-            Long deliveryId,
-            OrderStatus newStatus,
-            OrderStatus currentStatus) {
+                                                  Long deliveryId,
+                                                  OrderStatus newStatus,
+                                                  OrderStatus currentStatus) {
 
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> handleNotFound("No order found with id: " + orderId));

@@ -7,6 +7,7 @@ import com.food_delivery.g1_a_order.config.mapper.PaymentMapper;
 import com.food_delivery.g1_a_order.persistent.entity.Order;
 import com.food_delivery.g1_a_order.persistent.entity.Payment;
 import com.food_delivery.g1_a_order.persistent.entity.PaymentMethod;
+import com.food_delivery.g1_a_order.persistent.enum_.OrderStatusEnum;
 import com.food_delivery.g1_a_order.persistent.enum_.PaymentMethodEnum;
 import com.food_delivery.g1_a_order.persistent.enum_.PaymentStatusEnum;
 import com.food_delivery.g1_a_order.persistent.repository.OrderItemRepository;
@@ -36,8 +37,11 @@ public class OrderPaymentService extends BaseService {
     @Transactional
     public OrderShowDto processCashPayment(PaymentCreateDto paymentCreateDto) {
         Long orderId = paymentCreateDto.orderId();
-        PaymentMethod paymentMethod =PaymentMethodEnum.COD.paymentMethod;
+        PaymentMethod paymentMethod = PaymentMethodEnum.COD.paymentMethod;
+
         Order order = orderRepository.findById(orderId).orElseThrow(() -> handleNotFound("Order not found"));
+        if (order.getOrderStatus().getSequence() != OrderStatusEnum.CART.status.getSequence())
+            throw handleNotAcceptable("Order status is not CART");
         double paymentAmount = order.getTotalPrice();
         // Validate input parameters
         return this.confirmPayment(order, paymentMethod, paymentAmount);
@@ -57,6 +61,8 @@ public class OrderPaymentService extends BaseService {
         Payment savedPayment = paymentRepository.save(payment);
         // Set payment object in Order entity
         order.setPayment(savedPayment);
+        // Set Order status to pinding
+        order.setOrderStatus(OrderStatusEnum.PENDING.status);
         // Save Order object to database
         Order savedOrder = orderRepository.save(order);
         // Return Payment object as response
