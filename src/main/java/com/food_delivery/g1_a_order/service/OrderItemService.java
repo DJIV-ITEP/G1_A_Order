@@ -64,6 +64,9 @@ public class OrderItemService extends BaseService {
     @Transactional
     public OrderShowDto addOrderItemToOrder(Long customerId, Long restaurantId, List<OrderItemsCreateDto> itemDto) {
 
+        if (null == restaurantId || null == customerId || null == itemDto)
+            handleNotAcceptable("customer id, restaurant id or item is missing");
+
         Order order = orderRepository
                 .findFirstByCustomerIdAndOrderStatusOrderByCreatedAtAsc(customerId, OrderStatusEnum.CART.status)
                 .orElseGet(() -> {
