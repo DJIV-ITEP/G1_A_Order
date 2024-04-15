@@ -105,7 +105,8 @@ public class OrderService extends BaseService {
 
     private Order changePaymentStausBasedOrderStatusIfCash(Order order) {
         if (order.getOrderStatus().getSequence() == OrderStatusEnum.DELIVERED.status.getSequence()) {
-            if (order.getPayment().getPaymentMethod().getRoute().equals(PaymentMethodEnum.COD.paymentMethod.getRoute())) {
+            if (order.getPayment().getPaymentMethod().getRoute()
+                    .equals(PaymentMethodEnum.COD.paymentMethod.getRoute())) {
                 Payment orderPayment = order.getPayment();
                 orderPayment.setPaymentStatus(PaymentStatusEnum.PAID.status);
                 paymentRepository.save(orderPayment);
@@ -115,7 +116,6 @@ public class OrderService extends BaseService {
         return order;
 
     }
-
 
     // todo: handle get Restaurant address from restaurant service
     @Transactional
@@ -170,10 +170,11 @@ public class OrderService extends BaseService {
 
     // todo: handle get deliveryId from delivery service
     @Transactional
-    public OrderShowDto deliveryChangeOrderStatus(Long orderId,
-                                                  Long deliveryId,
-                                                  OrderStatus newStatus,
-                                                  OrderStatus currentStatus) {
+    public OrderShowDto deliveryChangeOrderStatus(
+            Long orderId,
+            Long deliveryId,
+            OrderStatus newStatus,
+            OrderStatus currentStatus) {
 
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> handleNotFound("No order found with id: " + orderId));
@@ -188,7 +189,6 @@ public class OrderService extends BaseService {
 
         return changeOrderStatus(savedOrder, newStatus);
     }
-
 
     @Transactional
     public List<OrderShowDto> getOrdersByCustomer(Long customerId) {
