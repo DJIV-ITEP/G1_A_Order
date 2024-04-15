@@ -3,7 +3,6 @@ package com.food_delivery.g1_a_order.api.controller;
 import com.food_delivery.g1_a_order.api.dto.order.OrderCreateDto;
 import com.food_delivery.g1_a_order.api.dto.order.OrderShowDto;
 import com.food_delivery.g1_a_order.api.dto.response.ErrResponse;
-import com.food_delivery.g1_a_order.persistent.enum_.OrderStatusEnum;
 import com.food_delivery.g1_a_order.service.OrderItemService;
 import com.food_delivery.g1_a_order.service.OrderService;
 
