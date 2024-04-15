@@ -41,18 +41,18 @@ public class AddressService extends BaseService {
     }
     public List<AddressShowDto> getAddressesByCustomerId(Long customerId) {
         List<Address> addresses = addressRepository.findByCustomerId(customerId)
-                .orElseThrow(() -> handleServerError("No addresses found for this customer"));
+                .orElseThrow(() -> handleNotFound("No addresses found for this customer"));
         return addressMapper.toAddressShowDto(addresses);
     }
     public AddressShowDto getFirstAddressByCustomerIdAndLocation(Long customerId, Double latitude, Double longitude) {
         Address address = addressRepository.findFirstByCustomerIdAndLatitudeAndLongitude(customerId, latitude, longitude)
-                .orElseThrow(() -> handleServerError("No address found for this customer at the given location"));
+                .orElseThrow(() -> handleNotFound("No address found for this customer at the given location"));
         return addressMapper.toAddressShowDto(address);
     }
 
     public void deleteAddressesByCustomerId(Long customerId) {
         List<Address> addresses = addressRepository.findByCustomerId(customerId)
-                .orElseThrow(() -> handleServerError("No addresses found for this customer"));
+                .orElseThrow(() -> handleNotFound("No addresses found for this customer"));
         addressRepository.deleteAll(addresses);
     }
     
