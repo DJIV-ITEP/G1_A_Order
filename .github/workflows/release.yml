@@ -49,6 +49,11 @@ jobs:
       - name: Generate Changelog
         run: auto-changelog --output CHANGELOG.md --starting-version ${{ steps.create_version_tag.outputs.new_tag }}
 
+      - name: Get Changelog
+        id: changelog
+        run: |
+          echo "::set-output name=content::$(cat CHANGELOG.md)"
+
       - name: Create Release
         uses: actions/create-release@v1
         env:
@@ -59,18 +64,12 @@ jobs:
           body: |
             *Changes in this release:*
             ```markdown
-            $(cat CHANGELOG.md)
+            ${{ steps.changelog.outputs.content }}
             ```
           draft: false
           prerelease: false
 
-      - run: |
-          upload_url=$(curl -sL https://api.github.com/repos/actions/checkout/releases/latest | jq -r '.upload_url')
-          echo UPLOAD_URL=$upload_url >> $GITHUB_ENV
-        shell: bash
-
       - name: Upload Release JAR
         uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
         with:
           files: target/g1_a_order-1.jar
