@@ -52,8 +52,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.calculate_version.outputs.VERSION }}
-          release_name: Release ${{ steps.calculate_version.outputs.VERSION }}
+          tag_name: ${{ steps.create_version_tag.outputs.new_tag }}
+          release_name: ${{ steps.create_version_tag.outputs.new_tag }}
           body: |
             *Changes in this release:*
             ```markdown
