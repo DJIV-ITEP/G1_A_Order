@@ -5,10 +5,6 @@ on:
     workflows: ["Build and Test"]
     types:
       - completed
-  push:
-    branches: [dev] # Trigger on the 'dev' branch
-  pull_request:
-    branches: [dev] # Trigger on PRs to the 'dev' branch
 
 jobs:
   deploy:
