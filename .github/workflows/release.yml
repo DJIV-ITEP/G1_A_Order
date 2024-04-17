@@ -25,29 +25,6 @@ jobs:
       - name: Build with Maven
         run: mvn clean install
 
-      - name: Install semver CLI tool (if needed)
-        if: ${{ !steps.semver_check.outputs.semver_installed }}
-        run: npm install -g semver
-
-      - name: Check semver installation
-        id: semver_check
-        run: echo "::set-output name=semver_installed::$(command -v semver)"
-
-      - name: Calculate Release Version
-        id: calculate_version
-        run: |
-          # Get the latest tag version
-          latest_tag=$(git describe --tags --abbrev=0)
-          # Extract major, minor and patch versions
-          major_version=$(echo $latest_tag | cut -d. -f1)
-          minor_version=$(echo $latest_tag | cut -d. -f2)
-          patch_version=$(echo $latest_tag | cut -d. -f3)
-          # Increment the minor version
-          new_minor_version=$((minor_version+1))
-          # Construct the new version
-          new_version="${major_version}.${new_minor_version}.${patch_version}"
-          echo "::set-output name=VERSION::$new_version"
-
       - name: Install auto-changelog (if needed)
         if: ${{ !steps.auto_changelog_check.outputs.auto_changelog_installed }}
         run: npm install -g auto-changelog
@@ -58,6 +35,14 @@ jobs:
 
       - name: Generate Changelog
         run: auto-changelog --output CHANGELOG.md --package.json package.json
+
+      - name: Create Release Tag
+        id: create_version_tag
+        uses: anothrNick/github-tag-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WITH_V: true
+          DEFAULT_BUMP: minor
 
       - name: Create Release
         uses: actions/create-release@v1
