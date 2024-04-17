@@ -49,6 +49,8 @@ kubectl create namespace <NAMESPACE_NAME>
 kubectl apply -f <FILE_NAME>.yaml -n <NAMESPACE_NAME>
 ```
 
+NOTE: Also change the namespace in metadata tag inside the .yaml files as the name of namespace you created.
+
 ### After doing this, your k8s should be working fine.
 
 If you want to make sure that everything is working fine, do the following:
