@@ -1,7 +1,10 @@
 name: Create Release
 
 on:
-  pull_request_target:
+  push:
+    branches:
+      - CI/CD-auto-releasing
+  pull_request:
     types: [closed]
     branches:
       - dev
