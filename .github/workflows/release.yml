@@ -9,6 +9,9 @@ on:
 #     branches:
 #       - dev
 
+permissions:
+  contents: write
+
 jobs:
   release:
     runs-on: ubuntu-latest
