@@ -14,8 +14,7 @@ jobs:
       postgres:
         image: postgres:16.2
         env:
-          # POSTGRES_USER: ${{ secrets.DB_USER }}
-          POSTGRES_USER: okay
+          POSTGRES_USER: ${{ secrets.DB_USER }}
           POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
           POSTGRES_DB: ${{ secrets.DB_NAME }}
         ports:
@@ -34,7 +33,7 @@ jobs:
       - name: Create application.properties
         run: |
           touch src/main/resources/secrets.properties
-          echo DB_USER=${{ secrets.DB_USER }} >> src/main/resources/secrets.properties
+          echo DB_USER=ok >> src/main/resources/secrets.properties
           echo DB_PASS=${{ secrets.DB_PASSWORD }} >> src/main/resources/secrets.properties
           echo DB_NAME=${{ secrets.DB_NAME }} >> src/main/resources/secrets.properties
           echo DB_PORT=${{ secrets.DB_PORT }} >> src/main/resources/secrets.properties
