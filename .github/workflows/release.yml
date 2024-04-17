@@ -25,6 +25,14 @@ jobs:
       - name: Build with Maven
         run: mvn clean install
 
+      - name: Create Release Tag
+        id: create_version_tag
+        uses: anothrNick/github-tag-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WITH_V: true
+          DEFAULT_BUMP: minor
+
       - name: Install auto-changelog (if needed)
         if: ${{ !steps.auto_changelog_check.outputs.auto_changelog_installed }}
         run: npm install -g auto-changelog
@@ -34,15 +42,7 @@ jobs:
         run: echo "::set-output name=auto_changelog_installed::$(command -v auto-changelog)"
 
       - name: Generate Changelog
-        run: auto-changelog --output CHANGELOG.md -p # -p flag for package.json
-
-      - name: Create Release Tag
-        id: create_version_tag
-        uses: anothrNick/github-tag-action@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          WITH_V: true
-          DEFAULT_BUMP: minor
+        run: auto-changelog --output CHANGELOG.md --starting-version ${{ steps.create_version_tag.outputs.new_tag }}
 
       - name: Create Release
         uses: actions/create-release@v1
