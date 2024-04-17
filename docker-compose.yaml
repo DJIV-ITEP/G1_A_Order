@@ -13,7 +13,7 @@ services:
     image: amjadfqs/g1_a_order_service
     build:
       context: .
-      dockerfile: Dockerfile-springboot
+      dockerfile: Dockerfile
     ports:
       - 8080:8080
     depends_on:
