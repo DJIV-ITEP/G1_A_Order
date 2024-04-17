@@ -4,15 +4,15 @@ on:
   push:
     branches:
       - CI/CD-auto-releasing
-  pull_request:
-    types: [closed]
-    branches:
-      - dev
+#   pull_request:
+#     types: [closed]
+#     branches:
+#       - dev
 
 jobs:
   release:
     runs-on: ubuntu-latest
-    if: ${{ github.event.pull_request.merged }}
+    # if: ${{ github.event.pull_request.merged }}
     steps:
       - uses: actions/checkout@v3
 
