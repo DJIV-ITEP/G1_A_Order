@@ -48,6 +48,10 @@ public class OrderPaymentService extends BaseService {
     }
 
     private OrderShowDto confirmPayment(Order order, PaymentMethod paymentMethod, Double paymentAmount) {
+
+        if (order.getAddress() == null)
+            handleNotFound("Customer address not found");
+
         // Create new Payment object
         Payment payment = Payment.builder()
                 .customerId(order.getCustomerId())
