@@ -48,11 +48,12 @@ jobs:
         if: ${{ github.event_name == 'pull_request' || github.event_name == 'push' && github.ref == 'refs/heads/dev' }}
         # run: mvn -B package --file pom.xml
         run: mvn clean install
-      - name: Archive production artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: g1_a_order-1.jar
-          path: target/g1_a_order-1.jar
+
+      # - name: Archive production artifacts
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: g1_a_order-1.jar
+      #     path: target/g1_a_order-1.jar
 
       - name: Run tests
         if: ${{ github.event_name == 'pull_request' || github.event_name == 'push' && github.ref == 'refs/heads/dev' }}
