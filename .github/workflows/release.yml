@@ -1,0 +1,74 @@
+name: Create Release
+
+on:
+  pull_request_target:
+    types: [closed]
+    branches:
+      - dev
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.pull_request.merged }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: "17"
+          distribution: "temurin"
+
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml
+
+      - name: Install semver CLI tool (if needed)
+        if: ${{ !steps.semver_check.outputs.semver_installed }}
+        run: npm install -g semver
+
+      - name: Check semver installation
+        id: semver_check
+        run: echo "::set-output name=semver_installed::$(command -v semver)"
+
+      - name: Calculate Release Version
+        id: calculate_version
+        run: |
+          # YOUR VERSION CALCULATION LOGIC HERE
+          # Example: Get the latest tag version and increment 
+          latest_tag=$(git describe --tags --abbrev=0)
+          new_version=$(semver $latest_tag -i minor)  
+          echo "::set-output name=VERSION::$new_version"
+
+      - name: Install auto-changelog (if needed)
+        if: ${{ !steps.auto_changelog_check.outputs.auto_changelog_installed }}
+        run: npm install -g auto-changelog
+
+      - name: Check auto-changelog installation
+        id: auto_changelog_check
+        run: echo "::set-output name=auto_changelog_installed::$(command -v auto-changelog)"
+
+      - name: Generate Changelog
+        run: auto-changelog --output CHANGELOG.md --package.json package.json
+
+      - name: Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.calculate_version.outputs.VERSION }}
+          release_name: Release ${{ steps.calculate_version.outputs.VERSION }}
+          body: |
+            *Changes in this release:*
+            ```markdown
+            <%= CHANGELOG %>
+            ```
+          draft: false
+          prerelease: false
+
+      - name: Upload Release JAR
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./target/g1_a_order-1.jar
+          asset_name: g1_a_order-1.jar
+          asset_content_type: application/java-archive
