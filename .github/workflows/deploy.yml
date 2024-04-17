@@ -1,6 +1,10 @@
 name: Deploy Image
 
 on:
+  workflow_run:
+    workflows: ["Build and Test"]
+    types:
+      - completed
   push:
     branches: [dev] # Trigger on the 'dev' branch
   pull_request:
