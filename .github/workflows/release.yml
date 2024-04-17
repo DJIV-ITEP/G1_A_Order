@@ -14,16 +14,16 @@ jobs:
     runs-on: ubuntu-latest
     # if: ${{ github.event.pull_request.merged }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up JDK
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
-          java-version: "17"
+          java-version: 17
           distribution: "temurin"
 
       - name: Build with Maven
-        run: mvn -B package --file pom.xml
+        run: mvn clean install
 
       - name: Install semver CLI tool (if needed)
         if: ${{ !steps.semver_check.outputs.semver_installed }}
