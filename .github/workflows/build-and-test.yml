@@ -33,7 +33,7 @@ jobs:
       - name: Create application.properties
         run: |
           touch src/main/resources/secrets.properties
-          echo DB_USER=ok >> src/main/resources/secrets.properties
+          echo DB_USER=${{ secrets.DB_USER }} >> src/main/resources/secrets.properties
           echo DB_PASS=${{ secrets.DB_PASSWORD }} >> src/main/resources/secrets.properties
           echo DB_NAME=${{ secrets.DB_NAME }} >> src/main/resources/secrets.properties
           echo DB_PORT=${{ secrets.DB_PORT }} >> src/main/resources/secrets.properties
@@ -47,7 +47,7 @@ jobs:
       - name: Build with Maven
         if: ${{ github.event_name == 'pull_request' || github.event_name == 'push' && github.ref == 'refs/heads/dev' }}
         # run: mvn -B package --file pom.xml
-        run: mvn spring-boot:run
+        run: mvn clean install
 
       # - name: Archive production artifacts
       #   uses: actions/upload-artifact@v4
