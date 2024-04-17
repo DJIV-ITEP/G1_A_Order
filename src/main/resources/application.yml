@@ -24,3 +24,8 @@ customer:
   service:
     url: ${CUSTOMER_SERVICE_URL}
 
+mail:
+  token: ${TOKEN}
+  domain: ${DOMAIN}
+  sender: ${SENDER}
+
