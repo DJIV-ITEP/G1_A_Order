@@ -62,12 +62,15 @@ jobs:
           draft: false
           prerelease: false
 
+      - run: |
+          upload_url=$(curl -sL https://api.github.com/repos/actions/checkout/releases/latest | jq -r '.upload_url')
+          echo UPLOAD_URL=$upload_url >> $GITHUB_ENV
+        shell: bash
+
       - name: Upload Release JAR
         uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ github.event.release.upload_url }}
+          upload_url: ${{ env.UPLOAD_URL }}
           asset_path: ./target/g1_a_order-1.jar
           asset_name: g1_a_order-1.jar
           asset_content_type: application/java-archive
