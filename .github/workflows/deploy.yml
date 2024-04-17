@@ -1,18 +1,14 @@
 name: Deploy Image
 
 on:
-  push:
-    branches: [dev] # Trigger on the 'dev' branch
-  pull_request:
-    branches: [dev] # Trigger on PRs to the 'dev' branch
   workflow_run:
-    workflows: [Build and Test]
+    workflows: ["Build and Test"]
     types: [completed]
 
 jobs:
   deploy:
+	needs: build-and-test
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 17
