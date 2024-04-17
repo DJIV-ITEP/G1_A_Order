@@ -34,7 +34,7 @@ jobs:
         run: echo "::set-output name=auto_changelog_installed::$(command -v auto-changelog)"
 
       - name: Generate Changelog
-        run: auto-changelog --output CHANGELOG.md --package.json package.json
+        run: auto-changelog --output CHANGELOG.md -p # -p flag for package.json
 
       - name: Create Release Tag
         id: create_version_tag
