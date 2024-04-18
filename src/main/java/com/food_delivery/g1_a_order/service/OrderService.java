@@ -38,7 +38,7 @@ public class OrderService extends BaseService {
     private final AddressRepository addressRepository;
     private final AddressService addressService;
     private final EmailService emailService;
-
+    private CustomerService customerService;
     private final WebClient customerEndpoint;
 
     @Autowired
@@ -102,10 +102,10 @@ public class OrderService extends BaseService {
         order.setUpdatedAt(LocalDateTime.now());
 
         // ! send email to customer - don't delete it
-        // emailService.sendSimpleMessage(
-        //         "ala0alsanea@gmail.com",
-        //         "Order with id #" + order.getId() + " Status",
-        //         "Your order is " + status.getValue()).subscribe();
+        emailService.sendSimpleMessage(
+                customerService.getEmail(order.getCustomerId()),
+                "Order with id #" + order.getId() + " Status",
+                "Your order is " + status.getValue()).subscribe();
 
         order = changePaymentStausBasedOrderStatusIfCash(order);
 
@@ -114,7 +114,6 @@ public class OrderService extends BaseService {
 
     }
 
-    
     private Order changePaymentStausBasedOrderStatusIfCash(Order order) {
         if (order.getOrderStatus().getSequence() == OrderStatusEnum.DELIVERED.status.getSequence()) {
             if (order.getPayment().getPaymentMethod().getRoute()
