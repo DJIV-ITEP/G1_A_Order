@@ -33,15 +33,20 @@ public class OrderPaymentService extends BaseService {
     private PaymentMethodRepository paymentMethodRepository;
     @Autowired
     private OrderItemRepository orderItemRepository;
+    @Autowired
+    private OrderService orderService;
 
     @Transactional
     public OrderShowDto processCashPayment(PaymentCreateDto paymentCreateDto) {
         Long orderId = paymentCreateDto.orderId();
         PaymentMethod paymentMethod = PaymentMethodEnum.COD.paymentMethod;
 
-        Order order = orderRepository.findById(orderId).orElseThrow(() -> handleNotFound("Order not found"));
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> handleNotFound("Order not found"));
+
         if (order.getOrderStatus().getSequence() != OrderStatusEnum.CART.status.getSequence())
             throw handleNotAcceptable("Order status is not CART");
+
         double paymentAmount = order.getTotalPrice();
         // Validate input parameters
         return this.confirmPayment(order, paymentMethod, paymentAmount);
@@ -65,11 +70,10 @@ public class OrderPaymentService extends BaseService {
         Payment savedPayment = paymentRepository.save(payment);
         // Set payment object in Order entity
         order.setPayment(savedPayment);
-        // Set Order status to pinding
-        order.setOrderStatus(OrderStatusEnum.PENDING.status);
         // Save Order object to database
         Order savedOrder = orderRepository.save(order);
-        // Return Payment object as response
-        return orderMapper.toOrderShowDto(savedOrder);
+        
+        // Set Order status to pinding and Return Payment object as response
+        return orderService.changeOrderStatus(savedOrder, OrderStatusEnum.PENDING.status);
     }
 }
