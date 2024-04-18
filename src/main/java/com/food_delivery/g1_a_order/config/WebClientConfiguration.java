@@ -19,4 +19,8 @@ public class WebClientConfiguration {
                 .build();
     }
 
+    // @Bean
+    // public WebClient webClient() {
+    //     return WebClient.create();
+    // }
 }
