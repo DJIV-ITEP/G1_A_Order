@@ -37,7 +37,6 @@ jobs:
       - name: Update spring version
         run: |
           mvn versions:set -DnewVersion=${{ steps.create_version_tag.outputs.new_tag }} -DgenerateBackupPoms=false
-          mvn versions:commit
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -55,22 +54,7 @@ jobs:
         run: |
           echo "::set-output name=content::$(cat CHANGELOG.md)"
 
-      # - name: Create Release
-      #   uses: actions/create-release@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     tag_name: v${{ steps.create_version_tag.outputs.new_tag }}
-      #     release_name: v${{ steps.create_version_tag.outputs.new_tag }}
-      #     body: |
-      #       *Changes in this release:*
-      #       ```markdown
-      #       ${{ steps.changelog.outputs.content }}
-      #       ```
-      #     draft: false
-      #     prerelease: false
-
-      - name: Upload Release JAR
+      - name: Create Release and Upload Release JAR
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.create_version_tag.outputs.new_tag }}
