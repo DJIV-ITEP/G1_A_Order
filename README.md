@@ -130,8 +130,8 @@ POSTGRES_DB=order_service
 
 ## Team Members
 
-1. [Adel Subait](https://github.com/ahdel) - `Project Owner`
+1. [Ala Al-Sanea](https://github.com/Ala-Alsanea) - `Project Owner`
 2. [Adam Almohammedi](https://github.com/Eng-Adam-Almohammedi) - `Scrum Master`
-3. [Waledd Thamer](https://github.com/waleedthamer)
-4. [Ala Al-Sanea](https://github.com/Ala-Alsanea)
-5. [Amjad Al-Aghbari](https://github.com/amjadfqs)
+3. [Amjad Al-Aghbari](https://github.com/amjadfqs)
+4. [Adel Subait](https://github.com/ahdel)
+5. [Waledd Thamer](https://github.com/waleedthamer)

@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.time.LocalDateTime;
 
 import com.food_delivery.g1_a_order.persistent.entity.base.BaseEntity;
 
