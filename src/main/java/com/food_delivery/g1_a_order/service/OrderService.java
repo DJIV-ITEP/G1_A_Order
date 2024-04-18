@@ -24,8 +24,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class OrderService extends BaseService {
 
     @Autowired
@@ -33,12 +33,13 @@ public class OrderService extends BaseService {
 
     @Autowired
     OrderItemMapper orderItemMapper;
+
     private final OrderRepository orderRepository;
     private final OrderStatusRepository orderStatusRepository;
     private final AddressRepository addressRepository;
     private final AddressService addressService;
     private final EmailService emailService;
-    private CustomerService customerService;
+    private final CustomerService customerService;
     private final WebClient customerEndpoint;
 
     @Autowired

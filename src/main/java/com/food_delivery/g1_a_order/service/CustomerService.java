@@ -16,8 +16,7 @@ public class CustomerService {
     // todo: handle fetching email from customer service
     public String getEmail(Long customerId) {
 
-        throw new UnsupportedOperationException("Unimplemented method 'getEmail'");
-
+        return "";
     }
 
 }
