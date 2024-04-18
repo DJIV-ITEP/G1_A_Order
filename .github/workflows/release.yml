@@ -33,13 +33,18 @@ jobs:
           WITH_V: true
           DEFAULT_BUMP: minor
 
-      - name: Install auto-changelog (if needed)
-        if: ${{ !steps.auto_changelog_check.outputs.auto_changelog_installed }}
-        run: npm install -g auto-changelog
+      - name: Update spring version
+        run: |
+          mvn versions:set -DnewVersion=${{ steps.create_version_tag.outputs.new_tag }} -DgenerateBackupPoms=false
+          mvn versions:commit
 
-      - name: Check auto-changelog installation
-        id: auto_changelog_check
-        run: echo "::set-output name=auto_changelog_installed::$(command -v auto-changelog)"
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16"
+
+      - name: Install auto-changelog
+        run: npm install -g auto-changelog
 
       - name: Generate Changelog
         run: auto-changelog --output CHANGELOG.md --starting-version ${{ steps.create_version_tag.outputs.new_tag }}
@@ -54,8 +59,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.create_version_tag.outputs.new_tag }}
-          release_name: ${{ steps.create_version_tag.outputs.new_tag }}
+          tag_name: v${{ steps.create_version_tag.outputs.new_tag }}
+          release_name: v${{ steps.create_version_tag.outputs.new_tag }}
           body: |
             *Changes in this release:*
             ```markdown
