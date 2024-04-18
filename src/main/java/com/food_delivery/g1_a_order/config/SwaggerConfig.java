@@ -6,7 +6,6 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.info.BuildProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,7 +18,7 @@ public class SwaggerConfig {
 
         @Bean
         public OpenAPI customOpenAPI() {
-                final String securitySchemeName = "bearerAuth";
+                // final String securitySchemeName = "bearerAuth";
                 return new OpenAPI()
                                 .info(new Info().title("Order Service")
                                                 .description("This is order service use for managing order of food delivery application.")
