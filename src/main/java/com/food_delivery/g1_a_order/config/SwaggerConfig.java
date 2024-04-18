@@ -4,11 +4,18 @@ import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.info.BuildProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class SwaggerConfig {
+
+        @Autowired
+        BuildProperties buildProperties;
 
         @Bean
         public OpenAPI customOpenAPI() {
@@ -16,7 +23,7 @@ public class SwaggerConfig {
                 return new OpenAPI()
                                 .info(new Info().title("Order Service")
                                                 .description("This is order service use for managing order of food delivery application.")
-                                                .version("v1.5.0")
+                                                .version(buildProperties.getVersion())
                                                 .license(new License().name("Apache 2.0").url("http://springdoc.org")))
 
                                 .externalDocs(new ExternalDocumentation()
