@@ -55,13 +55,26 @@ jobs:
         run: |
           echo "::set-output name=content::$(cat CHANGELOG.md)"
 
-      - name: Create Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Create Release
+      #   uses: actions/create-release@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     tag_name: v${{ steps.create_version_tag.outputs.new_tag }}
+      #     release_name: v${{ steps.create_version_tag.outputs.new_tag }}
+      #     body: |
+      #       *Changes in this release:*
+      #       ```markdown
+      #       ${{ steps.changelog.outputs.content }}
+      #       ```
+      #     draft: false
+      #     prerelease: false
+
+      - name: Upload Release JAR
+        uses: softprops/action-gh-release@v1
         with:
-          tag_name: v${{ steps.create_version_tag.outputs.new_tag }}
-          release_name: v${{ steps.create_version_tag.outputs.new_tag }}
+          tag_name: ${{ steps.create_version_tag.outputs.new_tag }}
+          name: v${{ steps.create_version_tag.outputs.new_tag }}
           body: |
             *Changes in this release:*
             ```markdown
@@ -69,9 +82,4 @@ jobs:
             ```
           draft: false
           prerelease: false
-
-      - name: Upload Release JAR
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ steps.create_version_tag.outputs.new_tag }}
           files: ./target/g1_a_order-${{ steps.create_version_tag.outputs.new_tag }}.jar
