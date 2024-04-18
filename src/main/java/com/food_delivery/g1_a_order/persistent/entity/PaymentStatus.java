@@ -3,7 +3,6 @@ package com.food_delivery.g1_a_order.persistent.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @AllArgsConstructor

@@ -6,7 +6,6 @@ import com.food_delivery.g1_a_order.api.dto.orderItem.OrderItemsCreateDto;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import lombok.NonNull;
 
 public record OrderCreateDto(
                 Long customerId,
