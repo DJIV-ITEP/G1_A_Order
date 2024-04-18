@@ -9,14 +9,12 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.context.ActiveProfiles;
 
 import com.food_delivery.g1_a_order.persistent.entity.Order;
 import com.food_delivery.g1_a_order.persistent.entity.OrderItem;
 import com.food_delivery.g1_a_order.persistent.entity.OrderStatus;
 import com.food_delivery.g1_a_order.persistent.enum_.OrderStatusEnum;
 
-import lombok.AllArgsConstructor;
 
 // @AllArgsConstructor
 @DataJpaTest

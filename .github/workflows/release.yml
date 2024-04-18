@@ -22,21 +22,32 @@ jobs:
           java-version: 17
           distribution: "temurin"
 
-      - name: Build with Maven
-        run: mvn clean install
-
       - name: Create Release Tag
         id: create_version_tag
         uses: anothrNick/github-tag-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          WITH_V: true
+          WITH_V: false
           DEFAULT_BUMP: minor
 
       - name: Update spring version
         run: |
           mvn versions:set -DnewVersion=${{ steps.create_version_tag.outputs.new_tag }} -DgenerateBackupPoms=false
-          mvn versions:commit
+
+      - name: Commit changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git commit -am "Update version to ${{ steps.create_version_tag.outputs.new_tag }}"
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
+
+      - name: Build with Maven
+        run: mvn clean install
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -54,13 +65,11 @@ jobs:
         run: |
           echo "::set-output name=content::$(cat CHANGELOG.md)"
 
-      - name: Create Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create Release and Upload Release JAR
+        uses: softprops/action-gh-release@v1
         with:
-          tag_name: v${{ steps.create_version_tag.outputs.new_tag }}
-          release_name: v${{ steps.create_version_tag.outputs.new_tag }}
+          tag_name: ${{ steps.create_version_tag.outputs.new_tag }}
+          name: v${{ steps.create_version_tag.outputs.new_tag }}
           body: |
             *Changes in this release:*
             ```markdown
@@ -68,9 +77,4 @@ jobs:
             ```
           draft: false
           prerelease: false
-
-      - name: Upload Release JAR
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ steps.create_version_tag.outputs.new_tag }}
           files: ./target/g1_a_order-${{ steps.create_version_tag.outputs.new_tag }}.jar
