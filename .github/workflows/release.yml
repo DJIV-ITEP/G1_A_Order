@@ -73,4 +73,4 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.create_version_tag.outputs.new_tag }}
-          files: ./target/g1_a_order-1.jar
+          files: ./target/g1_a_order-${{ steps.create_version_tag.outputs.new_tag }}.jar

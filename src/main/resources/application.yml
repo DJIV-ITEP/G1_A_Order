@@ -20,10 +20,6 @@ server:
   error:
     include-message: ALWAYS
 
-info:
-  app:
-    version: "@project.version@"
-
 customer:
   service:
     url: ${CUSTOMER_SERVICE_URL}
