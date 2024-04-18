@@ -23,9 +23,6 @@ jobs:
           java-version: 17
           distribution: "temurin"
 
-      - name: Build with Maven
-        run: mvn clean install
-
       - name: Create Release Tag
         id: create_version_tag
         uses: anothrNick/github-tag-action@v1
@@ -37,6 +34,9 @@ jobs:
       - name: Update spring version
         run: |
           mvn versions:set -DnewVersion=${{ steps.create_version_tag.outputs.new_tag }} -DgenerateBackupPoms=false
+
+      - name: Build with Maven
+        run: mvn clean install
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
