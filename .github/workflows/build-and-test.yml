@@ -30,7 +30,7 @@ jobs:
           distribution: "temurin"
           cache: "maven"
 
-      - name: Create application.properties
+      - name: Create secrets.properties
         run: |
           touch src/main/resources/secrets.properties
           echo DB_USER=${{ secrets.DB_USER }} >> src/main/resources/secrets.properties
