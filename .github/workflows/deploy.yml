@@ -2,7 +2,7 @@ name: Deploy Image
 
 on:
   workflow_run:
-    workflows: ["Build and Test"]
+    workflows: ["Create Release"]
     types:
       - completed
 
@@ -19,6 +19,13 @@ jobs:
           java-version: 17
           distribution: "temurin"
           cache: "maven"
+
+      - name: Create secrets.properties
+        run: |
+          touch src/main/resources/secrets.properties
+          echo MAIL_TOKEN=${{ secrets.MAIL_TOKEN }} >> src/main/resources/secrets.properties
+          echo MAIL_DOMAIN=${{ secrets.MAIL_DOMAIN }} >> src/main/resources/secrets.properties
+          echo MAIL_SENDER=${{ secrets.MAIL_SENDER }} >> src/main/resources/secrets.properties
 
       - name: Build with Maven
         run: mvn -B package

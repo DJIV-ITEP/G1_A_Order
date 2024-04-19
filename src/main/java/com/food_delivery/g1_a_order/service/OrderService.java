@@ -24,8 +24,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class OrderService extends BaseService {
 
     @Autowired
@@ -33,12 +33,15 @@ public class OrderService extends BaseService {
 
     @Autowired
     OrderItemMapper orderItemMapper;
+
     private final OrderRepository orderRepository;
     private final OrderStatusRepository orderStatusRepository;
     private final AddressRepository addressRepository;
     private final AddressService addressService;
-
+    private final EmailService emailService;
+    private final CustomerService customerService;
     private final WebClient customerEndpoint;
+
     @Autowired
     private PaymentRepository paymentRepository;
 
@@ -59,6 +62,7 @@ public class OrderService extends BaseService {
     }
 
     // todo: vlidate item qty and price
+    // todo: handle get Restaurant address from restaurant service
     @Transactional
     public Order addNewOrderItemsToOrder(List<OrderItemsCreateDto> itemsCreateDtos, Long orderId) {
 
@@ -97,6 +101,13 @@ public class OrderService extends BaseService {
 
         order.setOrderStatus(status);
         order.setUpdatedAt(LocalDateTime.now());
+
+        // ! send email to customer - don't delete it
+        emailService.sendSimpleMessage(
+                customerService.getEmail(order.getCustomerId()),
+                "Order with id #" + order.getId() + " Status",
+                "Your order is " + status.getValue()).subscribe();
+
         order = changePaymentStausBasedOrderStatusIfCash(order);
 
         return orderMapper
@@ -106,7 +117,8 @@ public class OrderService extends BaseService {
 
     private Order changePaymentStausBasedOrderStatusIfCash(Order order) {
         if (order.getOrderStatus().getSequence() == OrderStatusEnum.DELIVERED.status.getSequence()) {
-            if (order.getPayment().getPaymentMethod().getRoute().equals(PaymentMethodEnum.COD.paymentMethod.getRoute())) {
+            if (order.getPayment().getPaymentMethod().getRoute()
+                    .equals(PaymentMethodEnum.COD.paymentMethod.getRoute())) {
                 Payment orderPayment = order.getPayment();
                 orderPayment.setPaymentStatus(PaymentStatusEnum.PAID.status);
                 paymentRepository.save(orderPayment);
@@ -116,8 +128,6 @@ public class OrderService extends BaseService {
 
     }
 
-
-    // todo: handle get Restaurant address from restaurant service
     @Transactional
     public OrderShowDto customerSetOrderAddresses(
             Long orderId,
@@ -155,9 +165,10 @@ public class OrderService extends BaseService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> handleNotFound("No order found with id: " + orderId));
 
-        if (OrderStatusEnum.CANCELED.status.getSequence() == newStatus.getSequence() &&
-                order.getOrderStatus().getSequence() == currentStatus.getSequence())
-            return changeOrderStatus(order, newStatus);
+        // if (OrderStatusEnum.CANCELED.status.getSequence() == newStatus.getSequence()
+        // &&
+        // order.getOrderStatus().getSequence() == currentStatus.getSequence())
+        // return changeOrderStatus(order, newStatus);
 
         if (order.getOrderStatus().getSequence() != currentStatus.getSequence())
             handleNotAcceptable("Order status is not " + currentStatus.getValue());
@@ -165,21 +176,29 @@ public class OrderService extends BaseService {
         if (order.getRestaurantId() != restaurantId)
             handleNotAcceptable("Order does not belong to restaurant");
 
-        return changeOrderStatus(order, newStatus);
+        if (order.getPayment() == null)
+            handleNotFound("Payment not found");
+
+        OrderShowDto orderShowDto = changeOrderStatus(order, newStatus);
+
+        return orderShowDto;
     }
 
     // todo: handle get deliveryId from delivery service
     @Transactional
     public OrderShowDto deliveryChangeOrderStatus(Long orderId,
-                                                  Long deliveryId,
-                                                  OrderStatus newStatus,
-                                                  OrderStatus currentStatus) {
+            Long deliveryId,
+            OrderStatus newStatus,
+            OrderStatus currentStatus) {
 
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> handleNotFound("No order found with id: " + orderId));
 
         if (order.getOrderStatus().getSequence() != currentStatus.getSequence())
             handleNotAcceptable("Order status is not " + currentStatus.getValue());
+
+        if (order.getPayment() == null)
+            handleNotFound("Payment not found");
 
         order.setDeliveryId(deliveryId);
 
@@ -188,7 +207,6 @@ public class OrderService extends BaseService {
 
         return changeOrderStatus(savedOrder, newStatus);
     }
-
 
     @Transactional
     public List<OrderShowDto> getOrdersByCustomer(Long customerId) {
