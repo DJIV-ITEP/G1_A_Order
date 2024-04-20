@@ -78,7 +78,7 @@ public class OrderDeliveryController {
                 ));
         }
 
-        @GetMapping("readyToPickup/delivery/{deliveryId}")
+        @GetMapping("readyToPickup/driver/{deliveryId}")
         @ApiResponses(value = {
                         @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(array = @ArraySchema(schema = @Schema(implementation = OrderShowDto.class)))),
                         @ApiResponse(responseCode = "404", description = "No order found with provided id", content = @Content(schema = @Schema(implementation = ErrResponse.class))),
