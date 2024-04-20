@@ -67,6 +67,11 @@ public class OrderItemService extends BaseService {
         if (null == restaurantId || null == customerId || null == itemDto)
             handleNotAcceptable("customer id, restaurant id or item is missing");
 
+        itemDto.forEach((item) -> {
+            if (null == item.price() || null == item.quantity() || 0 == item.price() || 0 == item.quantity())
+                handleNotAcceptable("price or quantity is missing");
+        });
+
         Order order = orderRepository
                 .findFirstByCustomerIdAndOrderStatusOrderByCreatedAtAsc(customerId, OrderStatusEnum.CART.status)
                 .orElseGet(() -> {
