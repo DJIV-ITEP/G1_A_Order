@@ -13,23 +13,25 @@ ifndef::imagesdir[:imagesdir: ../../images]
 [[section-technical-risks]]
 == Risks and Technical Debts
 
+=== Technical Risks
 
-[role="arc42help"]
-****
-.Contents
-A list of identified technical risks or technical debts, ordered by priority
-
-.Motivation
-“Risk management is project management for grown-ups” (Tim Lister, Atlantic Systems Guild.) 
-
-This should be your motto for systematic detection and evaluation of risks and technical debts in the architecture, which will be needed by management stakeholders (e.g. project managers, product owners) as part of the overall risk analysis and measurement planning.
-
-.Form
-List of risks and/or technical debts, probably including suggested measures to minimize, mitigate or avoid risks or reduce technical debts.
+[options="header",cols="1,2"]
+|===
+|Risks | Description
+|  Integration with External Systems | The project might need to integrate with various external systems like payment gateways, GPS services for tracking, or restaurant's existing systems. Any issues with these integrations can pose a risk.
+|  Performance under Load | The system needs to handle a large number of customers, orders, and restaurants. If not designed properly, it could fail under heavy load.
+|  Security | The system needs to handle a large number of customers, orders, and restaurants. If not designed properly, it could fail under heavy load.
+|===
 
 
-.Further Information
 
-See https://docs.arc42.org/section-11/[Risks and Technical Debt] in the arc42 documentation.
+=== Technical Debts
+[options="header",cols="1,2"]
+|===
+|Risks | Description
+|  Scalability | If the system is not designed with scalability in mind from the beginning, it could lead to significant rework as the user base grows.
+|  Maintainability | If the codebase is not well-organized and documented, it could lead to increased time for bug fixing and adding new features.
+|  Lack of Automated Testing | If the project does not have a good suite of automated tests, it could lead to more bugs in production and more time spent on manual testing.
+|===
 
-****
+
