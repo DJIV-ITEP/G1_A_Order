@@ -13,25 +13,86 @@ ifndef::imagesdir[:imagesdir: ../../images]
 [[section-architecture-constraints]]
 == Architecture Constraints
 
+=== Technical Constraints
 
-[role="arc42help"]
-****
-.Contents
-Any requirement that constraints software architects in their freedom of design and implementation decisions or decision about the development process. These constraints sometimes go beyond individual systems and are valid for whole organizations and companies.
+==== Order Micro-Service
 
-.Motivation
-Architects should know exactly where they are free in their design decisions and where they must adhere to constraints.
-Constraints must always be dealt with; they may be negotiable, though.
+===== Software and programming constraints
 
-.Form
-Simple tables of constraints with explanations.
-If needed you can subdivide them into
-technical constraints, organizational and political constraints and
-conventions (e.g. programming or versioning guidelines, documentation or naming conventions)
+[options="header",cols="1,2,3"]
+|===
+|No. |Constraint | Background and / or motivation
+| TC1 | Implementation in Java | The application should be part of a Java 17 and Spring Boot 3 show case. The interface (i.e. the api) should be language and framework agnostic, however. It should be possible that clients can be implemented using various frameworks and languages. 
+| TC2 | Dependencies | the Dependencies manager is maven to install Third party packages. 
+| TC3 | Automated Testing Framework |  github actions for CI/CD and Junit for unit testing.
+|===
+
+===== Development constraints
+
+[options="header",cols="1,2,3"]
+|===
+|No. |Constraint | Background and / or motivation
+| TC4 | CI/CD | The application should be integrated with GitHub Actions for CI/CD.
+| TC6 | OS independent development | The application should be compilable on all 2 major operation systems (Linux and Windows)
+| TC7 | k8s Deployable  | The application should be deployable to Amazon Elastic Kubernetes Service or al least locallty using minikube.
+|===
+
+==== Customer Micro-Service
+
+**<make your table here>**
+
+==== Restaurant Micro-Service
+
+===== Software and programming constraints
+
+[options="header",cols="1,2,3"]
+|===
+|No. |Constraint | Background and / or motivation
+| TC1 | Implementation in Laravel framework | The development is based on the Laravel framework to leverage its features and conventions. 
+| TC2 | Use of a relational database | The system should utilize a relational database for data storage and retrieval. 
+| TC3 | Security | Ensuring data privacy and preventing unauthorized access. 
+| TC4 | Automated Testing Framework | use github actions for CI/CD and Junit for unit testing.
+
+|===
+
+===== Development constraints
+
+[options="header",cols="1,2,3"]
+|===
+|No. |Constraint | Background and / or motivation
+| TC5 | CI/CD | The application should be integrated with GitHub Actions for CI/CD.
+| TC6 | OS independent development | The application should be compatible on all 3 major operation systems (Mac OS X, Linux and Windows)
+| TC7 | k8s Deployable  | The application should be deployable to Amazon Elastic Kubernetes Service or al least locallty using minikube.
+|===
 
 
-.Further Information
+==== Delivery Micro-Service
 
-See https://docs.arc42.org/section-2/[Architecture Constraints] in the arc42 documentation.
+**<make your table here>**
 
-****
+=== Organizational Constraints
+
+[options="header",cols="1,2,3"]
+|===
+|No. |Constraint | Background and / or motivation
+| OC1 | Team | 3 teams, each team work on micro-service/s, each team contain of 5 developers.   
+| OC2 | Time schedule | starting in Feb. 2024 until Apr. 2024
+| OC3 | Project setup | The project should integrate with GitHub Actions workflow for each service 
+| OC4 | Configuration and version control / management | Privet repository on Github, and Github issues setup as Scrum.
+| OC5 | IDE independent | The project should be compatible with multi-IDE. 
+| OC6 | Collaboration with internal IT teams | The development team should collaborate with internal IT teams for infrastructure and integration support. 
+| OC7 | Testing | The system should have Unit testing coverage 80% At least 1 acceptance test. 
+|===
+
+
+=== Convention 
+[options="header",cols="1,2,3"]
+|===
+|No. |Convention | Description
+| C1 | Architecture documentation | Structure based on the English arc42-Template.   
+| C2 | Version control guidelines | The team should adhere to version control guidelines for managing source code and collaboration.
+| C2 | Language | English.
+|===
+
+
+
