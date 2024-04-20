@@ -18,7 +18,10 @@ ifndef::imagesdir[:imagesdir: ../../images]
 
 ==== What is Wasale?
 
-Wasale is a popular delivery company that wants to build a food delivery system that facilitates ordering food from different restaurants. The system shall support adding/removing different restaurants to the restaurant catalog.
+Wasale is a Food delivery platforms can help restaurants expand their customer base and increase their revenue by reaching customers who prefer to dine at home.Also, it offers customers the convenience of ordering meals from a wide range of restaurants without the need to leave their homes. 
+
+One of the key features of the Wasale system is its dynamic restaurant management capability. System administrators have the authority to register and deregister restaurants based on agreements between Wasale and contracted establishments. This flexibility ensures that the system remains up-to-date and aligned with the ever-changing landscape of serviced restaurants.
+
 
 
 ==== Main Features
@@ -63,9 +66,6 @@ It's a newly borned idea, the feedback from the system's users and business owne
 
 The system should support [10 restaurants, 1000 customers, 300 orders/day] at the first phase, expecting to increase the system capacity to accept [60 restaurants, 10,000 customers, 4000 orders/day] after 6 months.
 
-| 4 | Performance |  The customer should be able to get confirmation about placing the order within 5 sec after submitting the order.
-
-| 5 | Testability | The system should be easy to test.
 
 |===
 
@@ -78,5 +78,5 @@ The system should support [10 restaurants, 1000 customers, 300 orders/day] at th
 | Wasale (Delivery Company) | - | Seeks to expand their service offerings with a robust food delivery system, providing customers with access to a wide variety of restaurants.
 | Restaurants | - | Gain increased visibility and potential for more orders by partnering with the "Wasale" platform.
 | Customers | - | Desire a convenient and user-friendly way to order food from their favorite local restaurants.
-| Drivers | - | Seek flexible work opportunities and a reliable platform to complete delivery orders efficiently.
+| Couriers | - | Seek flexible work opportunities and a reliable platform to complete delivery orders efficiently.
 |===
