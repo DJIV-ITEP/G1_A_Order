@@ -5,7 +5,6 @@ import com.food_delivery.g1_a_order.api.dto.order.OrderShowDto;
 import com.food_delivery.g1_a_order.api.dto.orderItem.OrderItemsCreateDto;
 import com.food_delivery.g1_a_order.config.mapper.OrderItemMapper;
 import com.food_delivery.g1_a_order.config.mapper.OrderMapper;
-import com.food_delivery.g1_a_order.helper.StatusResponseHelper;
 import com.food_delivery.g1_a_order.persistent.entity.*;
 import com.food_delivery.g1_a_order.persistent.enum_.OrderStatusEnum;
 import com.food_delivery.g1_a_order.persistent.enum_.PaymentMethodEnum;
@@ -68,7 +67,7 @@ public class OrderService extends BaseService {
 
         Order order = orderRepository
                 .findById(orderId)
-                .orElseThrow(() -> StatusResponseHelper.getNotFound("no order found"));
+                .orElseThrow(() -> handleNotFound("no order found"));
 
         List<OrderItem> dtoItems = orderItemMapper.toOrderItem(itemsCreateDtos);
         List<OrderItem> orderItem = order.getOrderItems();
@@ -128,6 +127,7 @@ public class OrderService extends BaseService {
 
     }
 
+    // todo: handle get Restaurant address from restaurant service
     @Transactional
     public OrderShowDto customerSetOrderAddresses(
             Long orderId,
@@ -186,7 +186,8 @@ public class OrderService extends BaseService {
 
     // todo: handle get deliveryId from delivery service
     @Transactional
-    public OrderShowDto deliveryChangeOrderStatus(Long orderId,
+    public OrderShowDto deliveryChangeOrderStatus(
+            Long orderId,
             Long deliveryId,
             OrderStatus newStatus,
             OrderStatus currentStatus) {

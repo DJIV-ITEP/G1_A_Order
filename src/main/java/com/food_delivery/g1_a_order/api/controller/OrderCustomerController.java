@@ -2,13 +2,20 @@ package com.food_delivery.g1_a_order.api.controller;
 
 import com.food_delivery.g1_a_order.api.dto.order.OrderCreateDto;
 import com.food_delivery.g1_a_order.api.dto.order.OrderShowDto;
+import com.food_delivery.g1_a_order.api.dto.response.ErrResponse;
 import com.food_delivery.g1_a_order.service.OrderItemService;
 import com.food_delivery.g1_a_order.service.OrderService;
+
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 
 import java.util.List;
 
@@ -28,8 +35,12 @@ public class OrderCustomerController {
             Long addressId) {
     }
 
-    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("customer/add/item")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Order item successfully added to order", content = @Content(schema = @Schema(implementation = OrderShowDto.class))),
+            @ApiResponse(responseCode = "404", description = "No order found", content = @Content(schema = @Schema(implementation = ErrResponse.class))),
+            @ApiResponse(responseCode = "406", description = "Customer id, restaurant id or item is missing or there is an item exists from another restaurant or order already confirmed", content = @Content(schema = @Schema(implementation = ErrResponse.class)))
+    })
     public ResponseEntity<OrderShowDto> addOrderItems(@Valid @RequestBody OrderCreateDto orderCreateDto) {
 
         return ResponseEntity
@@ -42,6 +53,11 @@ public class OrderCustomerController {
     }
 
     @PutMapping("customer/setOrderAddress")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(schema = @Schema(implementation = OrderShowDto.class))),
+            @ApiResponse(responseCode = "404", description = "No order found with provided id or customer address not found", content = @Content(schema = @Schema(implementation = ErrResponse.class))),
+            @ApiResponse(responseCode = "406", description = "Order is incomplete or address does not belong to customer", content = @Content(schema = @Schema(implementation = ErrResponse.class)))
+    })
     public ResponseEntity<OrderShowDto> customerSetOrderAddresses(@RequestBody customerConfirmDto body) {
         Long orderId = body.orderId();
         Long addressId = body.addressId();
@@ -53,6 +69,10 @@ public class OrderCustomerController {
     }
 
     @GetMapping("customer/{customerId}")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(array = @ArraySchema(schema = @Schema(implementation = OrderShowDto.class)))),
+            @ApiResponse(responseCode = "404", description = "No order found with provided id", content = @Content(schema = @Schema(implementation = ErrResponse.class))),
+    })
     public ResponseEntity<List<OrderShowDto>> getOrdersByCustomer(@PathVariable("customerId") Long customerId) {
         return ResponseEntity.ok(orderService.getOrdersByCustomer(customerId));
     }

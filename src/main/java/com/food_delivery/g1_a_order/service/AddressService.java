@@ -34,28 +34,35 @@ public class AddressService extends BaseService {
         List<Address> addresses = addressRepository.findAll();
         return addressMapper.toAddressShowDto(addresses);
     }
+
     public AddressShowDto getAddress(Long addressId) {
         Address address = addressRepository.findById(addressId)
-                .orElseThrow(() ->  handleNotFound("Address not found with id: " + addressId));
+                .orElseThrow(() -> handleNotFound("Address not found with id: " + addressId));
         return addressMapper.toAddressShowDto(address);
     }
+
     public List<AddressShowDto> getAddressesByCustomerId(Long customerId) {
         List<Address> addresses = addressRepository.findByCustomerId(customerId)
-                .orElseThrow(() -> handleServerError("No addresses found for this customer"));
+                .orElseThrow(() -> handleNotFound("No addresses found for this customer"));
         return addressMapper.toAddressShowDto(addresses);
     }
+
     public AddressShowDto getFirstAddressByCustomerIdAndLocation(Long customerId, Double latitude, Double longitude) {
-        Address address = addressRepository.findFirstByCustomerIdAndLatitudeAndLongitude(customerId, latitude, longitude)
-                .orElseThrow(() -> handleServerError("No address found for this customer at the given location"));
+        Address address = addressRepository
+                .findFirstByCustomerIdAndLatitudeAndLongitude(customerId, latitude, longitude)
+                .orElseThrow(() -> handleNotFound("No address found for this customer at the given location"));
         return addressMapper.toAddressShowDto(address);
     }
 
     public void deleteAddressesByCustomerId(Long customerId) {
-        List<Address> addresses = addressRepository.findByCustomerId(customerId)
-                .orElseThrow(() -> handleServerError("No addresses found for this customer"));
+        List<Address> addresses = addressRepository.findByCustomerId(customerId).get();
+
+        if (addresses.isEmpty())
+            handleNotFound("No addresses found for this customer");
+            
         addressRepository.deleteAll(addresses);
     }
-    
+
     public boolean addressExists(Long addressId) {
         return addressRepository.existsById(addressId);
     }

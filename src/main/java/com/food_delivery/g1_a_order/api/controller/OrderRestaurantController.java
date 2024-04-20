@@ -11,10 +11,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.food_delivery.g1_a_order.api.dto.order.OrderShowDto;
+import com.food_delivery.g1_a_order.api.dto.response.ErrResponse;
 import com.food_delivery.g1_a_order.persistent.enum_.OrderStatusEnum;
 import com.food_delivery.g1_a_order.service.OrderService;
 
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,6 +38,11 @@ public class OrderRestaurantController {
         }
 
         @PutMapping("restaurant/startPreparing")
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(schema = @Schema(implementation = OrderShowDto.class))),
+                        @ApiResponse(responseCode = "404", description = "No order found with provided id", content = @Content(schema = @Schema(implementation = ErrResponse.class))),
+                        @ApiResponse(responseCode = "406", description = "Order status is not as expected or order does not belong to restaurant", content = @Content(schema = @Schema(implementation = ErrResponse.class)))
+        })
         public ResponseEntity<OrderShowDto> restaurantStartPreparingOrder(
                         @RequestBody restaurantConfirmDto body) {
 
@@ -46,6 +57,11 @@ public class OrderRestaurantController {
         }
 
         @PutMapping("restaurant/readyToPickup")
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(schema = @Schema(implementation = OrderShowDto.class))),
+                        @ApiResponse(responseCode = "404", description = "No order found with provided id", content = @Content(schema = @Schema(implementation = ErrResponse.class))),
+                        @ApiResponse(responseCode = "406", description = "Order status is not as expected or order does not belong to restaurant", content = @Content(schema = @Schema(implementation = ErrResponse.class)))
+        })
         public ResponseEntity<OrderShowDto> restaurantCompleteOrder(
                         @RequestBody restaurantConfirmDto body) {
 
@@ -60,6 +76,11 @@ public class OrderRestaurantController {
         }
 
         @PutMapping("restaurant/cancel")
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(schema = @Schema(implementation = OrderShowDto.class))),
+                        @ApiResponse(responseCode = "404", description = "No order found with provided id", content = @Content(schema = @Schema(implementation = ErrResponse.class))),
+                        @ApiResponse(responseCode = "406", description = "Order status is not as expected or order does not belong to restaurant", content = @Content(schema = @Schema(implementation = ErrResponse.class)))
+        })
         public ResponseEntity<OrderShowDto> restaurantCancel(
                         @RequestBody restaurantConfirmDto body) {
 
@@ -74,6 +95,11 @@ public class OrderRestaurantController {
         }
 
         @PutMapping("restaurant/reject")
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(schema = @Schema(implementation = OrderShowDto.class))),
+                        @ApiResponse(responseCode = "404", description = "No order found with provided id", content = @Content(schema = @Schema(implementation = ErrResponse.class))),
+                        @ApiResponse(responseCode = "406", description = "Order status is not as expected or order does not belong to restaurant", content = @Content(schema = @Schema(implementation = ErrResponse.class)))
+        })
         public ResponseEntity<OrderShowDto> restaurantReject(
                         @RequestBody restaurantConfirmDto body) {
 
@@ -88,6 +114,10 @@ public class OrderRestaurantController {
         }
 
         @GetMapping("pending/restaurant/{restaurantId}")
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(array = @ArraySchema(schema = @Schema(implementation = OrderShowDto.class)))),
+                        @ApiResponse(responseCode = "404", description = "No order found with provided id", content = @Content(schema = @Schema(implementation = ErrResponse.class))),
+        })
         public ResponseEntity<List<OrderShowDto>> getPendingOrdersByRestaurant(
                         @PathVariable("restaurantId") Long restaurantId) {
                 return ResponseEntity
@@ -96,12 +126,15 @@ public class OrderRestaurantController {
         }
 
         @GetMapping("inProgress/restaurant/{restaurantId}")
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(array = @ArraySchema(schema = @Schema(implementation = OrderShowDto.class)))),
+                        @ApiResponse(responseCode = "404", description = "No order found with provided id", content = @Content(schema = @Schema(implementation = ErrResponse.class))),
+        })
         public ResponseEntity<List<OrderShowDto>> getInProgressOrdersByRestaurant(
                         @PathVariable("restaurantId") Long restaurantId) {
                 return ResponseEntity
                                 .ok(orderService.getOrdersByStatusAndRestaurant(restaurantId,
                                                 OrderStatusEnum.IN_PEOGRESS.status));
         }
-
 
 }
