@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: restaurant-deployment
+  namespace: restaurant-namespace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: restaurant
+  template:
+    metadata:
+      labels:
+        app: restaurant
+    spec:
+      initContainers:
+      - name: init
+        image: busybox
+        command: ['sh', '-c', 'mkdir -p /storage/framework/sessions && mkdir -p /storage/framework/views && mkdir -p /storage/framework/cache && chmod -R 777 /storage']
+        volumeMounts:
+        - name: restaurant-volume
+          mountPath: /storage
+      containers:
+      - name: restaurant-service
+        image: afafalbakri/restaurant-srv
+        ports:
+        - containerPort: 80
+        envFrom:
+        - configMapRef:
+            name: restaurant-config
+        env:
+        - name: APP_DEBUG
+          value: "true"
+        - name: DB_HOST
+          value: mysql-service
+        - name: DB_PORT
+          value: "3306"
+        - name: DB_USERNAME
+          value: "restaurant_user"
+        - name: DB_DATABASE
+          value: "restaurant"
+        - name: DB_PASSWORD
+          value: "restaurant_user_password"
+        volumeMounts:
+        - name: restaurant-volume
+          mountPath: /var/www/html/storage
+      volumes:
+      - name: restaurant-volume
+        persistentVolumeClaim:
+          claimName: restaurant-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: restaurant-service
+  namespace: restaurant-namespace
+spec:
+  selector:
+    app: restaurant
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 80
+  type: LoadBalancer
