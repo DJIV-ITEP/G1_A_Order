@@ -90,4 +90,17 @@ public class OrderDeliveryController {
                                                 OrderStatusEnum.READY_TO_PICKUP.status));
         }
 
+
+
+
+        @GetMapping("readyToPickup/delivery")
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "200", description = "Successful operation", content = @Content(array = @ArraySchema(schema = @Schema(implementation = OrderShowDto.class)))),
+                        @ApiResponse(responseCode = "404", description = "No order found with provided id", content = @Content(schema = @Schema(implementation = ErrResponse.class))),
+        })
+        public ResponseEntity<List<OrderShowDto>> getAllReadyToPickupOrdersByDelivery() {
+                return ResponseEntity.ok(
+                                orderService.getAllOrdersByStatusAndDelivery(OrderStatusEnum.READY_TO_PICKUP.status));
+        }
+
 }

@@ -136,6 +136,9 @@ public class OrderService extends BaseService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> handleNotFound("No order found with id: " + orderId));
 
+        if (order.getOrderStatus().getSequence() != OrderStatusEnum.CART.status.getSequence())
+            handleNotAcceptable("Order status is not " + OrderStatusEnum.CART.status.getValue());
+
         if (order.getCustomerId() == null || order.getRestaurantId() == null)
             throwHandleNotAcceptable("Order is incomplete");
 
@@ -227,6 +230,13 @@ public class OrderService extends BaseService {
     public List<OrderShowDto> getOrdersByStatusAndDelivery(Long deliveryId, OrderStatus status) {
 
         List<Order> orders = orderRepository.findByDeliveryIdAndOrderStatusOrderByUpdatedAtAsc(deliveryId, status)
+                .orElseThrow(() -> handleNotFound("no order found"));
+        return orderMapper.toOrderShowDto(orders);
+    }
+
+    @Transactional
+    public List<OrderShowDto> getAllOrdersByStatusAndDelivery(OrderStatus status) {
+        List<Order> orders = orderRepository.findByOrderStatus(status)
                 .orElseThrow(() -> handleNotFound("no order found"));
         return orderMapper.toOrderShowDto(orders);
     }
