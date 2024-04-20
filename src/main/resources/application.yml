@@ -23,4 +23,12 @@ server:
 customer:
   service:
     url: ${CUSTOMER_SERVICE_URL}
+    error:
+      include-message: ALWAYS
+
+restaurant:
+  service:
+    url: ${RESTAURANT_SERVICE_URL}
+    error:
+      include-message: ALWAYS
 
