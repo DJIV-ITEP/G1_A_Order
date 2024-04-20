@@ -4,6 +4,9 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -12,14 +15,21 @@ import reactor.core.publisher.Mono;
 @Service
 public class OrderRestaurantService {
 
-    private final WebClient restaurantClient;
+    @Autowired
+    @Qualifier("restaurantServiceWebClient")
+    private WebClient restaurantClient;
 
     public Mono<Restaurant> getRestaurantData(Long id) {
 
+        // System.out.println("url: "+restaurantClient.get().uri("").toString());
+
         return restaurantClient.get()
-                .uri("/api/restaurants/" + id)
+                .uri("api/restaurants/" + id)
                 .retrieve()
-                .bodyToMono(Restaurant.class);
+                .bodyToMono(Restaurant.class)
+                .doOnNext(restaurant -> {
+                    // System.out.println("Restaurant: " + restaurant);
+                });
     }
 }
 

@@ -7,15 +7,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
-@ConfigurationProperties(prefix = "restaurant")
-public class RestaurantWebClientConfiguration {
+@ConfigurationProperties(prefix = "customer")
+public class customerClientConfiguration {
 
-    private String url;
+  private String url;
 
-    // @Primary
     @Bean
-    @Qualifier("restaurantServiceWebClient")
-    public WebClient restaurantServiceWebClient() {
+    @Qualifier("customerServiceWebClient")
+    public WebClient customerServiceWebClient() {
         return WebClient.builder()
                 .baseUrl(url)
                 // Add default headers, timeouts, etc. if needed
@@ -29,4 +28,5 @@ public class RestaurantWebClientConfiguration {
     public void setUrl(String url) {
         this.url = url;
     }
+
 }

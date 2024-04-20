@@ -21,14 +21,11 @@ server:
     include-message: ALWAYS
 
 customer:
-  service:
-    url: ${CUSTOMER_SERVICE_URL}
-    error:
-      include-message: ALWAYS
+  url: ${CUSTOMER_SERVICE_URL}
+  error:
+    include-message: ALWAYS
 
 restaurant:
-  service:
-    url: ${RESTAURANT_SERVICE_URL}
-    error:
-      include-message: ALWAYS
-
+  url: ${RESTAURANT_SERVICE_URL}
+  error:
+    include-message: ALWAYS

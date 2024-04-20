@@ -8,6 +8,7 @@ import com.food_delivery.g1_a_order.persistent.repository.AddressRepository;
 import com.food_delivery.g1_a_order.service.base.BaseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -21,7 +22,10 @@ public class AddressService extends BaseService {
     AddressMapper addressMapper;
 
     private final AddressRepository addressRepository;
-    private final WebClient customerEndpoint;
+    
+    @Qualifier("customerServiceWebClient")
+    @Autowired
+    private  WebClient customerEndpoint;
 
     public AddressShowDto createAddress(AddressCreateDto addressCreateDto) {
         Address address = addressMapper.toAddress(addressCreateDto);
@@ -34,18 +38,22 @@ public class AddressService extends BaseService {
         List<Address> addresses = addressRepository.findAll();
         return addressMapper.toAddressShowDto(addresses);
     }
+
     public AddressShowDto getAddress(Long addressId) {
         Address address = addressRepository.findById(addressId)
-                .orElseThrow(() ->  handleNotFound("Address not found with id: " + addressId));
+                .orElseThrow(() -> handleNotFound("Address not found with id: " + addressId));
         return addressMapper.toAddressShowDto(address);
     }
+
     public List<AddressShowDto> getAddressesByCustomerId(Long customerId) {
         List<Address> addresses = addressRepository.findByCustomerId(customerId)
                 .orElseThrow(() -> handleServerError("No addresses found for this customer"));
         return addressMapper.toAddressShowDto(addresses);
     }
+
     public AddressShowDto getFirstAddressByCustomerIdAndLocation(Long customerId, Double latitude, Double longitude) {
-        Address address = addressRepository.findFirstByCustomerIdAndLatitudeAndLongitude(customerId, latitude, longitude)
+        Address address = addressRepository
+                .findFirstByCustomerIdAndLatitudeAndLongitude(customerId, latitude, longitude)
                 .orElseThrow(() -> handleServerError("No address found for this customer at the given location"));
         return addressMapper.toAddressShowDto(address);
     }
@@ -55,7 +63,7 @@ public class AddressService extends BaseService {
                 .orElseThrow(() -> handleServerError("No addresses found for this customer"));
         addressRepository.deleteAll(addresses);
     }
-    
+
     public boolean addressExists(Long addressId) {
         return addressRepository.existsById(addressId);
     }
