@@ -4,6 +4,7 @@
 /src/main/resources/secrets.properties
 
 .env
+/src/docs/images/.$*
 
 
 /target/
