@@ -21,9 +21,14 @@ server:
     include-message: ALWAYS
 
 customer:
-  service:
-    url: ${CUSTOMER_SERVICE_URL}
+  url: ${CUSTOMER_SERVICE_URL}
+  error:
+    include-message: ALWAYS
 
+restaurant:
+  url: ${RESTAURANT_SERVICE_URL}
+  error:
+    include-message: ALWAYS
 mail:
   token: ${TOKEN}
   domain: ${DOMAIN}

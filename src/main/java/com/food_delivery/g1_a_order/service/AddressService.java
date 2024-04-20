@@ -8,6 +8,7 @@ import com.food_delivery.g1_a_order.persistent.repository.AddressRepository;
 import com.food_delivery.g1_a_order.service.base.BaseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -21,7 +22,10 @@ public class AddressService extends BaseService {
     AddressMapper addressMapper;
 
     private final AddressRepository addressRepository;
-    private final WebClient customerEndpoint;
+    
+    @Qualifier("customerServiceWebClient")
+    @Autowired
+    private  WebClient customerEndpoint;
 
     public AddressShowDto createAddress(AddressCreateDto addressCreateDto) {
         Address address = addressMapper.toAddress(addressCreateDto);
@@ -50,7 +54,7 @@ public class AddressService extends BaseService {
     public AddressShowDto getFirstAddressByCustomerIdAndLocation(Long customerId, Double latitude, Double longitude) {
         Address address = addressRepository
                 .findFirstByCustomerIdAndLatitudeAndLongitude(customerId, latitude, longitude)
-                .orElseThrow(() -> handleNotFound("No address found for this customer at the given location"));
+                .orElseThrow(() -> handleServerError("No address found for this customer at the given location"));
         return addressMapper.toAddressShowDto(address);
     }
 

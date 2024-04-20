@@ -16,12 +16,15 @@ import com.food_delivery.g1_a_order.persistent.repository.PaymentRepository;
 import com.food_delivery.g1_a_order.service.base.BaseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +32,8 @@ public class OrderService extends BaseService {
 
     @Autowired
     OrderMapper orderMapper;
-
+    @Autowired
+    OrderRestaurantService orderRestaurantService;
     @Autowired
     OrderItemMapper orderItemMapper;
 
@@ -37,9 +41,12 @@ public class OrderService extends BaseService {
     private final OrderStatusRepository orderStatusRepository;
     private final AddressRepository addressRepository;
     private final AddressService addressService;
+
+    @Autowired
+    @Qualifier("customerServiceWebClient")
+    private WebClient customerEndpoint;
     private final EmailService emailService;
     private final CustomerService customerService;
-    private final WebClient customerEndpoint;
 
     @Autowired
     private PaymentRepository paymentRepository;
@@ -50,14 +57,42 @@ public class OrderService extends BaseService {
         return orderMapper.toOrderShowDto(orders);
     }
 
+    public Mono<Order> setRestaurantAddressId(Order order) {
+
+        return orderRestaurantService.getRestaurantData(order.getRestaurantId())
+                .map(restaurant -> Optional.ofNullable(restaurant.getLocationId()))
+                .onErrorReturn(Optional.ofNullable(0L))
+                .flatMap(optionalLocationId -> {
+
+                    System.out.println("Restaurant: " + optionalLocationId.get());
+
+                    order.setRestaurantAddressId(optionalLocationId.get());
+                    orderRepository.save(order);
+                    return Mono.just(order);
+                });
+
+    }
+
     @Transactional
     public Order createOrder(OrderCreateDto OrderCreateDto) {
         Order order = orderMapper.toOrder(OrderCreateDto);
-        // List<OrderItem> orderItems =
-        // orderItemMapper.toOrderItem(OrderCreateDto.orderItems());
-        // orderItems.forEach(orderItem -> orderItem.setOrder(order));
-        // order.setOrderItems(orderItems);
-        return orderRepository.saveAndFlush(order);
+        order = orderRepository.save(order);
+         setRestaurantAddressId(order)
+                .subscribe(
+                        savedOrder -> {
+                            // Success callback
+                            System.out.println(
+                                    "Order saved with restaurantAddressId: " + savedOrder.getRestaurantAddressId());
+                            // orderRepository.saveAndFlush(savedOrder);
+                        },
+                        error -> {
+                            // Error callback
+                            System.err.println("Error saving order: " + error.getMessage());
+                        }).getClass();
+
+
+        Order newOrder = orderRepository.findById(order.getId()).orElseThrow(() -> handleNotFound("order not found"));
+        return newOrder;
     }
 
     // todo: vlidate item qty and price
@@ -126,6 +161,35 @@ public class OrderService extends BaseService {
         return order;
 
     }
+    //
+    // @Transactional
+    // public Mono<OrderShowDto> customerSetOrderAddresses(
+    // Long orderId,
+    // Long customerAddressId) {
+    //
+    // return orderRepository.findById(orderId)
+    // .flatMap(order -> {
+    // if (order.getCustomerId() == null || order.getRestaurantId() == null)
+    // return Mono.error(new NotAcceptableStatusException("Order is incomplete"));
+    //
+    // if (customerAddressId == null ||
+    // !addressService.addressExists(customerAddressId))
+    // return Mono.error(new h("Customer address not found"));
+    //
+    // return setRestaurantAddressId(order)
+    // .flatMap(updatedOrder -> {
+    // Address address = addressRepository.findById(customerAddressId).get();
+    // if (!address.getCustomerId().equals(updatedOrder.getCustomerId()))
+    // return Mono.error(new NotAcceptableException("Address does not belong to
+    // customer"));
+    //
+    // updatedOrder.setAddress(address);
+    // updatedOrder.setUpdatedAt(LocalDateTime.now());
+    // return orderRepository.save(updatedOrder);
+    // });
+    // })
+    // .map(orderMapper::toOrderShowDto);
+    // }
 
     // todo: handle get Restaurant address from restaurant service
     @Transactional

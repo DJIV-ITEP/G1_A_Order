@@ -1,11 +1,5 @@
 package com.food_delivery.g1_a_order.service;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.food_delivery.g1_a_order.api.dto.order.OrderCreateDto;
 import com.food_delivery.g1_a_order.api.dto.order.OrderShowDto;
 import com.food_delivery.g1_a_order.api.dto.orderItem.OrderItemShowDto;
@@ -18,9 +12,12 @@ import com.food_delivery.g1_a_order.persistent.enum_.OrderStatusEnum;
 import com.food_delivery.g1_a_order.persistent.repository.OrderItemRepository;
 import com.food_delivery.g1_a_order.persistent.repository.OrderRepository;
 import com.food_delivery.g1_a_order.service.base.BaseService;
-
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -29,7 +26,8 @@ public class OrderItemService extends BaseService {
     private final OrderItemRepository itemRepository;
     private final OrderRepository orderRepository;
     private final OrderService orderService;
-
+    @Autowired
+    OrderRestaurantService orderRestaurantService;
     @Autowired
     private final OrderItemMapper itemMapper;
 
@@ -65,7 +63,7 @@ public class OrderItemService extends BaseService {
     public OrderShowDto addOrderItemToOrder(Long customerId, Long restaurantId, List<OrderItemsCreateDto> itemDto) {
 
         if (null == restaurantId || null == customerId || null == itemDto)
-            handleNotAcceptable("customer id, restaurant id or item is missing");
+            throwHandleNotAcceptable("customer id, restaurant id or item is missing");
 
         itemDto.forEach((item) -> {
             if (null == item.price() || null == item.quantity() || 0 == item.price() || 0 == item.quantity())
@@ -75,14 +73,11 @@ public class OrderItemService extends BaseService {
         Order order = orderRepository
                 .findFirstByCustomerIdAndOrderStatusOrderByCreatedAtAsc(customerId, OrderStatusEnum.CART.status)
                 .orElseGet(() -> {
-
                     OrderCreateDto newOrder = orderMapper.toOrderCreateDto(
                             Order.builder()
                                     .customerId(customerId)
                                     .restaurantId(restaurantId)
-                                    // .orderItems(
-                                    // itemMapper.toOrderItem(itemDto))
-                                    .build());
+                                    .totalPrice(0).build());
 
                     Order createdOrder = orderService.createOrder(newOrder);
                     return createdOrder;
@@ -104,6 +99,7 @@ public class OrderItemService extends BaseService {
         return orderShowDto;
 
     }
+
 
     @Transactional
     public List<OrderItemShowDto> getOrderItemByOrder(Long orderId) {

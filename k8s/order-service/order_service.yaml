@@ -25,6 +25,8 @@ spec:
               value: "123"
             - name: CUSTOMER_SERVICE_URL
               value: http://localhost:8081
+            - name: RESTAURANT_SERVICE_URL
+              value: http://restaurant.service.com/
           ports:
             - containerPort: 8080
 ---

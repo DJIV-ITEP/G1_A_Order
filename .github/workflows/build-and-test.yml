@@ -40,6 +40,7 @@ jobs:
           echo DB_HOST=${{ secrets.DB_HOST }} >> src/main/resources/secrets.properties
           echo SERVER_PORT=${{ secrets.SERVER_PORT }} >> src/main/resources/secrets.properties
           echo CUSTOMER_SERVICE_URL=${{ secrets.CUSTOMER_SERVICE_URL }} >> src/main/resources/secrets.properties
+          echo RESTAURANT_SERVICE_URL=${{ secrets.RESTAURANT_SERVICE_URL }} >> src/main/resources/secrets.properties
           echo MAIL_TOKEN=${{ secrets.MAIL_TOKEN }} >> src/main/resources/secrets.properties
           echo MAIL_DOMAIN=${{ secrets.MAIL_DOMAIN }} >> src/main/resources/secrets.properties
           echo MAIL_SENDER=${{ secrets.MAIL_SENDER }} >> src/main/resources/secrets.properties
