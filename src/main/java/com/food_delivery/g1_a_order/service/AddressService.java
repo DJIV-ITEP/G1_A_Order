@@ -47,7 +47,7 @@ public class AddressService extends BaseService {
 
     public List<AddressShowDto> getAddressesByCustomerId(Long customerId) {
         List<Address> addresses = addressRepository.findByCustomerId(customerId)
-                .orElseThrow(() -> handleServerError("No addresses found for this customer"));
+                .orElseThrow(() -> handleNotFound("No addresses found for this customer"));
         return addressMapper.toAddressShowDto(addresses);
     }
 
@@ -59,8 +59,11 @@ public class AddressService extends BaseService {
     }
 
     public void deleteAddressesByCustomerId(Long customerId) {
-        List<Address> addresses = addressRepository.findByCustomerId(customerId)
-                .orElseThrow(() -> handleServerError("No addresses found for this customer"));
+        List<Address> addresses = addressRepository.findByCustomerId(customerId).get();
+
+        if (addresses.isEmpty())
+            handleNotFound("No addresses found for this customer");
+            
         addressRepository.deleteAll(addresses);
     }
 

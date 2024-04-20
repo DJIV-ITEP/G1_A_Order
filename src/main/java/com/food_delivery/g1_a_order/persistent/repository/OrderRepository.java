@@ -12,6 +12,7 @@ public interface OrderRepository extends JpaRepository<Order, Long>{
     Optional<Order> findFirstByCustomerIdAndOrderStatusOrderByCreatedAtAsc(Long customerId, OrderStatus orderStatus);
 
     Optional<List<Order>> findByCustomerId(Long customerId);
+    Optional<List<Order>> findByOrderStatus(OrderStatus orderStatus);
     Optional<List<Order>> findByRestaurantIdAndOrderStatusOrderByUpdatedAtAsc(Long restaurantId,OrderStatus orderStatus);
     Optional<List<Order>> findByDeliveryIdAndOrderStatusOrderByUpdatedAtAsc(Long restaurantId,OrderStatus orderStatus);
 }

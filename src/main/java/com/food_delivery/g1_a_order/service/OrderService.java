@@ -5,7 +5,6 @@ import com.food_delivery.g1_a_order.api.dto.order.OrderShowDto;
 import com.food_delivery.g1_a_order.api.dto.orderItem.OrderItemsCreateDto;
 import com.food_delivery.g1_a_order.config.mapper.OrderItemMapper;
 import com.food_delivery.g1_a_order.config.mapper.OrderMapper;
-import com.food_delivery.g1_a_order.helper.StatusResponseHelper;
 import com.food_delivery.g1_a_order.persistent.entity.*;
 import com.food_delivery.g1_a_order.persistent.enum_.OrderStatusEnum;
 import com.food_delivery.g1_a_order.persistent.enum_.PaymentMethodEnum;
@@ -27,8 +26,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class OrderService extends BaseService {
 
     @Autowired
@@ -37,6 +36,7 @@ public class OrderService extends BaseService {
     OrderRestaurantService orderRestaurantService;
     @Autowired
     OrderItemMapper orderItemMapper;
+
     private final OrderRepository orderRepository;
     private final OrderStatusRepository orderStatusRepository;
     private final AddressRepository addressRepository;
@@ -45,6 +45,9 @@ public class OrderService extends BaseService {
     @Autowired
     @Qualifier("customerServiceWebClient")
     private WebClient customerEndpoint;
+    private final EmailService emailService;
+    private final CustomerService customerService;
+
     @Autowired
     private PaymentRepository paymentRepository;
 
@@ -93,12 +96,13 @@ public class OrderService extends BaseService {
     }
 
     // todo: vlidate item qty and price
+    // todo: handle get Restaurant address from restaurant service
     @Transactional
     public Order addNewOrderItemsToOrder(List<OrderItemsCreateDto> itemsCreateDtos, Long orderId) {
 
         Order order = orderRepository
                 .findById(orderId)
-                .orElseThrow(() -> StatusResponseHelper.getNotFound("no order found"));
+                .orElseThrow(() -> handleNotFound("no order found"));
 
         List<OrderItem> dtoItems = orderItemMapper.toOrderItem(itemsCreateDtos);
         List<OrderItem> orderItem = order.getOrderItems();
@@ -131,6 +135,13 @@ public class OrderService extends BaseService {
 
         order.setOrderStatus(status);
         order.setUpdatedAt(LocalDateTime.now());
+
+        // ! send email to customer - don't delete it
+        emailService.sendSimpleMessage(
+                customerService.getEmail(order.getCustomerId()),
+                "Order with id #" + order.getId() + " Status",
+                "Your order is " + status.getValue()).subscribe();
+
         order = changePaymentStausBasedOrderStatusIfCash(order);
 
         return orderMapper
@@ -189,6 +200,9 @@ public class OrderService extends BaseService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> handleNotFound("No order found with id: " + orderId));
 
+        if (order.getOrderStatus().getSequence() != OrderStatusEnum.CART.status.getSequence())
+            handleNotAcceptable("Order status is not " + OrderStatusEnum.CART.status.getValue());
+
         if (order.getCustomerId() == null || order.getRestaurantId() == null)
             throwHandleNotAcceptable("Order is incomplete");
 
@@ -218,9 +232,10 @@ public class OrderService extends BaseService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> handleNotFound("No order found with id: " + orderId));
 
-        if (OrderStatusEnum.CANCELED.status.getSequence() == newStatus.getSequence() &&
-                order.getOrderStatus().getSequence() == currentStatus.getSequence())
-            return changeOrderStatus(order, newStatus);
+        // if (OrderStatusEnum.CANCELED.status.getSequence() == newStatus.getSequence()
+        // &&
+        // order.getOrderStatus().getSequence() == currentStatus.getSequence())
+        // return changeOrderStatus(order, newStatus);
 
         if (order.getOrderStatus().getSequence() != currentStatus.getSequence())
             handleNotAcceptable("Order status is not " + currentStatus.getValue());
@@ -228,12 +243,18 @@ public class OrderService extends BaseService {
         if (order.getRestaurantId() != restaurantId)
             handleNotAcceptable("Order does not belong to restaurant");
 
-        return changeOrderStatus(order, newStatus);
+        if (order.getPayment() == null)
+            handleNotFound("Payment not found");
+
+        OrderShowDto orderShowDto = changeOrderStatus(order, newStatus);
+
+        return orderShowDto;
     }
 
     // todo: handle get deliveryId from delivery service
     @Transactional
-    public OrderShowDto deliveryChangeOrderStatus(Long orderId,
+    public OrderShowDto deliveryChangeOrderStatus(
+            Long orderId,
             Long deliveryId,
             OrderStatus newStatus,
             OrderStatus currentStatus) {
@@ -243,6 +264,9 @@ public class OrderService extends BaseService {
 
         if (order.getOrderStatus().getSequence() != currentStatus.getSequence())
             handleNotAcceptable("Order status is not " + currentStatus.getValue());
+
+        if (order.getPayment() == null)
+            handleNotFound("Payment not found");
 
         order.setDeliveryId(deliveryId);
 
@@ -270,6 +294,13 @@ public class OrderService extends BaseService {
     public List<OrderShowDto> getOrdersByStatusAndDelivery(Long deliveryId, OrderStatus status) {
 
         List<Order> orders = orderRepository.findByDeliveryIdAndOrderStatusOrderByUpdatedAtAsc(deliveryId, status)
+                .orElseThrow(() -> handleNotFound("no order found"));
+        return orderMapper.toOrderShowDto(orders);
+    }
+
+    @Transactional
+    public List<OrderShowDto> getAllOrdersByStatusAndDelivery(OrderStatus status) {
+        List<Order> orders = orderRepository.findByOrderStatus(status)
                 .orElseThrow(() -> handleNotFound("no order found"));
         return orderMapper.toOrderShowDto(orders);
     }
