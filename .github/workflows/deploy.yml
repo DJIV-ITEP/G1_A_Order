@@ -24,6 +24,7 @@ jobs:
       - name: Create secrets.properties
         run: |
           touch src/main/resources/secrets.properties
+          echo SERVER_PORT=${{ secrets.SERVER_PORT }} >> src/main/resources/secrets.properties
           echo MAIL_TOKEN=${{ secrets.MAIL_TOKEN }} >> src/main/resources/secrets.properties
           echo MAIL_DOMAIN=${{ secrets.MAIL_DOMAIN }} >> src/main/resources/secrets.properties
           echo MAIL_SENDER=${{ secrets.MAIL_SENDER }} >> src/main/resources/secrets.properties
@@ -37,11 +38,11 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push Docker image
-        run: |
-          docker build -f Dockerfile -t amjadfqs/g1_a_order_service .
-          docker tag amjadfqs/g1_a_order_service amjadfqs/g1_a_order_service:latest
-          docker push amjadfqs/g1_a_order_service:latest
+      # - name: Build and push Docker image
+      #   run: |
+      #     docker build -f Dockerfile -t amjadfqs/g1_a_order_service .
+      #     docker tag amjadfqs/g1_a_order_service amjadfqs/g1_a_order_service:latest
+      #     docker push amjadfqs/g1_a_order_service:latest
 
       - name: Build and push Docker k8s image
         run: |
