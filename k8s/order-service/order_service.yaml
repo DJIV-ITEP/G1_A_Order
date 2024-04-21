@@ -26,8 +26,9 @@ spec:
               value: "123"
             - name: CUSTOMER_SERVICE_URL
               value: http://localhost:8081
-            - name: RESTAURANT_SERVICE_URL
-              value: http://restaurant.service.com/
+            # - name: RESTAURANT_SERVICE_URL
+              # value: http://restaurant.service.com/
+              # value: restaurant-service.restaurant-namespace.svc.cluster.local:8000
           ports:
             - containerPort: 8080
 ---
@@ -41,3 +42,4 @@ spec:
     app: order
   ports:
     - port: 8080
+  type: ClusterIP

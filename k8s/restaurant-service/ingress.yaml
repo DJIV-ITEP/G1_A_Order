@@ -5,13 +5,15 @@ metadata:
   namespace: restaurant-namespace
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
 spec:
   rules:
   - host: restaurant.service.com
     http:
       paths:
       - pathType: Prefix
-        path: /
+        path: "/"
         backend:
           service:
             name: restaurant-service

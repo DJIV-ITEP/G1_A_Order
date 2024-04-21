@@ -112,3 +112,52 @@ http://minikube.local/<YOUR_API_ROUTE
 Pleas read our `k8s.Dockerfile`, which is in the root dir of the project, to know how to setup your image correctly and pass the required ARG to the image as we did in the `order_service.yaml` file.
 
 ⚠️ And it is very important to make sure that your `SPRING_DATASOURCE_URL` should have the same name of the postgres service name which you declared it in `postgres.yaml` file
+
+---
+
+---
+
+## RUN PROJECT K8S:
+
+1. Run minikube
+
+```
+minikube start
+```
+
+2. Run minikube with ingress controller
+
+```
+minikube addons enable ingress
+```
+
+3. Add domains to `/etc/hosts`, as mentioned above
+
+```
+<MINIKUBE_IP> restaurant.service.com
+<MINIKUBE_IP> order.service.com
+```
+
+4. Go to the folder in this dir, and run the following:
+
+```
+kubectl apply -f "**.yaml"
+```
+
+NOTE: run the above command two times to ensure everything is working
+
+5. Access the services:
+
+```
+http://order.service.com/webjars/swagger-ui/index.html
+```
+
+```
+http://restaurant.service.com/api/restaurants
+```
+
+6. Access minikube dashboard for more control:
+
+```
+minikube dashboard
+```

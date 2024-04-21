@@ -18,7 +18,6 @@ public class RestaurantWebClientConfiguration {
     public WebClient restaurantServiceWebClient() {
         return WebClient.builder()
                 .baseUrl(url)
-                // Add default headers, timeouts, etc. if needed
                 .build();
     }
 

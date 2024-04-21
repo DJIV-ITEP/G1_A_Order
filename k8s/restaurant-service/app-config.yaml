@@ -54,3 +54,4 @@ data:
   AWS_USE_PATH_STYLE_ENDPOINT: "false"
   VITE_APP_NAME: "${APP_NAME}"
   ORDER_SERVICE_HOST: "http://order.service.com"
+  # ORDER_SERVICE_HOST: "order-service.order-namespace.svc.cluster.local:8080"

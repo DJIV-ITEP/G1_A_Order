@@ -28,7 +28,7 @@ public class OrderRestaurantService {
                 .retrieve()
                 .bodyToMono(Restaurant.class)
                 .doOnNext(restaurant -> {
-                    // System.out.println("Restaurant: " + restaurant);
+                    System.out.println("Restaurant: " + restaurant);
                 });
     }
 }
