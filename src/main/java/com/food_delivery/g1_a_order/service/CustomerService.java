@@ -18,7 +18,7 @@ public class CustomerService {
     // todo: handle fetching email from customer service
     public String getEmail(Long customerId) {
 
-        return "";
+        return "ala0alsanea@gmail.com";
     }
 
 }
