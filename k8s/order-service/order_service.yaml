@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: order-deployment
-  namespace: order-namespace
+  # namespace: order-namespace
 spec:
   replicas: 1
   selector:
@@ -27,7 +27,8 @@ spec:
             - name: CUSTOMER_SERVICE_URL
               value: http://localhost:8081
             - name: RESTAURANT_SERVICE_URL
-              value: http://restaurant.service.com/
+              value: http://restaurant-service:8000
+              # value: restaurant-service.restaurant-namespace.svc.cluster.local:8000
           ports:
             - containerPort: 8080
 ---
@@ -35,9 +36,10 @@ apiVersion: v1
 kind: Service
 metadata:
   name: order-service
-  namespace: order-namespace
+  # namespace: order-namespace
 spec:
   selector:
     app: order
   ports:
     - port: 8080
+  type: ClusterIP

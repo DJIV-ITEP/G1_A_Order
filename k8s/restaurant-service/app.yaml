@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: restaurant-deployment
-  namespace: restaurant-namespace
+  # namespace: restaurant-namespace
 spec:
   replicas: 1
   selector:
@@ -53,7 +53,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: restaurant-service
-  namespace: restaurant-namespace
+  # namespace: restaurant-namespace
 spec:
   selector:
     app: restaurant
@@ -61,4 +61,4 @@ spec:
     - protocol: TCP
       port: 8000
       targetPort: 80
-  type: LoadBalancer
+  type: ClusterIP

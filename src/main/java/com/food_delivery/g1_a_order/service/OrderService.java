@@ -61,6 +61,7 @@ public class OrderService extends BaseService {
 
         return orderRestaurantService.getRestaurantData(order.getRestaurantId())
                 .map(restaurant -> Optional.ofNullable(restaurant.getLocationId()))
+                .doOnError(error -> System.err.println("Error getting restaurant location id: " + error.getMessage()))
                 .onErrorReturn(Optional.ofNullable(0L))
                 .flatMap(optionalLocationId -> {
 
@@ -77,7 +78,7 @@ public class OrderService extends BaseService {
     public Order createOrder(OrderCreateDto OrderCreateDto) {
         Order order = orderMapper.toOrder(OrderCreateDto);
         order = orderRepository.save(order);
-         setRestaurantAddressId(order)
+        setRestaurantAddressId(order)
                 .subscribe(
                         savedOrder -> {
                             // Success callback
@@ -88,8 +89,8 @@ public class OrderService extends BaseService {
                         error -> {
                             // Error callback
                             System.err.println("Error saving order: " + error.getMessage());
-                        }).getClass();
-
+                        })
+                .getClass();
 
         Order newOrder = orderRepository.findById(order.getId()).orElseThrow(() -> handleNotFound("order not found"));
         return newOrder;
