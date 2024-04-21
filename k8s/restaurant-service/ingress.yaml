@@ -2,14 +2,14 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: restaurant-ingress
-  namespace: restaurant-namespace
+  # namespace: restaurant-namespace
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
     nginx.ingress.kubernetes.io/enable-cors: "true"
     nginx.ingress.kubernetes.io/cors-allow-origin: "*"
 spec:
   rules:
-  - host: restaurant.service.com
+  - host: restaurant.service.test
     http:
       paths:
       - pathType: Prefix

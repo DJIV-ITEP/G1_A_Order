@@ -2,10 +2,10 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: order-ingress
-  namespace: order-namespace
+  # namespace: order-namespace
 spec:
   rules:
-    - host: order.service.com
+    - host: order.service.test
       http:
         paths:
           - path: /
