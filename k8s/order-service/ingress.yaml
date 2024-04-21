@@ -5,7 +5,7 @@ metadata:
   # namespace: order-namespace
 spec:
   rules:
-    - host: order.service.test
+    - host: order.service.com
       http:
         paths:
           - path: /
